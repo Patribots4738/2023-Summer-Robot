@@ -21,13 +21,13 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive m_drive;
 
   public Drivetrain() {
-    leftLeadMotor = new CANSparkMax(Constants.leftMotorFront, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightLeadMotor = new CANSparkMax(Constants.rightMotorFront, CANSparkMaxLowLevel.MotorType.kBrushless);
-    leftFollower = new CANSparkMax(Constants.leftFollower, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightFollower = new CANSparkMax(Constants.rightFollower, CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftLeadMotor = new CANSparkMax(Constants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightLeadMotor = new CANSparkMax(Constants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     
-    leftFollower.follow(leftLeadMotor, false);
-    rightFollower.follow(rightLeadMotor, false);
+    leftFollower.follow(leftLeadMotor, Constants.LEFT_MOTOR_INVERT);
+    rightFollower.follow(rightLeadMotor, Constants.RIGHT_MOTOR_INVERT);
     
     leftLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
