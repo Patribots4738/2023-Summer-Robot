@@ -7,16 +7,13 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
-import frc.robot.Constants.*;
 
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-public class Drivetrain extends PIDSubsystem{
+public class Drivetrain extends SubsystemBase{
   /** Creates a new Drivetrain. */
   private final CANSparkMax leftLeadMotor;
   private final CANSparkMax rightLeadMotor;
@@ -24,11 +21,8 @@ public class Drivetrain extends PIDSubsystem{
   private final CANSparkMax rightFollower;
 
   private final DifferentialDrive m_drive;
-  private SlewRateLimiter filter = new SlewRateLimiter(0.1);
 
   public Drivetrain() {
-
-    super(new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD));
 
     // initialize motors
     leftLeadMotor = new CANSparkMax(Constants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -62,19 +56,8 @@ public class Drivetrain extends PIDSubsystem{
     // This is the order that worked... if not please change
 
     // Calculate with SlewRate Limiting and PID Controller
-    double calculatedForward = filter.calculate( getController().calculate(forward) );
-    m_drive.arcadeDrive(calculatedForward, turn);
+
+    m_drive.arcadeDrive(forward, turn);
   }
 
-  @Override
-  protected void useOutput(double output, double setpoint) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'useOutput'");
-  }
-
-  @Override
-  protected double getMeasurement() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getMeasurement'");
-  }
 }
