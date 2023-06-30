@@ -25,5 +25,10 @@ public final class Constants {
   public static final int DRIVER_CONTROLLER_PORT = 0;
 
   public static final double DRIVER_DEADBAND = 0.17;
+
+  public final class DrivetrainConstants {
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+  }
 }
- 
