@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -24,6 +27,7 @@ public class Drivetrain extends SubsystemBase {
   private final SparkMaxPIDController _turningPIDController;
 
   public Drivetrain() {
+
     // initialize motors
     leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightLeadMotor = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
