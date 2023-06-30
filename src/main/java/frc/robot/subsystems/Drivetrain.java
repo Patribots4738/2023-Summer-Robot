@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,16 +20,17 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax rightFollower;
 
   private final DifferentialDrive m_drive;
+  private SlewRateLimiter filter = new SlewRateLimiter(0.1);
 
   public Drivetrain() {
     leftLeadMotor = new CANSparkMax(Constants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightLeadMotor = new CANSparkMax(Constants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-
+    
     leftFollower.follow(leftLeadMotor, Constants.LEFT_MOTOR_INVERT);
     rightFollower.follow(rightLeadMotor, Constants.RIGHT_MOTOR_INVERT);
-
+    
     leftLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -43,10 +45,10 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void run(double forward, double turn) {
-    // Originally these parameters were flipped,
+  public void run(double turn, double forward){
+    // Originally these parameters were flipped, 
     // But it appeared to be a naming issue
     // This is the order that worked... if not please change
-    m_drive.arcadeDrive(turn, forward);
+    m_drive.arcadeDrive(filter.calculate(forward), turn);
   }
 }
