@@ -13,22 +13,29 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final int LEFT_MOTOR_FRONT_CAN_ID = 1;
-  public static final int LEFT_MOTOR_FOLLOWER_CAN_ID = 2;
-
-  public static final int RIGHT_MOTOR_FRONT_CAN_ID = 3;
-  public static final int RIGHT_MOTOR_FOLLOWER_CAN_ID = 4;
-
-  public static final boolean RIGHT_MOTOR_INVERT = false;
-  public static final boolean LEFT_MOTOR_INVERT = false;
 
   public static final int DRIVER_CONTROLLER_PORT = 0;
 
   public static final double DRIVER_DEADBAND = 0.17;
 
   public final class DrivetrainConstants {
-    public static final double kP = 0.1;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
+
+    public static final int LEFT_MOTOR_FRONT_CAN_ID = 1;
+    public static final int LEFT_MOTOR_FOLLOWER_CAN_ID = 2;
+
+    public static final int RIGHT_MOTOR_FRONT_CAN_ID = 3;
+    public static final int RIGHT_MOTOR_FOLLOWER_CAN_ID = 4;
+
+    public static final boolean RIGHT_MOTOR_INVERT = false;
+    public static final boolean LEFT_MOTOR_INVERT = false;
+
+    public static final double TURNING_P = 0.6;
+    public static final double TURNING_I = 0;
+    public static final double TURNING_D = 0.1;
+
+    public static final double DRIVING_P = 0.7;
+    public static final double DRIVING_I = 0;
+    public static final double DRIVING_D = 0.1;
+
   }
 }

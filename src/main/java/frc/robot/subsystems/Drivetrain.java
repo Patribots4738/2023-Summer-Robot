@@ -5,18 +5,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Constants;
-import frc.robot.Constants.*;
+import frc.robot.Constants.DrivetrainConstants;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-
-
-public class Drivetrain extends PIDSubsystem{
+public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
   private final CANSparkMax leftLeadMotor;
   private final CANSparkMax rightLeadMotor;
@@ -24,27 +20,45 @@ public class Drivetrain extends PIDSubsystem{
   private final CANSparkMax rightFollower;
 
   private final DifferentialDrive m_drive;
-  private SlewRateLimiter filter = new SlewRateLimiter(0.1);
+  private final SparkMaxPIDController _drivingPIDController;
+  private final SparkMaxPIDController _turningPIDController;
 
   public Drivetrain() {
-
-    super(new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD));
-
     // initialize motors
-    leftLeadMotor = new CANSparkMax(Constants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightLeadMotor = new CANSparkMax(Constants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightLeadMotor = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftFollower = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightFollower = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     
-    // follow the lead motors
-    leftFollower.follow(leftLeadMotor, Constants.LEFT_MOTOR_INVERT);
-    rightFollower.follow(rightLeadMotor, Constants.RIGHT_MOTOR_INVERT);
-    
+    leftLeadMotor.restoreFactoryDefaults();
+    rightLeadMotor.restoreFactoryDefaults();
+    leftFollower.restoreFactoryDefaults();
+    rightFollower.restoreFactoryDefaults();
+
+    leftLeadMotor.setInverted(true);
+    rightLeadMotor.setInverted(false);
+
     // Set all Motors to Brake Mode
     leftLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+    // Set PID Controller
+    _drivingPIDController = leftLeadMotor.getPIDController();
+    _turningPIDController = rightLeadMotor.getPIDController();
+
+    _drivingPIDController.setP(DrivetrainConstants.DRIVING_P);
+    _drivingPIDController.setI(DrivetrainConstants.DRIVING_I);
+    _drivingPIDController.setD(DrivetrainConstants.DRIVING_D);
+
+    _turningPIDController.setP(DrivetrainConstants.TURNING_P);
+    _turningPIDController.setI(DrivetrainConstants.TURNING_I);
+    _turningPIDController.setD(DrivetrainConstants.TURNING_D);
+    
+    // follow the lead motors
+    leftFollower.follow(leftLeadMotor, DrivetrainConstants.LEFT_MOTOR_INVERT);
+    rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
 
     // Set the default command for a subsystem here.
     m_drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
@@ -56,25 +70,7 @@ public class Drivetrain extends PIDSubsystem{
     // This method will be called once per scheduler run
   }
 
-  public void run(double turn, double forward){
-    // Originally these parameters were flipped, 
-    // But it appeared to be a naming issue
-    // This is the order that worked... if not please change
-
-    // Calculate with SlewRate Limiting and PID Controller
-    double calculatedForward = filter.calculate( getController().calculate(forward) );
-    m_drive.arcadeDrive(calculatedForward, turn);
-  }
-
-  @Override
-  protected void useOutput(double output, double setpoint) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'useOutput'");
-  }
-
-  @Override
-  protected double getMeasurement() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getMeasurement'");
+  public void run(double forward, double turn){
+    m_drive.arcadeDrive(forward, turn);
   }
 }
