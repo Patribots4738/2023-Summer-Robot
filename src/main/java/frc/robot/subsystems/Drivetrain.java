@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -50,13 +53,19 @@ public class Drivetrain extends SubsystemBase{
     // This method will be called once per scheduler run
   }
 
-  public void run(double turn, double forward){
+  public void run(DoubleSupplier forward, DoubleSupplier turn){
     // Originally these parameters were flipped, 
     // But it appeared to be a naming issue
     // This is the order that worked... if not please change
 
-    // Calculate with SlewRate Limiting and PID Controller
+    m_drive.arcadeDrive(forward.getAsDouble(), turn.getAsDouble());
+  }
 
+  public void run(double forward, double turn){
+    // Originally these parameters were flipped, 
+    // But it appeared to be a naming issue
+    // This is the order that worked... if not please change
+    
     m_drive.arcadeDrive(forward, turn);
   }
 
