@@ -25,10 +25,10 @@ public class Drivetrain extends SubsystemBase {
     rightLeadMotor = new CANSparkMax(Constants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    
+
     leftFollower.follow(leftLeadMotor, Constants.LEFT_MOTOR_INVERT);
     rightFollower.follow(rightLeadMotor, Constants.RIGHT_MOTOR_INVERT);
-    
+
     leftLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -43,8 +43,8 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void run(double forward, double turn){
-    // Originally these parameters were flipped, 
+  public void run(double forward, double turn) {
+    // Originally these parameters were flipped,
     // But it appeared to be a naming issue
     // This is the order that worked... if not please change
     m_drive.arcadeDrive(turn, forward);

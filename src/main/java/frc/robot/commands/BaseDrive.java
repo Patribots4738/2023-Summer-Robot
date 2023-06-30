@@ -14,7 +14,7 @@ public class BaseDrive extends CommandBase {
   private final Drivetrain m_drive;
   private final DoubleSupplier m_turn;
   private final DoubleSupplier m_forward;
-  
+
   public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
     m_drive = drive;
     m_forward = forward;
@@ -25,7 +25,8 @@ public class BaseDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
