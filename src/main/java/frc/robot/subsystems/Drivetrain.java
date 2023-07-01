@@ -77,4 +77,8 @@ public class Drivetrain extends SubsystemBase {
   public void run(double forward, double turn){
     m_drive.arcadeDrive(forward, turn);
   }
+
+  public void run(DoubleSupplier forward, DoubleSupplier turn){
+    m_drive.arcadeDrive(forward.getAsDouble(), turn.getAsDouble());
+  }
 }
