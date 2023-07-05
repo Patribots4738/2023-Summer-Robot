@@ -6,19 +6,21 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class BaseDrive extends CommandBase {
   /** Creates a new BaseDrive. */
   private final Drivetrain m_drive;
-  private final DoubleSupplier m_turn;
-  private final DoubleSupplier m_forward;
+  private DoubleSupplier m_turn;
+  private DoubleSupplier m_forward;
   
   public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
     m_drive = drive;
-    m_forward = forward;
-    m_turn = turn;
+    m_forward = () -> MathUtil.applyDeadband(forward.getAsDouble(), Constants.DRIVER_DEADBAND);
+    m_turn = () -> MathUtil.applyDeadband(turn.getAsDouble(), Constants.DRIVER_DEADBAND);
     addRequirements(m_drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }

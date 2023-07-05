@@ -25,9 +25,9 @@ public class RobotContainer {
 
   private final XboxController m_controller = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
 
-  private final BaseDrive m_baseDrive = new BaseDrive(m_drive, 
-                                                () -> MathUtil.applyDeadband(m_controller.getLeftY(), Constants.DRIVER_DEADBAND), 
-                                                () -> MathUtil.applyDeadband(m_controller.getRightX(), Constants.DRIVER_DEADBAND));
+  private final BaseDrive m_baseDrive = new BaseDrive(m_drive,
+                                                        m_controller::getLeftY, 
+                                                          m_controller::getRightX);
   
   //Controller
 
