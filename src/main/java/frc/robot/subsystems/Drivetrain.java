@@ -43,7 +43,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
-  public Drivetrain() {
+    public Drivetrain() {
 
     // initialize motors
     leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -115,10 +115,6 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getPose(){
     return odometry.getPoseMeters();
-  }
-
-  public void run(double forward, double turn){
-    m_drive.arcadeDrive(forward, turn);
   }
 
   public void run(DoubleSupplier forward, DoubleSupplier turn){
