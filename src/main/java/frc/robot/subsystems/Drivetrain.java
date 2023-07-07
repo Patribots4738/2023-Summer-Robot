@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax;
 
 import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -40,6 +41,9 @@ public class Drivetrain extends SubsystemBase {
   private final SparkMaxPIDController _turningPIDController;
 
   private final DifferentialDriveOdometry odometry;
+
+  SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN);
+  SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE);
 
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
@@ -91,6 +95,8 @@ public class Drivetrain extends SubsystemBase {
     // Set the default command for a subsystem here.
     m_drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
 
+
+
   }
 
   @Override
@@ -118,6 +124,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void run(DoubleSupplier forward, DoubleSupplier turn){
-    m_drive.arcadeDrive(forward.getAsDouble(), turn.getAsDouble());
+    m_drive.arcadeDrive(driveFilter.calculate(-forward.getAsDouble()), turnFilter.calculate(turn.getAsDouble()));
   }
 }

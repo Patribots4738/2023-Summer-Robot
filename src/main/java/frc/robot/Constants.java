@@ -41,5 +41,8 @@ public final class Constants {
 
     public static final double TRACK_WIDTH = 0.69;
     public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(TRACK_WIDTH);
+
+    public static final double SLEW_RATE_TURN = .5;
+    public static final double SLEW_RATE_DRIVE = .5;
   }
 }

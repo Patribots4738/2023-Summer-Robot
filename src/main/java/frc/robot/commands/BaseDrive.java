@@ -17,6 +17,7 @@ public class BaseDrive extends CommandBase {
   private DoubleSupplier m_turn;
   private DoubleSupplier m_forward;
   
+  
   public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
     m_drive = drive;
     m_forward = () -> MathUtil.applyDeadband(forward.getAsDouble(), Constants.DRIVER_DEADBAND);
