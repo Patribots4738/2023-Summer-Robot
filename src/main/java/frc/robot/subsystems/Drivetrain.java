@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.Odometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -39,7 +40,7 @@ public class Drivetrain extends SubsystemBase {
   private final SparkMaxPIDController _drivingPIDController;
   private final SparkMaxPIDController _turningPIDController;
 
-  private final DifferentialDriveOdometry odometry;
+  private final Odometry odometry;
 
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
@@ -56,7 +57,7 @@ public class Drivetrain extends SubsystemBase {
     rightEncoder = rightLeadMotor.getEncoder();
     rightEncoderFollower = rightFollower.getEncoder();
 
-    odometry = new DifferentialDriveOdometry(getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    odometry = new Odometry(this);
 
     leftLeadMotor.restoreFactoryDefaults();
     rightLeadMotor.restoreFactoryDefaults();
@@ -96,8 +97,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    odometry.update(getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-  
+    odometry.execute();  
   }
 
   public void resetEncoders(){
@@ -115,6 +115,18 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getPose(){
     return odometry.getPoseMeters();
+  }
+
+  public RelativeEncoder getLeftEncoder(){
+    return leftEncoder;
+  }
+
+  public RelativeEncoder getRightEncoder(){
+    return rightEncoder;
+  }
+
+  public void run(double forward, double turn){
+    m_drive.arcadeDrive(forward, turn);
   }
 
   public void run(DoubleSupplier forward, DoubleSupplier turn){
