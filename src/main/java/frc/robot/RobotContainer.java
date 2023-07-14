@@ -8,8 +8,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
+import frc.robot.commands.AutoSetRotation;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Pivot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -24,18 +28,17 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // Subsystems
-  private final Drivetrain m_drive = new Drivetrain();
+  private final Drivetrain drivetrain = new Drivetrain();
 
-  private final XboxController m_controller = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private final XboxController controller = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
 
-  /*
-    () -> Explantion:
-
-  */
-  private final BaseDrive m_baseDrive = new BaseDrive(
-      m_drive,
-      () -> MathUtil.applyDeadband(m_controller.getLeftY(), Constants.DRIVER_DEADBAND),
-      () -> MathUtil.applyDeadband(m_controller.getRightX(), Constants.DRIVER_DEADBAND)
+  private final Pivot pivot = new Pivot();
+  private final Claw claw = new Claw();
+  
+  private final BaseDrive baseDrive = new BaseDrive(
+      drivetrain,
+      () -> MathUtil.applyDeadband(controller.getLeftY(), Constants.DRIVER_DEADBAND),
+      () -> MathUtil.applyDeadband(controller.getRightX(), Constants.DRIVER_DEADBAND)
   );
 
   /**
@@ -43,7 +46,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    m_drive.setDefaultCommand(m_baseDrive);
+    drivetrain.setDefaultCommand(baseDrive);
     configureButtonBindings();
   }
 
@@ -56,6 +59,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // create triggers for each button used
+    Trigger aTrigger = new Trigger(() -> controller.getAButton());
+    Trigger bTrigger = new Trigger(() -> controller.getBButton());
+    Trigger xTrigger = new Trigger(() -> controller.getXButton());
+    Trigger yTrigger = new Trigger(() -> controller.getYButton());
+
+    // TODO: determine the placement positions for each button
+    aTrigger.onTrue(new AutoSetRotation(pivot, claw, 0));
+    bTrigger.onTrue(new AutoSetRotation(pivot, claw, 1));
+    xTrigger.onTrue(new AutoSetRotation(pivot, claw,  2));
+    yTrigger.onTrue(new AutoSetRotation(pivot, claw, 3));
 
   }
 
