@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
@@ -11,26 +12,35 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  //Subsystems
+  // Subsystems
   private final Drivetrain m_drive = new Drivetrain();
 
   private final XboxController m_controller = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
 
-  private final BaseDrive m_baseDrive = new BaseDrive(m_drive,
-                                                          m_controller::getLeftY, 
-                                                          m_controller::getRightX);
-  
-  //Controller
+  /*
+    () -> Explantion:
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  */
+  private final BaseDrive m_baseDrive = new BaseDrive(
+      m_drive,
+      () -> MathUtil.applyDeadband(m_controller.getLeftY(), Constants.DRIVER_DEADBAND),
+      () -> MathUtil.applyDeadband(m_controller.getRightX(), Constants.DRIVER_DEADBAND)
+  );
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the button bindings
     m_drive.setDefaultCommand(m_baseDrive);
@@ -38,9 +48,11 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
