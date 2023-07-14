@@ -7,11 +7,15 @@ package frc.robot;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -39,10 +43,39 @@ public final class Constants {
     public static final double DRIVING_I = 0;
     public static final double DRIVING_D = 0.1;
 
-    public static final double TRACK_WIDTH = 0.69;
-    public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(TRACK_WIDTH);
+    // TODO: These values are placeholders and need to be tuned for the robot
+    public static final double SLEW_RATE_TURN = 0;
+    public static final double SLEW_RATE_DRIVE = 0;
+  }
 
-    public static final double SLEW_RATE_TURN = .5;
-    public static final double SLEW_RATE_DRIVE = .5;
+  public final static class PivotConstants {
+
+    public static final double PIVOT_DEADBAND_DEGREES = 5;
+
+    // TODO: These values are placeholders and need to be set for the robot
+    public static final int PIVOT_LEAD_CAN_ID = 5;
+    public static final int PIVOT_FOLLOWER_CAN_ID = 6;
+
+    public static final double PIVOT_P = 0.1;
+    public static final double PIVOT_I = 0;
+    public static final double PIVOT_D = 0.1;
+
+    public static final double[] placementRotationPositions = {
+        // TODO: These values will represent the dictionary of positions for the pivot
+        // i.e. "Low" = 0, "Middle" = 45, "High" = 90, etc
+    };
+
+  }
+
+  public final static class ClawConstants {
+
+    // TODO: These values are placeholders and need to be set for the robot
+    public static final int CLAW_LEAD_CAN_ID = 5;
+    public static final int CLAW_FOLLOWER_CAN_ID = 6;
+
+    public static final double CLAW_P = 0.1;
+    public static final double CLAW_I = 0;
+    public static final double CLAW_D = 0.1;
+
   }
 }
