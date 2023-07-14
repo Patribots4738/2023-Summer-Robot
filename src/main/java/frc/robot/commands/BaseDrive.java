@@ -33,16 +33,17 @@ public class BaseDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.run(m_forward, m_turn);
+    m_drive.run(m_forward.getAsDouble(), m_turn.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drive.run(() -> 0.0, () -> 0.0);
+    m_drive.run(0.0, 0.0);
   }
 
   // Returns true when the command should end.
+  // We never want this command to end, so it always returns false
   @Override
   public boolean isFinished() {
     return false;

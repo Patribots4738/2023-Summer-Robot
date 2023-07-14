@@ -44,14 +44,18 @@ public class Drivetrain extends SubsystemBase {
 
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
-    public Drivetrain() {
+  public Drivetrain() {
 
     // initialize motors
-    leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightLeadMotor = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FRONT_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    leftFollower = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightFollower = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FOLLOWER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    
+    leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID,
+        CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightLeadMotor = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FRONT_CAN_ID,
+        CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftFollower = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FOLLOWER_CAN_ID,
+        CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightFollower = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FOLLOWER_CAN_ID,
+        CANSparkMaxLowLevel.MotorType.kBrushless);
+
     leftEncoder = leftLeadMotor.getEncoder();
     leftEncoderFollower = leftFollower.getEncoder();
     rightEncoder = rightLeadMotor.getEncoder();
@@ -84,7 +88,7 @@ public class Drivetrain extends SubsystemBase {
     _turningPIDController.setP(DrivetrainConstants.TURNING_P);
     _turningPIDController.setI(DrivetrainConstants.TURNING_I);
     _turningPIDController.setD(DrivetrainConstants.TURNING_D);
-    
+
     // follow the lead motors
     leftFollower.follow(leftLeadMotor, DrivetrainConstants.LEFT_MOTOR_INVERT);
     rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
@@ -92,46 +96,41 @@ public class Drivetrain extends SubsystemBase {
     // Set the default command for a subsystem here.
     m_drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
 
-
-
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    odometry.execute();  
+    odometry.execute();
   }
 
-  public void resetEncoders(){
+  public void resetEncoders() {
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
   }
 
-  public Rotation2d getRotation2d(){
+  public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(getAngle());
   }
 
-  public double getAngle(){
+  public double getAngle() {
     return gyro.getAngle();
   }
 
-  public Pose2d getPose(){
+  public Pose2d getPose() {
     return odometry.getPoseMeters();
   }
 
-  public RelativeEncoder getLeftEncoder(){
+  public RelativeEncoder getLeftEncoder() {
     return leftEncoder;
   }
 
-  public RelativeEncoder getRightEncoder(){
+  public RelativeEncoder getRightEncoder() {
     return rightEncoder;
   }
 
-  public void run(double forward, double turn){
-    m_drive.arcadeDrive(forward, turn);
-  }
-
-  public void run(DoubleSupplier forward, DoubleSupplier turn){
-    m_drive.arcadeDrive(driveFilter.calculate(-forward.getAsDouble()), turnFilter.calculate(turn.getAsDouble()));
+  public void run(double forward, double turn) {      
+    m_drive.arcadeDrive(driveFilter.calculate(-forward), 
+                        turnFilter.calculate(turn));
   }
 }
