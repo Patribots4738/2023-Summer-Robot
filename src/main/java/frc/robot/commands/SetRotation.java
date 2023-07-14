@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.Pivot;
 
 public class SetRotation extends CommandBase {
@@ -24,19 +26,14 @@ public class SetRotation extends CommandBase {
     pivot.setRotation(placementPosition);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // TODO: apply deadband for the range of rotations 
-    if (pivot.getRotation() == placementPosition) { 
-      // TODO: check if this is the correct way to end the command
-      end(true); 
-    }
-  }
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // start the next command for the claw to intake
+    // TODO: start the next command for the claw to intake
+  }
+
+  @Override
+  public boolean isFinished(){
+    return (MathUtil.applyDeadband(pivot.getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES) == placementPosition);
   }
 }
