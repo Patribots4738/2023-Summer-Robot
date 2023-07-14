@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import java.util.HashMap;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -76,6 +76,16 @@ public final class Constants {
     public static final double CLAW_P = 0.1;
     public static final double CLAW_I = 0;
     public static final double CLAW_D = 0.1;
+
+    public static final double[] PLACEMENT_SPEEDS = {
+      // High | Index 0
+
+      // Mid | Index 1
+
+      // Low | Index 2
+
+      // Stop | Index 3
+    };
 
   }
 }
