@@ -8,8 +8,6 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -23,30 +21,39 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
+
+  // Create Motors
   private final CANSparkMax leftLeadMotor;
   private final CANSparkMax rightLeadMotor;
   private final CANSparkMax leftFollower;
   private final CANSparkMax rightFollower;
 
+  // Create Encoders
   private RelativeEncoder leftEncoder;
   private RelativeEncoder leftEncoderFollower;
   private RelativeEncoder rightEncoder;
   private RelativeEncoder rightEncoderFollower;
 
-  private final DifferentialDrive m_drive;
+  // Create Differential Drive
+  private final DifferentialDrive drive;
+
+  // Create PID Controllers
   private final SparkMaxPIDController _drivingPIDController;
   private final SparkMaxPIDController _turningPIDController;
 
+  // Create Odometry
   private final Odometry odometry;
 
+  // Create Filters for Slew Rate Limiting
   SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN);
   SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE);
 
+  // Create Gyro
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
   public Drivetrain() {
 
-    // initialize motors
+    // Initialize motors
     leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID,
         CANSparkMaxLowLevel.MotorType.kBrushless);
     rightLeadMotor = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FRONT_CAN_ID,
@@ -94,7 +101,7 @@ public class Drivetrain extends SubsystemBase {
     rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
 
     // Set the default command for a subsystem here.
-    m_drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
+    drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
 
   }
 
@@ -130,7 +137,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void run(double forward, double turn) {      
-    m_drive.arcadeDrive(driveFilter.calculate(-forward), 
+    drive.arcadeDrive(driveFilter.calculate(-forward), 
                         turnFilter.calculate(turn));
   }
 }
