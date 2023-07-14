@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class Pivot {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Pivot extends SubsystemBase {
   private double rotation;
 
   // TODO: Declare Motors and Encoders
@@ -16,6 +19,10 @@ public class Pivot {
     this.rotation = 0.0; 
     
     // TODO: Initialize Motors and Encoders
+    pivotLead = new CANSparkMax(0, MotorType.kBrushless);
+    pivotFollower = new CANSparkMax(1, MotorType.kBrushless);
+
+    pivotFollower.follow(pivotLead);
   }
 
 
