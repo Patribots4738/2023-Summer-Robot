@@ -51,14 +51,29 @@ public class Odometry extends CommandBase {
     return false;
   }
 
+  /**
+   * Returns the current pose in meters.
+   * 
+   * @return The method is returning a Pose2d object.
+   */
   public Pose2d getPoseMeters() {
     return m_odometry.getPoseMeters();
   }
 
+  /**
+   * Returns the rotation of the pose in meters.
+   * 
+   * @return The method is returning a Rotation2d object.
+   */
   public Rotation2d getRotation() {
     return m_odometry.getPoseMeters().getRotation();
   }
 
+  /**
+   * Returns the DifferentialDriveOdometry object.
+   * 
+   * @return The method is returning an instance of the DifferentialDriveOdometry class.
+   */
   public DifferentialDriveOdometry getOdometry() {
     return m_odometry;
   }
