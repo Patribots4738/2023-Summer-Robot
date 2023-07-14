@@ -13,17 +13,16 @@ import frc.robot.subsystems.Drivetrain;
 
 public class BaseDrive extends CommandBase {
   /** Creates a new BaseDrive. */
-  private final Drivetrain m_drive;
-  private DoubleSupplier m_turn;
-  private DoubleSupplier m_forward;
+  private final Drivetrain drive;
+  private DoubleSupplier turn;
+  private DoubleSupplier forward;
   
   
   public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
-    m_drive = drive;
-    m_forward = () -> MathUtil.applyDeadband(forward.getAsDouble(), Constants.DRIVER_DEADBAND);
-    m_turn = () -> MathUtil.applyDeadband(turn.getAsDouble(), Constants.DRIVER_DEADBAND);
-    addRequirements(m_drive);
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.drive = drive;
+    this.forward = forward;
+    this.turn = turn;
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
@@ -33,13 +32,13 @@ public class BaseDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.run(m_forward.getAsDouble(), m_turn.getAsDouble());
+    drive.run(forward.getAsDouble(), turn.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drive.run(0.0, 0.0);
+    drive.run(0.0, 0.0);
   }
 
   // Returns true when the command should end.
