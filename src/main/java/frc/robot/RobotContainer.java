@@ -8,7 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
-import frc.robot.commands.AutoSetRotation;
+import frc.robot.commands.AutoSetPivotRoation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -60,16 +60,19 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // create triggers for each button used
-    Trigger aTrigger = new Trigger(() -> controller.getAButton());
-    Trigger bTrigger = new Trigger(() -> controller.getBButton());
-    Trigger xTrigger = new Trigger(() -> controller.getXButton());
-    Trigger yTrigger = new Trigger(() -> controller.getYButton());
+    Trigger y = new Trigger(() -> controller.getYButton());
+    Trigger b = new Trigger(() -> controller.getBButton());
+    Trigger a = new Trigger(() -> controller.getAButton());
+    Trigger x = new Trigger(() -> controller.getXButton());
 
-    // TODO: determine the placement positions for each button
-    aTrigger.onTrue(new AutoSetRotation(pivot, claw, 0));
-    bTrigger.onTrue(new AutoSetRotation(pivot, claw, 1));
-    xTrigger.onTrue(new AutoSetRotation(pivot, claw,  2));
-    yTrigger.onTrue(new AutoSetRotation(pivot, claw, 3));
+    // High
+    y.onTrue(new AutoSetPivotRoation(pivot, claw, 0)); 
+    // Middle
+    b.onTrue(new AutoSetPivotRoation(pivot, claw, 1)); 
+    // Low
+    a.onTrue(new AutoSetPivotRoation(pivot, claw, 2)); 
+    // Reset
+    x.onTrue(new AutoSetPivotRoation(pivot, claw,  3)); 
 
   }
 
