@@ -1,43 +1,51 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ClawConstants;
+import frc.robot.Constants.PlacementConstants;
 import frc.robot.subsystems.Claw;
 
-public class AutoSetClawSpeed extends CommandBase{
+public class AutoSetClawSpeed extends CommandBase {
   private final Claw claw;
-  private final int placementPosition;
+  private final int placementIndex;
+  private final double totalPlacementTime;
+  private Timer timer;
 
-  //TODO: Add speeds for each position -> through testing
 
-  public AutoSetClawSpeed(Claw claw, int placementPosition) {
+  public AutoSetClawSpeed(Claw claw, int placementIndex) {
     // set the claw and placement position
     // add the claw as a requirement
     this.claw = claw;
-    this.placementPosition = placementPosition;
+    this.placementIndex = placementIndex;
     addRequirements(claw);
+    timer = new Timer();
+    timer.reset();
+    // create a placement time variable for the claw to know how long to run
+    totalPlacementTime = PlacementConstants.PLACEMENT_TIMES[placementIndex];
   }
 
   @Override
   public void initialize() {
     // set the speed of the claw to the placement position
-    claw.setSpeed(ClawConstants.PLACEMENT_SPEEDS[placementPosition]);
+    claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[placementIndex]);
+
+    timer.start();
   }
 
   @Override
-  public void execute() {
-  }
+  public void execute() { }
 
   @Override
   public void end(boolean interrupted) {
-    // stop the claw by setting the speed to 0.0
+    // Stop the claw by setting the speed to 0.0
     claw.setSpeed(0.0);
+    // We are also going to stop the timer
+    timer.stop();
   }
 
   @Override
-  public boolean isFinished(){
-    // TODO: return true if after a certain amount of time. (dont need to do just yet)
-    return false;
+  public boolean isFinished() {
+    return timer.get() > totalPlacementTime;
   }
 
 }
