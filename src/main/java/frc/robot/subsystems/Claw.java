@@ -1,22 +1,42 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
-public class Claw extends SubsystemBase{
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClawConstants;
+
+public class Claw extends SubsystemBase {
   private double speed;
 
-  // TODO: Declare Motors and Encoders
+  private final CANSparkMax leadMotor;
+  private final CANSparkMax followerMotor;
+
 
   public Claw() {
-    // TODO: make this the value of the motor at start
     speed = 0.0;
 
-    // TODO: Initialize Motors and Encoders
+    leadMotor = new CANSparkMax(ClawConstants.CLAW_LEAD_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    followerMotor = new CANSparkMax(ClawConstants.CLAW_FOLLOWER_CAN_ID, CANSparkMax.MotorType.kBrushless);
+
+    leadMotor.restoreFactoryDefaults();
+    followerMotor.restoreFactoryDefaults();
+
+    leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
+    leadMotor.setInverted(true);
+    leadMotor.burnFlash();
+
   }
 
+  // Set the speed of the motors, positive is out, negative is in
+  // range: -1, 1
   public void setSpeed(double speed) {
-    // TODO: Set the speed of the motors
     this.speed = speed;
   }
 
+  // TODO: add this to the periodic method of the robot container
+  public void periodic() {
+    leadMotor.set(speed);
+  }
 }
