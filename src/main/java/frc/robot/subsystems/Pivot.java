@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
-  private double rotation;
+  private double desiredRotation;
 
   CANSparkMax pivotLead;
   CANSparkMax pivotFollower;
@@ -21,7 +21,7 @@ public class Pivot extends SubsystemBase {
   private final AbsoluteEncoder pivotEncoder;
 
   public Pivot() {
-    this.rotation = 0.0;
+    this.desiredRotation = 0.0;
 
     // Initialize the motors
     pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
@@ -31,7 +31,7 @@ public class Pivot extends SubsystemBase {
     pivotLead.restoreFactoryDefaults();
     pivotFollower.restoreFactoryDefaults();
 
-    pivotFollower.follow(pivotLead);
+    pivotFollower.follow(pivotLead, true);
 
     pivotPIDController = pivotLead.getPIDController();
 
@@ -39,6 +39,7 @@ public class Pivot extends SubsystemBase {
 
     // Convert the encoder position from rotations to degrees
     pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
+    pivotPIDController.setPositionPIDWrappingEnabled(true);
     
     pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
 
@@ -46,7 +47,7 @@ public class Pivot extends SubsystemBase {
 
   // TODO: add this to the periodic method of the robot container
   public void periodic() {
-    pivotPIDController.setReference(this.rotation, ControlType.kPosition);
+    pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
   }
 
   /**
@@ -55,7 +56,7 @@ public class Pivot extends SubsystemBase {
    * @return the current rotation of the pivot
    */
   public double getRotationDegrees() {
-    return rotation;
+    return desiredRotation;
   }
 
   public double getEncoderPosition() {
@@ -67,8 +68,13 @@ public class Pivot extends SubsystemBase {
    * 
    * @param placementPositionDegrees the rotation of the pivot
    */
-  public void setRotation(double placementPositionDegrees) {
-    rotation = placementPositionDegrees;
+  public void setDesiredRotation(double placementPositionDegrees) {
+    if (placementPositionDegrees > PivotConstants.PIVOT_HIGH_LIMIT_DEGREES) {
+      placementPositionDegrees = PivotConstants.PIVOT_HIGH_LIMIT_DEGREES;
+    } else if (placementPositionDegrees < PivotConstants.PIVOT_LOW_LIMIT_DEGREES) {
+      placementPositionDegrees = PivotConstants.PIVOT_LOW_LIMIT_DEGREES;
+    }
+    desiredRotation = placementPositionDegrees;
   }
 
 }

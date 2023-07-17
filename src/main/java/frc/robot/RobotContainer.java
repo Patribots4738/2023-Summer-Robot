@@ -86,8 +86,6 @@ public class RobotContainer {
     rightTrigger.onTrue(Commands.run(() -> claw.setSpeed(-controller.getRightTriggerAxis())));
     leftBumper.onTrue(Commands.run(() -> claw.setSpeed(0)));
 
-
-
   }
 
   /**
