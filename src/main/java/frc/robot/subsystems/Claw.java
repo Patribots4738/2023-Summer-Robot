@@ -26,7 +26,7 @@ public class Claw extends SubsystemBase {
     leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
     
     followerMotor.follow(leadMotor);
-    leadMotor.setInverted(true);
+    followerMotor.setInverted(true);
 
   }
 

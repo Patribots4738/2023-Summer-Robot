@@ -32,6 +32,7 @@ public class Pivot extends SubsystemBase {
     pivotFollower.restoreFactoryDefaults();
 
     pivotFollower.follow(pivotLead);
+    pivotFollower.setInverted(true);
 
     pivotPIDController = pivotLead.getPIDController();
 

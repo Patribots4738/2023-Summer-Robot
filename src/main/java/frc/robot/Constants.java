@@ -72,8 +72,8 @@ public final class Constants {
 
   public final static class ClawConstants {
     // TODO: change CAN IDs to match the robot
-    public static final int CLAW_LEAD_CAN_ID = 5;
-    public static final int CLAW_FOLLOWER_CAN_ID = 6;
+    public static final int CLAW_FOLLOWER_CAN_ID = 7;
+    public static final int CLAW_LEAD_CAN_ID = 8;
 
     public static final double CLAW_P = 0.1;
     public static final double CLAW_I = 0;
