@@ -12,7 +12,7 @@ import frc.robot.commands.AutoSetPivotRoation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -34,7 +34,7 @@ public class RobotContainer {
 
   private final Pivot pivot = new Pivot();
   private final Claw claw = new Claw();
-  
+
   private final BaseDrive baseDrive = new BaseDrive(
       drivetrain,
       () -> MathUtil.applyDeadband(controller.getLeftY(), Constants.DRIVER_DEADBAND),
@@ -47,6 +47,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     drivetrain.setDefaultCommand(baseDrive);
+    pivot.setDefaultCommand(Commands.run(() -> pivot.periodic()));
+    claw.setDefaultCommand(Commands.run(() -> claw.periodic()));
     configureButtonBindings();
   }
 

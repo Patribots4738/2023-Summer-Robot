@@ -93,11 +93,11 @@ public final class Constants {
     // TODO: These values are placeholder positions and need to be tuned for the robot
     public static final double[] PLACEMENT_POSITIONS = {
         // Low | Index 0
-        130,
+        10,
         // Mid | Index 1
-        90,
-        // High | Index 2
         50,
+        // High | Index 2
+        70,
         // Reset | Index 3
         0
     };
