@@ -42,8 +42,8 @@ public final class Constants {
     public static final double DRIVING_D = 0.1;
 
     // TODO: These values are placeholders and need to be tuned for the robot
-    public static final double SLEW_RATE_TURN = 0;
-    public static final double SLEW_RATE_DRIVE = 0;
+    public static final double SLEW_RATE_TURN = 0.95;
+    public static final double SLEW_RATE_DRIVE = 0.95;
   }
 
   public final static class PivotConstants {
