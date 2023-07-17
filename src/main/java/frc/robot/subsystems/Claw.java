@@ -24,13 +24,16 @@ public class Claw extends SubsystemBase {
     followerMotor.restoreFactoryDefaults();
 
     leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
-    followerMotor.setInverted(true);
+    
+    followerMotor.follow(leadMotor, true);
   }
 
   // Set the speed of the motors, positive is out, negative is in
   // range: -1, 1
   public void setSpeed(double speed) {
     this.speed = speed;
+    System.out.println(speed);
+    this.periodic();
   }
 
   // TODO: add this to the periodic method of the robot container

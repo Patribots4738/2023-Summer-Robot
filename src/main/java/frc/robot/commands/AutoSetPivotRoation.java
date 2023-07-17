@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.PlacementConstants;
@@ -19,12 +20,12 @@ public class AutoSetPivotRoation extends CommandBase {
   public AutoSetPivotRoation(Pivot pivot, Claw claw, int placementIndex) {
     // set the pivot and placement position
     // add the pivot as a requirement
-    Trigger whenFinished = new Trigger(() -> isFinished());
-    whenFinished.onTrue(new AutoSetClawSpeed(claw, placementIndex));
-
+    
     this.pivot = pivot;
     this.placementPositionDegrees = PlacementConstants.PLACEMENT_POSITIONS[placementIndex];
     addRequirements(pivot);
+    Trigger whenFinished = new Trigger(() -> isFinished());
+    whenFinished.onTrue(Commands.run(() -> new AutoSetClawSpeed(claw, placementIndex)));
   }
 
   // Called when the command is initially scheduled.
