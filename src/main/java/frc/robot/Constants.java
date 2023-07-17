@@ -52,6 +52,9 @@ public final class Constants {
 
     public static final double PIVOT_DEADBAND_DEGREES = 5;
 
+    public static final double PIVOT_LOW_LIMIT_DEGREES = -20;
+    public static final double PIVOT_HIGH_LIMIT_DEGREES = 155;
+
     // TODO: change CAN IDs to match the robot
     public static final int PIVOT_LEAD_CAN_ID = 5;
     public static final int PIVOT_FOLLOWER_CAN_ID = 6;
@@ -72,8 +75,8 @@ public final class Constants {
 
   public final static class ClawConstants {
     // TODO: change CAN IDs to match the robot
-    public static final int CLAW_LEAD_CAN_ID = 5;
-    public static final int CLAW_FOLLOWER_CAN_ID = 6;
+    public static final int CLAW_LEAD_CAN_ID = 8;
+    public static final int CLAW_FOLLOWER_CAN_ID = 7;
 
     public static final double CLAW_P = 0.1;
     public static final double CLAW_I = 0;
@@ -94,11 +97,11 @@ public final class Constants {
     // robot
     public static final double[] PLACEMENT_POSITIONS = {
         // High | Index 0
-        130,
+        70,
         // Mid | Index 1
-        90,
+        40,
         // Low | Index 2
-        50,
+        0,
         // Reset | Index 3
         0
     };
@@ -106,11 +109,11 @@ public final class Constants {
     // TODO: These valuse are plceholder speeds and need to be tuned for the robot
     public static final double[] PLACEMENT_SPEEDS = {
         // High | Index 0
-        0.7,
+        -0.7,
         // Mid | Index 1
-        0.5,
+        -0.5,
         // Low | Index 2
-        0.3,
+        -0.3,
         // Stop | Index 3
         0.0
     };

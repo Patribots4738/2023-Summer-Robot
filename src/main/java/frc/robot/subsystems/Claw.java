@@ -24,9 +24,7 @@ public class Claw extends SubsystemBase {
     followerMotor.restoreFactoryDefaults();
 
     leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
-    leadMotor.setInverted(true);
-    leadMotor.burnFlash();
-
+    followerMotor.setInverted(true);
   }
 
   // Set the speed of the motors, positive is out, negative is in

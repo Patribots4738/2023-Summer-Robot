@@ -37,7 +37,7 @@ public class AutoSetPivotRoation extends CommandBase {
      * The placement position is the index of the array, so we can use that to get
      * the value from the array.
      */
-    pivot.setRotation(placementPositionDegrees);
+    pivot.setDesiredRotation(placementPositionDegrees);
   }
 
   // Called once the command ends or is interrupted.

@@ -78,6 +78,8 @@ public class RobotContainer {
     // Reset
     x.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.RESET_INDEX)); 
 
+    trigger.onTrue()
+
   }
 
   /**
