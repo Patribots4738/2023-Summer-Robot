@@ -105,13 +105,13 @@ public final class Constants {
     // TODO: These valuse are plceholder speeds and need to be tuned for the robot
     public static final double[] PLACEMENT_SPEEDS = {
         // High | Index 0
-        0.7,
+        -0.7,
         // Mid | Index 1
-        0.5,
+        -0.5,
         // Low | Index 2
-        0.3,
+        -0.3,
         // Stop | Index 3
-        0.0
+        -0.0
     };
 
     // TODO: Add timings for each position through testing

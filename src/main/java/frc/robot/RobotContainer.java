@@ -7,13 +7,14 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.BaseDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoSetPivotRoation;
+import frc.robot.commands.BaseDrive;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,6 +67,8 @@ public class RobotContainer {
     Trigger b = new Trigger(() -> controller.getBButton());
     Trigger a = new Trigger(() -> controller.getAButton());
     Trigger x = new Trigger(() -> controller.getXButton());
+    Trigger rTrigger = new Trigger(() -> controller.getLeftTriggerAxis() > 0.4);
+    Trigger lTrigger = new Trigger(() -> controller.getRightTriggerAxis() > 0.4);
 
     // High
     y.onTrue(new AutoSetPivotRoation(pivot, claw, 0)); 
@@ -75,7 +78,10 @@ public class RobotContainer {
     a.onTrue(new AutoSetPivotRoation(pivot, claw, 2)); 
     // Reset
     x.onTrue(new AutoSetPivotRoation(pivot, claw,  3)); 
-
+    // Intake 
+    lTrigger.onTrue(Commands.run(() -> claw.setSpeed(0.3) ));
+    // Outtake
+    rTrigger.onTrue(Commands.run(() -> claw.setSpeed(-0.4)));
   }
 
   /**
