@@ -8,11 +8,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
+import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.AutoSetPivotRoation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -47,6 +49,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     drivetrain.setDefaultCommand(baseDrive);
+    pivot.setDefaultCommand(Commands.run(() -> pivot.periodic()));
+    claw.setDefaultCommand(Commands.run(() -> claw.periodic()));
     configureButtonBindings();
   }
 
@@ -66,13 +70,13 @@ public class RobotContainer {
     Trigger x = new Trigger(() -> controller.getXButton());
 
     // High
-    y.onTrue(new AutoSetPivotRoation(pivot, claw, 0)); 
+    y.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.HIGH_INDEX)); 
     // Middle
-    b.onTrue(new AutoSetPivotRoation(pivot, claw, 1)); 
+    b.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.MID_INDEX)); 
     // Low
-    a.onTrue(new AutoSetPivotRoation(pivot, claw, 2)); 
+    a.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.LOW_INDEX)); 
     // Reset
-    x.onTrue(new AutoSetPivotRoation(pivot, claw,  3)); 
+    x.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.RESET_INDEX)); 
 
   }
 

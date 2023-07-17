@@ -90,13 +90,14 @@ public final class Constants {
     public static final int HIGH_INDEX = 2;
     public static final int RESET_INDEX = 3;
 
-    // TODO: These values are placeholder positions and need to be tuned for the robot
+    // TODO: These values are placeholder positions and need to be tuned for the
+    // robot
     public static final double[] PLACEMENT_POSITIONS = {
-        // Low | Index 0
+        // High | Index 0
         130,
         // Mid | Index 1
         90,
-        // High | Index 2
+        // Low | Index 2
         50,
         // Reset | Index 3
         0
@@ -117,15 +118,15 @@ public final class Constants {
     // TODO: Add timings for each position through testing
     // This is an array of times for each placement position
     // If we wanted the outtake time to be different for each position, we could
-		public static final double[] PLACEMENT_TIMES = {
+    public static final double[] PLACEMENT_TIMES = {
         // High | Index 0
-        1, //seconds 
+        1, // seconds
         // Mid | Index 1
-        1, //seconds 
+        1, // seconds
         // Low | Index 2
-        1, //seconds 
+        1, // seconds
         // Stop | Index 3
-        1  //seconds 
+        1 // seconds
     };
   }
 }
