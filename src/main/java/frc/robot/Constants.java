@@ -111,7 +111,7 @@ public final class Constants {
         0.5,
         // Low | Index 2
         0.3,
-        // Stop | Index 3
+        // Reset | Index 3
         0.0
     };
 

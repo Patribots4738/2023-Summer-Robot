@@ -69,6 +69,10 @@ public class RobotContainer {
     Trigger a = new Trigger(() -> controller.getAButton());
     Trigger x = new Trigger(() -> controller.getXButton());
 
+    Trigger leftTrigger = new Trigger(() -> controller.getLeftTriggerAxis() > 0);
+    Trigger leftBumper = new Trigger(() -> controller.getLeftBumper());
+    Trigger rightTrigger = new Trigger(() -> controller.getRightTriggerAxis() > 0);
+
     // High
     y.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.HIGH_INDEX)); 
     // Middle
@@ -77,6 +81,12 @@ public class RobotContainer {
     a.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.LOW_INDEX)); 
     // Reset
     x.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.RESET_INDEX)); 
+
+    leftTrigger.onTrue(Commands.run(() -> claw.setSpeed(controller.getLeftTriggerAxis())));
+    rightTrigger.onTrue(Commands.run(() -> claw.setSpeed(-controller.getRightTriggerAxis())));
+    leftBumper.onTrue(Commands.run(() -> claw.setSpeed(0)));
+
+
 
   }
 
