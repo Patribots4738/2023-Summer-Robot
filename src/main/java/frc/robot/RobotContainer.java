@@ -30,7 +30,10 @@ public class RobotContainer {
 
   /*
     () -> Explantion:
-
+      We need to give a supplier to the BaseDrive constructor. The supplier
+      will be called every time the command is scheduled. We want to give the
+      supplier the controller axis, without calling the controller axis once.
+      This is why we use () ->
   */
   private final BaseDrive m_baseDrive = new BaseDrive(
       m_drive,
@@ -56,7 +59,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
+    
   }
 
   /**
