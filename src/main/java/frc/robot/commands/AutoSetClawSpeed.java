@@ -18,6 +18,7 @@ public class AutoSetClawSpeed extends CommandBase {
     this.claw = claw;
     this.placementIndex = placementIndex;
     addRequirements(claw);
+    
     timer = new Timer();
     timer.reset();
     // create a placement time variable for the claw to know how long to run

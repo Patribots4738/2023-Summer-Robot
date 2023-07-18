@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -42,7 +41,7 @@ public class RobotContainer {
 
   private final Pivot pivot = new Pivot();
   private final Claw claw = new Claw();
-  
+
   private final BaseDrive baseDrive = new BaseDrive(
       drivetrain,
       () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND),
@@ -76,6 +75,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // create triggers for each button used
+
     Trigger y = new Trigger(() -> driverController.getYButton());
     Trigger b = new Trigger(() -> driverController.getBButton());
     Trigger a = new Trigger(() -> driverController.getAButton());
@@ -118,6 +118,7 @@ public class RobotContainer {
 
   public Command movePivotAndClaw(int index){
     return new AutoSetPivotRotation(pivot, claw, index);
+    // Uncomment below to enable/disable the claw
     // .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
     // .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     // .andThen(new InstantCommand(() -> claw.setSpeed(0)));
