@@ -5,59 +5,61 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Pivot;
 
 public class AutoSetPivotRotation extends CommandBase {
-  /** Creates a new BaseDrive. */
-  private final Pivot pivot;
-  private final double placementPositionDegrees;
+    /** Creates a new BaseDrive. */
+    private final Pivot pivot;
+    private int placementIndex;
 
-  public AutoSetPivotRotation(Pivot pivot, Claw claw, int placementIndex) {
-    // set the pivot and placement position
-    // add the pivot as a requirement
-    
-    this.pivot = pivot;
-    this.placementPositionDegrees = PlacementConstants.PLACEMENT_POSITIONS[placementIndex];
-    addRequirements(pivot);
-    Trigger whenFinished = new Trigger(() -> isFinished());
-    whenFinished.onTrue(Commands.run(() -> new AutoSetClawSpeed(claw, placementIndex)));
-  }
+    public AutoSetPivotRotation(Pivot pivot, Claw claw, int placementIndex) {
+        // set the pivot and placement position
+        // add the pivot as a requirement
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    /*
-     * set the pivot's rotation to the placement position given in the array
-     * @see PivotConstants.PLACEMENT_ROTATION_POSITIONS
-     * 
-     * The placement position is the index of the array, so we can use that to get
-     * the value from the array.
-     */
-    pivot.setDesiredRotation(placementPositionDegrees);
-  }
+        this.pivot = pivot;
+        this.placementIndex = placementIndex;
+        addRequirements(pivot);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    // start the next command for the claw to intake
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        /*
+         * set the pivot's rotation to the placement position given in the array
+         * 
+         * @see PivotConstants.PLACEMENT_ROTATION_POSITIONS
+         * 
+         * The placement position is the index of the array, so we can use that to get
+         * the value from the array.
+         */
+        System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
+        pivot.setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
+    }
 
-  @Override
-  public boolean isFinished() {
-    /*
-     * return true if the pivot is within the deadband of the placement position
-     * given in the array @see PivotConstants.PLACEMENT_ROTATION_POSITIONS.
-     * 
-     * To determine if the pivot is within the deadband, we can use the subtraction
-     * of the pivot's current rotation and the placement position. If the absolute value of
-     * the difference is less than the deadband, then the motors should stop.
-     */
-    return Math.abs(pivot.getRotationDegrees()
-        - placementPositionDegrees) < PivotConstants.PIVOT_DEADBAND_DEGREES;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        // start the next command for the claw to intake
+    }
+
+    @Override
+    public boolean isFinished() {
+        /*
+         * return true if the pivot is within the deadband of the placement position
+         * given in the array @see PivotConstants.PLACEMENT_ROTATION_POSITIONS.
+         * 
+         * To determine if the pivot is within the deadband, we can use the subtraction
+         * of the pivot's current rotation and the placement position. If the absolute
+         * value of
+         * the difference is less than the deadband, then the motors should stop.
+         */
+        System.out.println("Current rotation: " + pivot.getEncoderPositionDegrees() + 
+                            " Desired Rotation " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]
+            );
+        return Math.abs(pivot.getEncoderPositionDegrees()
+                - PlacementConstants.PLACEMENT_POSITIONS[placementIndex]) < PivotConstants.PIVOT_DEADBAND_DEGREES;
+    }
 }
