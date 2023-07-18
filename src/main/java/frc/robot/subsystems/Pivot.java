@@ -76,7 +76,7 @@ public class Pivot extends SubsystemBase {
     }
     desiredRotation = placementPositionDegrees;
   
-    this.periodic();
+    periodic();
 }
 
 }

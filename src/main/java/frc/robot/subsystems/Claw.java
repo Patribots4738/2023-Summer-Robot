@@ -33,7 +33,7 @@ public class Claw extends SubsystemBase {
   public void setSpeed(double speed) {
     this.speed = speed;
     System.out.println(speed);
-    this.periodic();
+    periodic();
   }
 
   // TODO: add this to the periodic method of the robot container

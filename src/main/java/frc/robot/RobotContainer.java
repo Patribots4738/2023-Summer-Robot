@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
 import frc.robot.commands.ManualSetClawSpeed;
 import frc.robot.Constants.PlacementConstants;
-import frc.robot.commands.AutoSetPivotRoation;
+import frc.robot.commands.AutoSetPivotRotation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -78,22 +78,22 @@ public class RobotContainer {
     Trigger a = new Trigger(() -> driverController.getAButton());
     Trigger x = new Trigger(() -> driverController.getXButton());
 
-    Trigger leftTrigger = new Trigger(() -> driverController.getLeftTriggerAxis() > 0);
+    Trigger leftTrigger = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.2);
     Trigger leftBumper = new Trigger(() -> driverController.getLeftBumper());
-    Trigger rightTrigger = new Trigger(() -> driverController.getRightTriggerAxis() > 0);
+    Trigger rightTrigger = new Trigger(() -> driverController.getRightTriggerAxis() > 0.2);
 
     // High
-    y.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.HIGH_INDEX)); 
+    y.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.HIGH_INDEX)); 
     // Middle
-    b.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.MID_INDEX)); 
+    b.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.MID_INDEX)); 
     // Low
-    a.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.LOW_INDEX)); 
+    a.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.LOW_INDEX)); 
     // Reset
-    x.onTrue(new AutoSetPivotRoation(pivot, claw, PlacementConstants.RESET_INDEX)); 
+    x.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.RESET_INDEX)); 
 
     leftTrigger.whileTrue(new RunCommand(() -> claw.setSpeed(driverController.getLeftTriggerAxis())));
     rightTrigger.whileTrue(new RunCommand(() -> claw.setSpeed(-driverController.getRightTriggerAxis())));
-    leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
+    //leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
   }
 
   /**

@@ -12,12 +12,12 @@ import frc.robot.Constants.PlacementConstants;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Pivot;
 
-public class AutoSetPivotRoation extends CommandBase {
+public class AutoSetPivotRotation extends CommandBase {
   /** Creates a new BaseDrive. */
   private final Pivot pivot;
   private final double placementPositionDegrees;
 
-  public AutoSetPivotRoation(Pivot pivot, Claw claw, int placementIndex) {
+  public AutoSetPivotRotation(Pivot pivot, Claw claw, int placementIndex) {
     // set the pivot and placement position
     // add the pivot as a requirement
     
