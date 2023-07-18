@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
 import frc.robot.commands.ManualSetClawSpeed;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.AutoSetPivotRotation;
 import frc.robot.subsystems.Claw;
@@ -16,8 +17,10 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -79,21 +82,28 @@ public class RobotContainer {
     Trigger x = new Trigger(() -> driverController.getXButton());
 
     Trigger leftTrigger = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.2);
-    Trigger leftBumper = new Trigger(() -> driverController.getLeftBumper());
     Trigger rightTrigger = new Trigger(() -> driverController.getRightTriggerAxis() > 0.2);
 
     // High
-    y.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.HIGH_INDEX)); 
+    y.onTrue(movePivotAndClaw(PlacementConstants.HIGH_INDEX));
     // Middle
-    b.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.MID_INDEX)); 
+    b.onTrue(movePivotAndClaw(PlacementConstants.MID_INDEX));
     // Low
-    a.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.LOW_INDEX)); 
+    a.onTrue(movePivotAndClaw(PlacementConstants.LOW_INDEX));
     // Reset
-    x.onTrue(new AutoSetPivotRotation(pivot, claw, PlacementConstants.RESET_INDEX)); 
+    x.onTrue(movePivotAndClaw(PlacementConstants.RESET_INDEX));
 
-    leftTrigger.whileTrue(new RunCommand(() -> claw.setSpeed(driverController.getLeftTriggerAxis())));
-    rightTrigger.whileTrue(new RunCommand(() -> claw.setSpeed(-driverController.getRightTriggerAxis())));
-    //leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
+    /*
+     * When A button is pressed, we want to set the pivot to a certain angle
+     * Then, we want to wait until that angle is reached by the pivot
+     * Finally, we want to move the claw at a certain speed
+     */
+
+    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(driverController.getLeftTriggerAxis())))
+                .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
+
+    rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-driverController.getRightTriggerAxis())))
+                .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
   }
 
   /**
@@ -104,5 +114,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return null;
+  }
+
+  public Command movePivotAndClaw(int index){
+    return new AutoSetPivotRotation(pivot, claw, index);
+    // .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
+    // .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
+    // .andThen(new InstantCommand(() -> claw.setSpeed(0)));
   }
 }
