@@ -48,18 +48,21 @@ public final class Constants {
 
   public final static class PivotConstants {
 
+    public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
+    public static final double ZERO_OFFSET_OFFSET = 180;
+
     public static final double PIVOT_DEADBAND_DEGREES = 5;
 
-    public static final double PIVOT_LOW_LIMIT_DEGREES = -20;
-    public static final double PIVOT_HIGH_LIMIT_DEGREES = 155;
+    public static final double PIVOT_LOW_LIMIT_DEGREES = 90 - 20;
+    public static final double PIVOT_HIGH_LIMIT_DEGREES = 90 + 155;
 
     // TODO: change CAN IDs to match the robot
     public static final int PIVOT_LEAD_CAN_ID = 5;
     public static final int PIVOT_FOLLOWER_CAN_ID = 6;
 
-    public static final double PIVOT_P = 0.1;
+    public static final double PIVOT_P = 0.001;
     public static final double PIVOT_I = 0;
-    public static final double PIVOT_D = 0.1;
+    public static final double PIVOT_D = 0.0025;
 
     public static final int LOW_INDEX = 0;
     public static final int MID_INDEX = 1;
@@ -94,12 +97,12 @@ public final class Constants {
     // TODO: These values are placeholder positions and need to be tuned for the
     // robot
     public static final double[] PLACEMENT_POSITIONS = {
-        // High | Index 0
-        70,
+        // Low | Index 0
+        0 + 90,
         // Mid | Index 1
-        40,
-        // Low | Index 2
-        0,
+        40 + 90,
+        // High | Index 2
+        70 + 90,
         // Reset | Index 3
         0
     };
