@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -25,15 +27,17 @@ public class Claw extends SubsystemBase {
 
     leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
     
-    followerMotor.follow(leadMotor);
-    followerMotor.setInverted(true);
+    followerMotor.follow(leadMotor, true);
 
+    leadMotor.burnFlash();
+    followerMotor.burnFlash();
   }
 
   // Set the speed of the motors, positive is out, negative is in
   // range: -1, 1
   public void setSpeed(double speed) {
     this.speed = speed;
+    periodic();
   }
 
   // TODO: add this to the periodic method of the robot container
