@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -44,38 +42,95 @@ public final class Constants {
     public static final double DRIVING_D = 0.1;
 
     // TODO: These values are placeholders and need to be tuned for the robot
-    public static final double SLEW_RATE_TURN = 0;
-    public static final double SLEW_RATE_DRIVE = 0;
+    public static final double SLEW_RATE_TURN = 0.95;
+    public static final double SLEW_RATE_DRIVE = 0.95;
   }
 
   public final static class PivotConstants {
 
+    public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
+    public static final double ZERO_OFFSET_OFFSET = 180;
+
     public static final double PIVOT_DEADBAND_DEGREES = 5;
 
-    // TODO: These values are placeholders and need to be set for the robot
+    public static final double PIVOT_LOW_LIMIT_DEGREES = 90 - 20;
+    public static final double PIVOT_HIGH_LIMIT_DEGREES = 90 + 155;
+
+    // TODO: change CAN IDs to match the robot
     public static final int PIVOT_LEAD_CAN_ID = 5;
     public static final int PIVOT_FOLLOWER_CAN_ID = 6;
 
-    public static final double PIVOT_P = 0.1;
+    public static final double PIVOT_P = 0.001;
     public static final double PIVOT_I = 0;
-    public static final double PIVOT_D = 0.1;
+    public static final double PIVOT_D = 0.0025;
 
-    public static final double[] placementRotationPositions = {
-        // TODO: These values will represent the dictionary of positions for the pivot
-        // i.e. "Low" = 0, "Middle" = 45, "High" = 90, etc
-    };
+    public static final int LOW_INDEX = 0;
+    public static final int MID_INDEX = 1;
+    public static final int HIGH_INDEX = 2;
+    public static final int RESET_INDEX = 3;
 
+    // Multiply all encoder outputs by this factor to get degrees
+    public static final int PIVOT_POSITION_ENCODER_FACTOR = 360;
+    public static final int PIVOT_SMART_CURRENT_LIMIT = 30;
   }
 
   public final static class ClawConstants {
-
-    // TODO: These values are placeholders and need to be set for the robot
-    public static final int CLAW_LEAD_CAN_ID = 5;
-    public static final int CLAW_FOLLOWER_CAN_ID = 6;
+    // TODO: change CAN IDs to match the robot
+    public static final int CLAW_LEAD_CAN_ID = 8;
+    public static final int CLAW_FOLLOWER_CAN_ID = 7;
 
     public static final double CLAW_P = 0.1;
     public static final double CLAW_I = 0;
     public static final double CLAW_D = 0.1;
 
+    public static final int CLAW_FREE_CURRENT_LIMIT = 30;
+    public static final int CLAW_STALL_CURRENT_LIMIT = 10;
+
+  }
+
+  public static final class PlacementConstants {
+    public static final int LOW_INDEX = 0;
+    public static final int MID_INDEX = 1;
+    public static final int HIGH_INDEX = 2;
+    public static final int RESET_INDEX = 3;
+
+    // TODO: These values are placeholder positions and need to be tuned for the
+    // robot
+    public static final double[] PLACEMENT_POSITIONS = {
+        // Low | Index 0
+        0 + 90,
+        // Mid | Index 1
+        40 + 90,
+        // High | Index 2
+        70 + 90,
+        // Reset | Index 3
+        0
+    };
+
+    // TODO: These valuse are plceholder speeds and need to be tuned for the robot
+    public static final double[] PLACEMENT_SPEEDS = {
+        // High | Index 0
+        -0.7,
+        // Mid | Index 1
+        -0.5,
+        // Low | Index 2
+        -0.3,
+        // Reset | Index 3
+        0.0
+    };
+
+    // TODO: Add timings for each position through testing
+    // This is an array of times for each placement position
+    // If we wanted the outtake time to be different for each position, we could
+    public static final double[] PLACEMENT_TIMES = {
+        // High | Index 0
+        1, // seconds
+        // Mid | Index 1
+        1, // seconds
+        // Low | Index 2
+        1, // seconds
+        // Stop | Index 3
+        1 // seconds
+    };
   }
 }

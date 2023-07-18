@@ -9,40 +9,40 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class Odometry extends CommandBase {
-  private final Drivetrain m_drive;
-  private final DifferentialDriveOdometry m_odometry;
-  private Rotation2d m_rotation;
-  private RelativeEncoder m_leftEncoder;
-  private RelativeEncoder m_rightEncoder;
+  private final Drivetrain drive;
+  private final DifferentialDriveOdometry odometry;
+  private Rotation2d rotation;
+  private RelativeEncoder leftEncoder;
+  private RelativeEncoder rightEncoder;
 
   public Odometry(Drivetrain drive) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_drive = drive;
-    m_rotation = m_drive.getRotation2d();
-    m_leftEncoder = m_drive.getLeftEncoder();
-    m_rightEncoder = m_drive.getRightEncoder();
-    m_odometry = new DifferentialDriveOdometry(m_rotation,
-        m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    this.drive = drive;
+    this.rotation = drive.getRotation2d();
+    this.leftEncoder = drive.getLeftEncoder();
+    this.rightEncoder = drive.getRightEncoder();
+    this.odometry = new DifferentialDriveOdometry(rotation,
+        leftEncoder.getPosition(), rightEncoder.getPosition());
 
-    addRequirements(m_drive);
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
+    odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_odometry.update(m_rotation, m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    odometry.update(rotation, leftEncoder.getPosition(), rightEncoder.getPosition());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
+    odometry.resetPosition(new Rotation2d(), 0, 0, new Pose2d());
   }
 
   // Returns true when the command should end.
@@ -57,7 +57,7 @@ public class Odometry extends CommandBase {
    * @return The method is returning a Pose2d object.
    */
   public Pose2d getPoseMeters() {
-    return m_odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   /**
@@ -66,7 +66,7 @@ public class Odometry extends CommandBase {
    * @return The method is returning a Rotation2d object.
    */
   public Rotation2d getRotation() {
-    return m_odometry.getPoseMeters().getRotation();
+    return odometry.getPoseMeters().getRotation();
   }
 
   /**
@@ -75,7 +75,7 @@ public class Odometry extends CommandBase {
    * @return The method is returning an instance of the DifferentialDriveOdometry class.
    */
   public DifferentialDriveOdometry getOdometry() {
-    return m_odometry;
+    return odometry;
   }
 
 }
