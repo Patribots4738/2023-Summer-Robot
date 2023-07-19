@@ -145,7 +145,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void run(double forward, double turn) {      
-    drive.arcadeDrive(driveFilter.calculate(-forward), 
-                        turnFilter.calculate(turn));
+    drive.arcadeDrive(-forward, 
+                        turn);
   }
 }
