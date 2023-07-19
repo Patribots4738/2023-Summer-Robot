@@ -2,91 +2,74 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 
-public class Pivot extends PIDSubsystem {
-    private double desiredRotation;
+public class Pivot extends SubsystemBase {
+  private double desiredRotation;
 
-    CANSparkMax pivotLead;
-    CANSparkMax pivotFollower;
+  CANSparkMax pivotLead;
+  CANSparkMax pivotFollower;
 
-    private final AbsoluteEncoder pivotEncoder;
+  SparkMaxPIDController pivotPIDController;
 
-    public Pivot() {
-        super(new PIDController(PivotConstants.PIVOT_P, PivotConstants.PIVOT_I, PivotConstants.PIVOT_D));
-        this.desiredRotation = 0.0;
+  private final AbsoluteEncoder pivotEncoder;
 
-        // Initialize the motors
-        pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
-        pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
+  public Pivot() {
+    this.desiredRotation = 0.0;
 
-        // Restore the motors to factory defaults
-        pivotLead.restoreFactoryDefaults();
-        pivotFollower.restoreFactoryDefaults();
+    // Initialize the motors
+    pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
+    pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
 
-        pivotLead.setInverted(false);
+    // Restore the motors to factory defaults
+    pivotLead.restoreFactoryDefaults();
+    pivotFollower.restoreFactoryDefaults();
 
-        pivotFollower.follow(pivotLead, true);
-        pivotEncoder = pivotLead.getAbsoluteEncoder(Type.kDutyCycle);
+    pivotFollower.follow(pivotLead, true);
 
-        // Convert the encoder position from rotations to degrees
-        pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
+    pivotPIDController = pivotLead.getPIDController();
 
-        pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
+    pivotEncoder = pivotLead.getAbsoluteEncoder(Type.kDutyCycle);
 
-        // The constant found here can be found in
-        // REV Hardware client when the arm is pointed straight up
-        // Then, depending on if the value is more or less than 180,
-        // Add or subtract 180 to the value
-        pivotEncoder.setZeroOffset(PivotConstants.ORIGINAL_ZERO_OFFSET + PivotConstants.ZERO_OFFSET_OFFSET);
+    // Convert the encoder position from rotations to degrees
+    pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
 
-        pivotLead.burnFlash();
-        pivotFollower.burnFlash();
+    pivotPIDController.setPositionPIDWrappingEnabled(false);
+    pivotPIDController.setFeedbackDevice(pivotEncoder);
 
-    }
+    pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
+  }
 
-    @Override
-    protected void useOutput(double output, double setpoint) {
-        pivotLead.set(output);
-    }
+  /**
+   * Get the current rotation of the pivot
+   * 
+   * @return the current rotation of the pivot
+   */
+  public double getRotationDegrees() {
+    return desiredRotation;
+  }
 
-    /**
-     * Get the current rotation of the pivot
-     * 
-     * @return the current rotation of the pivot
-     */
-    public double getDesiredPositionDegrees() {
-        return desiredRotation;
-    }
+  public double getEncoderPosition() {
+    return pivotEncoder.getPosition();
+  }
 
-    public double getEncoderPositionDegrees() {
-        return pivotEncoder.getPosition();
-    }
+  /**
+   * Set the rotation of the pivot, in degrees
+   * 
+   * @param placementPositionDegrees the rotation of the pivot
+   */
+  public void setDesiredRotation(double placementPositionDegrees) {
+    // Clamp the desired rotation to the limits of the pivot
+    MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES, PivotConstants.PIVOT_LOW_LIMIT_DEGREES);
 
-    @Override
-    protected double getMeasurement() { // returns degrees
-        return getEncoderPositionDegrees();
-    }
+    pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
+  }
 
-    /**
-     * Set the rotation of the pivot, in degrees
-     * 
-     * @param placementPositionDegrees the rotation of the pivot
-     */
-    public void setDesiredRotation(double placementPositionDegrees) {
-        MathUtil.clamp(
-            placementPositionDegrees, 
-            PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
-            PivotConstants.PIVOT_HIGH_LIMIT_DEGREES
-        );
-
-        enable();
-        super.setSetpoint(this.desiredRotation);
-    }
 }
