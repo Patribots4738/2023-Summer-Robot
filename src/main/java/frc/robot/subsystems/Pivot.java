@@ -44,6 +44,9 @@ public class Pivot extends SubsystemBase {
     // Convert the encoder position from rotations to degrees
     pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
 
+    // TODO: Comment me out once I run once just in case something happens
+    // We want this false, but false is default... but it might be true currently
+    // just run once and delete :)
     pivotPIDController.setPositionPIDWrappingEnabled(false);
     pivotPIDController.setFeedbackDevice(pivotEncoder);
 
