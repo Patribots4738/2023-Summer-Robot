@@ -35,7 +35,7 @@ public class AutoSetPivotRotation extends CommandBase {
          * The placement position is the index of the array, so we can use that to get
          * the value from the array.
          */
-        System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
+        // System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
         pivot.setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
     }
 
@@ -56,9 +56,9 @@ public class AutoSetPivotRotation extends CommandBase {
          * value of
          * the difference is less than the deadband, then the motors should stop.
          */
-        System.out.println("Current rotation: " + pivot.getEncoderPositionDegrees() + 
-                            " Desired Rotation " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]
-            );
+        // System.out.println("Current rotation: " + pivot.getEncoderPositionDegrees() + 
+        //                     " Desired Rotation " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]
+        //     );
         return Math.abs(pivot.getEncoderPositionDegrees()
                 - PlacementConstants.PLACEMENT_POSITIONS[placementIndex]) < PivotConstants.PIVOT_DEADBAND_DEGREES;
     }
