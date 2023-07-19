@@ -9,6 +9,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
@@ -26,7 +27,9 @@ public class Pivot extends SubsystemBase {
 
     // Initialize the motors
     pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
+    Constants.SPARK_LIST.add(pivotLead);
     pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
+    Constants.SPARK_LIST.add(pivotFollower);
 
     // Restore the motors to factory defaults
     pivotLead.restoreFactoryDefaults();
@@ -45,6 +48,8 @@ public class Pivot extends SubsystemBase {
     pivotPIDController.setFeedbackDevice(pivotEncoder);
 
     pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
+
+    // Flash is burnt in robotContainer... incinerateMotors()
   }
 
   /**
@@ -56,7 +61,7 @@ public class Pivot extends SubsystemBase {
     return desiredRotation;
   }
 
-  public double getEncoderPosition() {
+  public double getEncoderPositionDegrees() {
     return pivotEncoder.getPosition();
   }
 

@@ -1,12 +1,9 @@
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
@@ -20,7 +17,9 @@ public class Claw extends SubsystemBase {
     speed = 0.0;
 
     leadMotor = new CANSparkMax(ClawConstants.CLAW_LEAD_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    Constants.SPARK_LIST.add(leadMotor);
     followerMotor = new CANSparkMax(ClawConstants.CLAW_FOLLOWER_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    Constants.SPARK_LIST.add(followerMotor);
 
     leadMotor.restoreFactoryDefaults();
     followerMotor.restoreFactoryDefaults();
@@ -29,8 +28,7 @@ public class Claw extends SubsystemBase {
     
     followerMotor.follow(leadMotor, true);
 
-    leadMotor.burnFlash();
-    followerMotor.burnFlash();
+    // Flash is burnt in robotContainer... incinerateMotors()
   }
 
   // Set the speed of the motors, positive is out, negative is in

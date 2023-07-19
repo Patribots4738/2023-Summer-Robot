@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
@@ -71,6 +73,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(baseDrive);
     // claw.setDefaultCommand(manualSetClawSpeed);
     configureButtonBindings();
+
+    RobotContainer.incinerateMotors();
   }
 
   /**
@@ -136,14 +140,16 @@ public class RobotContainer {
    * Run burnFlash() for all controllers initialized. burnFlash() stops comms w/deivce for 200ms or more.
    * Might include calls from before method was called or calls from after. 
    * Too risky so we do this to burn everything in sync
-   * to avoid accidentally stoppinmg messages from getting to the device
+   * to avoid accidentally stopping messages from getting to the device
    */
-  public void incinerateMotors() {
+  public static void incinerateMotors() {
     Timer.delay(0.25);
-    for (Neo : neos) {
-      Neo.burnFlash();
+    for (CANSparkMax spark : Constants.SPARK_LIST) {
+      spark.burnFlash();
       Timer.delay(0.005);
     }
     Timer.delay(0.25);
+
+    System.out.println("\n\nAll motor flashes burnt\n\n");
   }
 }

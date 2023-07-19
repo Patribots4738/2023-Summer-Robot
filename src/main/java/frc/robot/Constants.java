@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
+import com.revrobotics.CANSparkMax;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -17,6 +21,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  // This is a list of all of our motors that we use to burn flashes without complication
+  public static ArrayList<CANSparkMax> SPARK_LIST = new ArrayList<CANSparkMax>();
 
   public static final int DRIVER_CONTROLLER_PORT = 0;
 

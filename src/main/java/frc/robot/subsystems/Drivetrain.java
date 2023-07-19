@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.Odometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,6 +64,11 @@ public class Drivetrain extends SubsystemBase {
     rightFollower = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FOLLOWER_CAN_ID,
         CANSparkMaxLowLevel.MotorType.kBrushless);
 
+    Constants.SPARK_LIST.add(leftLeadMotor);
+    Constants.SPARK_LIST.add(rightLeadMotor);
+    Constants.SPARK_LIST.add(leftFollower);
+    Constants.SPARK_LIST.add(rightFollower);
+
     leftEncoder = leftLeadMotor.getEncoder();
     leftEncoderFollower = leftFollower.getEncoder();
     rightEncoder = rightLeadMotor.getEncoder();
@@ -102,6 +108,8 @@ public class Drivetrain extends SubsystemBase {
 
     // Set the default command for a subsystem here.
     drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
+
+    // Flash is burnt in robotContainer... incinerateMotors()
 
   }
 
