@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import com.revrobotics.CANSparkMax;
 
 import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
-import io.github.oblarg.oblog.annotations.Config.NumberSlider;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
