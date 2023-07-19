@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.management.ConstructorParameters;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -11,16 +13,32 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class Pivot extends SubsystemBase {
+public class Pivot extends SubsystemBase implements Loggable{
   private double desiredRotation;
 
   CANSparkMax pivotLead;
   CANSparkMax pivotFollower;
 
+  @Config
   SparkMaxPIDController pivotPIDController;
 
   private final AbsoluteEncoder pivotEncoder;
+
+  @Log.Graph(visibleTime = 20)
+  private double encoderPositionDegrees;
+
+  @Config
+  public static double PIVOT_P = 0.02;
+
+  @Config
+  public static double PIVOT_I = 0;
+
+  @Config
+  public static double PIVOT_D = 0.02;
 
   public Pivot() {
     this.desiredRotation = 0.0;
@@ -41,19 +59,20 @@ public class Pivot extends SubsystemBase {
 
     pivotEncoder = pivotLead.getAbsoluteEncoder(Type.kDutyCycle);
 
+    pivotPIDController.setP(PIVOT_P);
+    pivotPIDController.setI(PIVOT_I);
+    pivotPIDController.setD(PIVOT_D);
+
     // Convert the encoder position from rotations to degrees
     pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
 
-    // TODO: Comment me out once I run once just in case something happens
-    // We want this false, but false is default... but it might be true currently
-    // just run once and delete :)
-    pivotPIDController.setPositionPIDWrappingEnabled(false);
     pivotPIDController.setFeedbackDevice(pivotEncoder);
 
     pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
-
+    pivotPIDController.setOutputRange(-0.3, 0.3);
     // Flash is burnt in robotContainer... incinerateMotors()
   }
+ 
 
   /**
    * Get the current rotation of the pivot
@@ -65,7 +84,16 @@ public class Pivot extends SubsystemBase {
   }
 
   public double getEncoderPositionDegrees() {
-    return pivotEncoder.getPosition();
+    encoderPositionDegrees = pivotEncoder.getPosition();
+    return encoderPositionDegrees;
+  }
+
+  @Config
+  public void setPID(double p, double i, double d) {
+    // pivotPIDController.setP(p);
+    // pivotPIDController.setI(i);
+    // pivotPIDController.setD(d);
+    
   }
 
   /**
@@ -75,8 +103,8 @@ public class Pivot extends SubsystemBase {
    */
   public void setDesiredRotation(double placementPositionDegrees) {
     // Clamp the desired rotation to the limits of the pivot
-    MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES, PivotConstants.PIVOT_LOW_LIMIT_DEGREES);
-
+    this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES, PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
+    // System.out.println("desired Rotation:" + this.desiredRotation);
     pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
   }
 
