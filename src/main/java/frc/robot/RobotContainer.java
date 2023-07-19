@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
 import frc.robot.commands.ManualSetClawSpeed;
@@ -129,5 +130,20 @@ public class RobotContainer {
     // .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
     // .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     // .andThen(new InstantCommand(() -> claw.setSpeed(0)));
+  }
+
+  /**
+   * Run burnFlash() for all controllers initialized. burnFlash() stops comms w/deivce for 200ms or more.
+   * Might include calls from before method was called or calls from after. 
+   * Too risky so we do this to burn everything in sync
+   * to avoid accidentally stoppinmg messages from getting to the device
+   */
+  public void incinerateMotors() {
+    Timer.delay(0.25);
+    for (Neo : neos) {
+      Neo.burnFlash();
+      Timer.delay(0.005);
+    }
+    Timer.delay(0.25);
   }
 }
