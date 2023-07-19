@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3.Register;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,6 +19,7 @@ import frc.robot.commands.AutoSetPivotRotation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
+import io.github.oblarg.oblog.Loggable;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -34,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Loggable{
   // The robot's subsystems and commands are defined here...
 
   // Subsystems
@@ -111,8 +113,8 @@ public class RobotContainer {
      * Finally, we want to move the claw at a certain speed
      */
 
-    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(driverController.getLeftTriggerAxis())))
-                .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
+    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(driverController.getLeftTriggerAxis())));
+                // .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
 
     rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-driverController.getRightTriggerAxis())))
                 .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
@@ -129,11 +131,10 @@ public class RobotContainer {
   }
 
   public Command movePivotAndClaw(int index){
-    return new AutoSetPivotRotation(pivot, claw, index);
-    // Uncomment below to enable/disable the claw
-    // .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
-    // .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
-    // .andThen(new InstantCommand(() -> claw.setSpeed(0)));
+    return new AutoSetPivotRotation(pivot, claw, index)
+    .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
+    .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
+    .andThen(new InstantCommand(() -> claw.setSpeed(0)));
   }
 
   /**
@@ -149,7 +150,6 @@ public class RobotContainer {
       Timer.delay(0.005);
     }
     Timer.delay(0.25);
-
-    System.out.println("\n\nAll motor flashes burnt\n\n");
+    // System.out.println("\n\nAll motor flashes burnt\n\n");
   }
 }
