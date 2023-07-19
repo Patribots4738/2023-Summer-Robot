@@ -8,6 +8,11 @@ import java.util.ArrayList;
 
 import com.revrobotics.CANSparkMax;
 
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
+import io.github.oblarg.oblog.annotations.Config.NumberSlider;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -49,11 +54,11 @@ public final class Constants {
     public static final double DRIVING_D = 0.1;
 
     // TODO: These values are placeholders and need to be tuned for the robot
-    public static final double SLEW_RATE_TURN = 0.95;
-    public static final double SLEW_RATE_DRIVE = 0.95;
+    public static final double SLEW_RATE_TURN = 1.25;
+    public static final double SLEW_RATE_DRIVE = 1.25;
   }
 
-  public final static class PivotConstants {
+  public final static class PivotConstants implements Loggable{
 
     public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
     public static final double ZERO_OFFSET_OFFSET = 180;
@@ -67,9 +72,9 @@ public final class Constants {
     public static final int PIVOT_LEAD_CAN_ID = 5;
     public static final int PIVOT_FOLLOWER_CAN_ID = 6;
 
-    public static final double PIVOT_P = 0.001;
+    public static final double PIVOT_P = 0.005;
     public static final double PIVOT_I = 0;
-    public static final double PIVOT_D = 0.0025;
+    public static final double PIVOT_D = 0.0525;
 
     public static final int LOW_INDEX = 0;
     public static final int MID_INDEX = 1;
@@ -83,15 +88,18 @@ public final class Constants {
 
   public final static class ClawConstants {
     // TODO: change CAN IDs to match the robot
+
+    // The outtake limit for the claw (its 10 so there is basically nothing limiting it)
+    public static final double SLEW_NEGATIVE_LIMIT = -10;
+    // The intake limit for the claw (we want to prevent skipping so we have a very low limit)
+    public static final double SLEW_POSITIVE_LIMIT = 0.75;
+
     public static final int CLAW_LEAD_CAN_ID = 8;
     public static final int CLAW_FOLLOWER_CAN_ID = 7;
 
-    public static final double CLAW_P = 0.1;
-    public static final double CLAW_I = 0;
-    public static final double CLAW_D = 0.1;
-
     public static final int CLAW_FREE_CURRENT_LIMIT = 30;
     public static final int CLAW_STALL_CURRENT_LIMIT = 10;
+    public static final int CLAW_OUTTAKE_CURRENT_LIMIT = 30;
 
   }
 
@@ -111,17 +119,17 @@ public final class Constants {
         // High | Index 2
         70 + 90,
         // Reset | Index 3
-        0
+        75
     };
 
     // TODO: These valuse are plceholder speeds and need to be tuned for the robot
     public static final double[] PLACEMENT_SPEEDS = {
-        // High | Index 0
-        -0.7,
-        // Mid | Index 1
-        -0.5,
-        // Low | Index 2
+        // Low | Index 0
         -0.3,
+        // Mid | Index 1
+        -0.75,
+        // High | Index 2
+        -1,
         // Reset | Index 3
         0.0
     };
@@ -130,14 +138,14 @@ public final class Constants {
     // This is an array of times for each placement position
     // If we wanted the outtake time to be different for each position, we could
     public static final double[] PLACEMENT_TIMES = {
-        // High | Index 0
+        // Low | Index 0
         1, // seconds
         // Mid | Index 1
         1, // seconds
-        // Low | Index 2
+        // High | Index 2
         1, // seconds
-        // Stop | Index 3
-        1 // seconds
+        // Reset | Index 3
+        0 // seconds
     };
   }
 }
