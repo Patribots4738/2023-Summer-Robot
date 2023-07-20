@@ -57,8 +57,8 @@ public class RobotContainer implements Loggable{
   */
   private final BaseDrive baseDrive = new BaseDrive(
       drivetrain,
-      () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND),
-      () -> MathUtil.applyDeadband(driverController.getRightX(), Constants.DRIVER_DEADBAND)
+      () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND_FORWARD),
+      () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, Constants.DRIVER_DEADBAND_TURN)
   );
 
   private final ManualSetClawSpeed manualSetClawSpeed = new ManualSetClawSpeed(
@@ -91,12 +91,16 @@ public class RobotContainer implements Loggable{
   private void configureButtonBindings() {
     // create triggers for each button used
 
+    // Trigger aDrive = new Trigger(() -> driverController.getAButton());
+    // aDrive.onTrue(Commands.run(()-> drivetrain.setDefaultCommand(baseDriveSlow))).onFalse(Commands.run(() ->drivetrain.setDefaultCommand(baseDrive)));
+
     Trigger y = new Trigger(() -> operatorController.getYButton());
     Trigger b = new Trigger(() -> operatorController.getBButton());
     Trigger a = new Trigger(() -> operatorController.getAButton());
     Trigger x = new Trigger(() -> operatorController.getXButton());
 
     Trigger leftTrigger = new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.2);
+    Trigger leftBumper = new Trigger(() -> operatorController.getLeftBumper());
     Trigger rightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.2);
 
     // High
@@ -114,8 +118,10 @@ public class RobotContainer implements Loggable{
      * Finally, we want to move the claw at a certain speed
      */
 
-    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(operatorController.getLeftTriggerAxis()/3)));
+    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(operatorController.getLeftTriggerAxis()/2)));
                 // .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
+
+    leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
 
     rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-operatorController.getRightTriggerAxis())))
                 .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
@@ -133,7 +139,7 @@ public class RobotContainer implements Loggable{
 
   public Command movePivotAndClaw(int index){
     return new AutoSetPivotRotation(pivot, claw, index)
-    .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[index]))
+    .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
     .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     .andThen(new InstantCommand(() -> claw.setSpeed(0)));
   }

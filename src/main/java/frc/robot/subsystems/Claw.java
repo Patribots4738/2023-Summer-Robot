@@ -49,7 +49,9 @@ public class Claw extends SubsystemBase {
     leadMotor.setSmartCurrentLimit(
         speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT, 
         ClawConstants.CLAW_FREE_CURRENT_LIMIT);
-    this.speed = speed;
+
+    // if we are intaking, only set the speed if it is faster than the current speed
+    this.speed = (speed > 0 && this.speed > speed) ? this.speed : speed; 
   }
 
   // TODO: add this to the periodic method of the robot container
