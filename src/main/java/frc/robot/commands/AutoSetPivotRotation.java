@@ -36,7 +36,7 @@ public class AutoSetPivotRotation extends CommandBase {
          * the value from the array.
          */
         // System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
-        pivot.setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
+        pivot.setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[placementIndex]);
     }
 
     // Called once the command ends or is interrupted.
@@ -60,6 +60,6 @@ public class AutoSetPivotRotation extends CommandBase {
         //                     " Desired Rotation " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]
         //     );
         return Math.abs(pivot.getEncoderPositionDegrees()
-                - PlacementConstants.PLACEMENT_POSITIONS[placementIndex]) < PivotConstants.PIVOT_DEADBAND_DEGREES;
+                - PlacementConstants.PLACEMENT_POSITIONS_FRONT[placementIndex]) < PivotConstants.PIVOT_DEADBAND_DEGREES;
     }
 }

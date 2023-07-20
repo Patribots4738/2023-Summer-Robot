@@ -30,7 +30,9 @@ public final class Constants {
   public static final int DRIVER_CONTROLLER_PORT = 0;
   public static final int OPERATOR_CONTROLLER_PORT = 1;
 
-  public static final double DRIVER_DEADBAND = 0.17;
+  public static final double DRIVER_DEADBAND_FORWARD = 0.05;
+  public static final double DRIVER_DEADBAND_TURN = 0.03;
+  public static final double OPERATOR_DEADBAND = 0.5;
 
 
   public final static class DrivetrainConstants {
@@ -53,8 +55,10 @@ public final class Constants {
     public static final double DRIVING_D = 0.1;
 
     // TODO: These values are placeholders and need to be tuned for the robot
-    public static final double SLEW_RATE_TURN = 1.25;
-    public static final double SLEW_RATE_DRIVE = 1.25;
+    public static final double SLEW_RATE_TURN_NEGATIVE = -10;
+    public static final double SLEW_RATE_TURN_POSITIVE = 10;
+    public static final double SLEW_RATE_DRIVE_POSITIVE = 4;
+    public static final double SLEW_RATE_DRIVE_NEGATIVE = -10;
   }
 
   public final static class PivotConstants implements Loggable{
@@ -110,19 +114,19 @@ public final class Constants {
 
     // TODO: These values are placeholder positions and need to be tuned for the
     // robot
-    public static final double[] PLACEMENT_POSITIONS = {
+    public static final double[] PLACEMENT_POSITIONS_FRONT = {
         // Low | Index 0
-        0 + 90,
+        90 + 0,
         // Mid | Index 1
-        44 + 90,
+        90 + 44,
         // High | Index 2
-        54 + 90,
+        90 + 54,
         // Reset | Index 3
         78
     };
 
     // TODO: These valuse are plceholder speeds and need to be tuned for the robot
-    public static final double[] PLACEMENT_SPEEDS = {
+    public static final double[] PLACEMENT_SPEEDS_FRONT = {
         // Low | Index 0
         -0.15,
         // Mid | Index 1
@@ -131,6 +135,31 @@ public final class Constants {
         -0.3,
         // Reset | Index 3
         0.0
+
+    };
+
+    public static final double[] PLACEMENT_POSITIONS_BACK = {
+        // Low | Index 0
+        270 + 0,
+        // Mid | Index 1
+        270 - 44,
+        // High | Index 2
+        270 - 15 - 54,
+        // Reset | Index 3
+        78
+    };
+
+    // TODO: These valuse are plceholder speeds and need to be tuned for the robot
+    public static final double[] PLACEMENT_SPEEDS_BACK = {
+        // Low | Index 0
+        -0.15,
+        // Mid | Index 1
+        -0.24,
+        // High | Index 2
+        -0.4,
+        // Reset | Index 3
+        0.0
+
     };
 
     // TODO: Add timings for each position through testing

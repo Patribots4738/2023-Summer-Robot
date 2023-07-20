@@ -28,7 +28,7 @@ public class AutoSetClawSpeed extends CommandBase {
   @Override
   public void initialize() {
     // set the speed of the claw to the placement position
-    claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS[placementIndex]);
+    claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS_FRONT[placementIndex]);
 
     timer.start();
   }
