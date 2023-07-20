@@ -31,23 +31,20 @@ public class Drivetrain extends SubsystemBase {
 
   // Create Encoders
   private RelativeEncoder leftEncoder;
-  private RelativeEncoder leftEncoderFollower;
   private RelativeEncoder rightEncoder;
-  private RelativeEncoder rightEncoderFollower;
 
   // Create Differential Drive
   private final DifferentialDrive drive;
-
-  // Create PID Controllers
-  private final SparkMaxPIDController _drivingPIDController;
-  private final SparkMaxPIDController _turningPIDController;
 
   // Create Odometry
   private final Odometry odometry;
 
   // Create Filters for Slew Rate Limiting
-  SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN);
-  SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE);
+  SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN_POSITIVE, DrivetrainConstants.SLEW_RATE_TURN_NEGATIVE, 0);
+  SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE_POSITIVE, DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
+
+  private double forward;
+  private double turn;
 
   // Create Gyro
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();
@@ -70,9 +67,7 @@ public class Drivetrain extends SubsystemBase {
     Constants.SPARK_LIST.add(rightFollower);
 
     leftEncoder = leftLeadMotor.getEncoder();
-    leftEncoderFollower = leftFollower.getEncoder();
     rightEncoder = rightLeadMotor.getEncoder();
-    rightEncoderFollower = rightFollower.getEncoder();
 
     odometry = new Odometry(this);
 
@@ -90,18 +85,6 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightFollower.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-    // Set PID Controller
-    _drivingPIDController = leftLeadMotor.getPIDController();
-    _turningPIDController = rightLeadMotor.getPIDController();
-
-    _drivingPIDController.setP(DrivetrainConstants.DRIVING_P);
-    _drivingPIDController.setI(DrivetrainConstants.DRIVING_I);
-    _drivingPIDController.setD(DrivetrainConstants.DRIVING_D);
-
-    _turningPIDController.setP(DrivetrainConstants.TURNING_P);
-    _turningPIDController.setI(DrivetrainConstants.TURNING_I);
-    _turningPIDController.setD(DrivetrainConstants.TURNING_D);
-
     // follow the lead motors
     leftFollower.follow(leftLeadMotor, DrivetrainConstants.LEFT_MOTOR_INVERT);
     rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
@@ -110,13 +93,18 @@ public class Drivetrain extends SubsystemBase {
     drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
 
     // Flash is burnt in robotContainer... incinerateMotors()
-
+    super.register();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     odometry.execute();
+
+    drive.arcadeDrive(
+        driveFilter.calculate(forward), 
+        turn
+    );
   }
 
   public void resetEncoders() {
@@ -144,8 +132,8 @@ public class Drivetrain extends SubsystemBase {
     return rightEncoder;
   }
 
-  public void run(double forward, double turn) {      
-    drive.arcadeDrive(-forward, 
-                        turn);
+  public void run(double forward, double turn) {
+    this.forward = -forward;
+    this.turn = turn;
   }
 }
