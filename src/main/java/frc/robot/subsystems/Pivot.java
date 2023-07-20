@@ -13,6 +13,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.PlacementConstants;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
@@ -71,6 +72,8 @@ public class Pivot extends SubsystemBase implements Loggable{
     pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
     pivotPIDController.setOutputRange(-0.3, 0.3);
     // Flash is burnt in robotContainer... incinerateMotors()
+
+    setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.RESET_INDEX]);
   }
  
 
@@ -86,14 +89,6 @@ public class Pivot extends SubsystemBase implements Loggable{
   public double getEncoderPositionDegrees() {
     encoderPositionDegrees = pivotEncoder.getPosition();
     return encoderPositionDegrees;
-  }
-
-  @Config
-  public void setPID(double p, double i, double d) {
-    // pivotPIDController.setP(p);
-    // pivotPIDController.setI(i);
-    // pivotPIDController.setD(d);
-    
   }
 
   /**
