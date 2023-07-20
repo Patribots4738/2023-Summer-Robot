@@ -43,6 +43,7 @@ public class RobotContainer implements Loggable{
   private final Drivetrain drivetrain = new Drivetrain();
 
   private final XboxController driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
+  private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT);
 
   private final Pivot pivot = new Pivot();
   private final Claw claw = new Claw();
@@ -90,13 +91,13 @@ public class RobotContainer implements Loggable{
   private void configureButtonBindings() {
     // create triggers for each button used
 
-    Trigger y = new Trigger(() -> driverController.getYButton());
-    Trigger b = new Trigger(() -> driverController.getBButton());
-    Trigger a = new Trigger(() -> driverController.getAButton());
-    Trigger x = new Trigger(() -> driverController.getXButton());
+    Trigger y = new Trigger(() -> operatorController.getYButton());
+    Trigger b = new Trigger(() -> operatorController.getBButton());
+    Trigger a = new Trigger(() -> operatorController.getAButton());
+    Trigger x = new Trigger(() -> operatorController.getXButton());
 
-    Trigger leftTrigger = new Trigger(() -> driverController.getLeftTriggerAxis() > 0.2);
-    Trigger rightTrigger = new Trigger(() -> driverController.getRightTriggerAxis() > 0.2);
+    Trigger leftTrigger = new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.2);
+    Trigger rightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.2);
 
     // High
     y.onTrue(movePivotAndClaw(PlacementConstants.HIGH_INDEX));
@@ -113,10 +114,10 @@ public class RobotContainer implements Loggable{
      * Finally, we want to move the claw at a certain speed
      */
 
-    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(driverController.getLeftTriggerAxis())));
+    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(operatorController.getLeftTriggerAxis()/3)));
                 // .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
 
-    rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-driverController.getRightTriggerAxis())))
+    rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-operatorController.getRightTriggerAxis())))
                 .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
   }
 

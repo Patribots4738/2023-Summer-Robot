@@ -28,8 +28,10 @@ public final class Constants {
   public static ArrayList<CANSparkMax> SPARK_LIST = new ArrayList<CANSparkMax>();
 
   public static final int DRIVER_CONTROLLER_PORT = 0;
+  public static final int OPERATOR_CONTROLLER_PORT = 1;
 
   public static final double DRIVER_DEADBAND = 0.17;
+
 
   public final static class DrivetrainConstants {
 
@@ -112,21 +114,21 @@ public final class Constants {
         // Low | Index 0
         0 + 90,
         // Mid | Index 1
-        40 + 90,
+        44 + 90,
         // High | Index 2
-        70 + 90,
+        54 + 90,
         // Reset | Index 3
-        75
+        78
     };
 
     // TODO: These valuse are plceholder speeds and need to be tuned for the robot
     public static final double[] PLACEMENT_SPEEDS = {
         // Low | Index 0
-        -0.3,
+        -0.15,
         // Mid | Index 1
-        -0.75,
+        -0.24,
         // High | Index 2
-        -1,
+        -0.3,
         // Reset | Index 3
         0.0
     };
