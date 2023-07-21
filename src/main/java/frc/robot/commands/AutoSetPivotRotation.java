@@ -13,14 +13,16 @@ import frc.robot.subsystems.Pivot;
 public class AutoSetPivotRotation extends CommandBase {
     /** Creates a new BaseDrive. */
     private final Pivot pivot;
-    private int placementIndex;
+    private double placementPosition;
+    public boolean backwards;
 
-    public AutoSetPivotRotation(Pivot pivot, Claw claw, int placementIndex) {
+
+    public AutoSetPivotRotation(Pivot pivot, Claw claw, double placementPosition) {
         // set the pivot and placement position
         // add the pivot as a requirement
 
         this.pivot = pivot;
-        this.placementIndex = placementIndex;
+        this.placementPosition = placementPosition;
         addRequirements(pivot);
     }
 
@@ -36,7 +38,7 @@ public class AutoSetPivotRotation extends CommandBase {
          * the value from the array.
          */
         // System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
-        pivot.setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[placementIndex]);
+        pivot.setDesiredRotation(placementPosition);
     }
 
     // Called once the command ends or is interrupted.
@@ -60,6 +62,6 @@ public class AutoSetPivotRotation extends CommandBase {
         //                     " Desired Rotation " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]
         //     );
         return Math.abs(pivot.getEncoderPositionDegrees()
-                - PlacementConstants.PLACEMENT_POSITIONS_FRONT[placementIndex]) < PivotConstants.PIVOT_DEADBAND_DEGREES;
+                - placementPosition) < PivotConstants.PIVOT_DEADBAND_DEGREES;
     }
 }
