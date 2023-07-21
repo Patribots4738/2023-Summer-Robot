@@ -66,7 +66,7 @@ public final class Constants {
     public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
     public static final double ZERO_OFFSET_OFFSET = 180;
 
-    public static final double PIVOT_DEADBAND_DEGREES = 5;
+    public static final double PIVOT_DEADBAND_DEGREES = 2;
 
     public static final double PIVOT_LOW_LIMIT_DEGREES = 90 - 20;
     public static final double PIVOT_HIGH_LIMIT_DEGREES = 90 + 155;
@@ -102,7 +102,7 @@ public final class Constants {
 
     public static final int CLAW_FREE_CURRENT_LIMIT = 30;
     public static final int CLAW_STALL_CURRENT_LIMIT = 10;
-    public static final int CLAW_OUTTAKE_CURRENT_LIMIT = 30;
+    public static final int CLAW_OUTTAKE_CURRENT_LIMIT = 40;
 
   }
 
@@ -112,20 +112,18 @@ public final class Constants {
     public static final int HIGH_INDEX = 2;
     public static final int RESET_INDEX = 3;
 
-    // TODO: These values are placeholder positions and need to be tuned for the
-    // robot
+    public static final double LOW_PLACEMENT_FRONT = 90 + 0;
+    public static final double MID_PLACEMENT_FRONT = 90 + 44;
+    public static final double HIGH_PLACEMENT_FRONT = 90 + 54;
+    public static final double RESET_PLACEMENT_FRONT = 78;
+    
     public static final double[] PLACEMENT_POSITIONS_FRONT = {
-        // Low | Index 0
-        90 + 0,
-        // Mid | Index 1
-        90 + 44,
-        // High | Index 2
-        90 + 54,
-        // Reset | Index 3
-        78
+        LOW_PLACEMENT_FRONT,
+        MID_PLACEMENT_FRONT,
+        HIGH_PLACEMENT_FRONT,
+        RESET_PLACEMENT_FRONT
     };
 
-    // TODO: These valuse are plceholder speeds and need to be tuned for the robot
     public static final double[] PLACEMENT_SPEEDS_FRONT = {
         // Low | Index 0
         -0.15,
@@ -138,18 +136,19 @@ public final class Constants {
 
     };
 
+    public static final double LOW_PLACEMENT_BACK = 270 + 0;
+    public static final double MID_PLACEMENT_BACK = 270 - 44;
+    public static final double HIGH_PLACEMENT_BACK = 270 - 54;
+    public static final double RESET_PLACEMENT_BACK = 78;
+
     public static final double[] PLACEMENT_POSITIONS_BACK = {
-        // Low | Index 0
-        270 + 0,
-        // Mid | Index 1
-        270 - 44,
-        // High | Index 2
-        270 - 15 - 54,
-        // Reset | Index 3
-        78
+        LOW_PLACEMENT_BACK,
+        MID_PLACEMENT_BACK,
+        HIGH_PLACEMENT_BACK,
+        RESET_PLACEMENT_BACK
     };
 
-    // TODO: These valuse are plceholder speeds and need to be tuned for the robot
+    
     public static final double[] PLACEMENT_SPEEDS_BACK = {
         // Low | Index 0
         -0.15,
@@ -162,7 +161,6 @@ public final class Constants {
 
     };
 
-    // TODO: Add timings for each position through testing
     // This is an array of times for each placement position
     // If we wanted the outtake time to be different for each position, we could
     public static final double[] PLACEMENT_TIMES = {
