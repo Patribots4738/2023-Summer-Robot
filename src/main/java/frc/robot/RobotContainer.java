@@ -136,7 +136,7 @@ public class RobotContainer implements Loggable{
     .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     .andThen(new InstantCommand(() -> claw.setSpeed(0)))
     .andThen(new WaitCommand(2))
-    .andThen(new AutoSetPivotRotation(pivot, claw, shootingBackwards ? PlacementConstants.RESET_PLACEMENT_BACK: PlacementConstants.RESET_PLACEMENT_FRONT)); 
+    .andThen(new AutoSetPivotRotation(pivot, claw, PlacementConstants.RESET_PLACEMENT)); 
   }
 
   /**

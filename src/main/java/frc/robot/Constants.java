@@ -115,13 +115,13 @@ public final class Constants {
     public static final double LOW_PLACEMENT_FRONT = 90 + 0;
     public static final double MID_PLACEMENT_FRONT = 90 + 44;
     public static final double HIGH_PLACEMENT_FRONT = 90 + 54;
-    public static final double RESET_PLACEMENT_FRONT = 78;
+    public static final double RESET_PLACEMENT = 78;
     
     public static final double[] PLACEMENT_POSITIONS_FRONT = {
         LOW_PLACEMENT_FRONT,
         MID_PLACEMENT_FRONT,
         HIGH_PLACEMENT_FRONT,
-        RESET_PLACEMENT_FRONT
+        RESET_PLACEMENT
     };
 
     public static final double[] PLACEMENT_SPEEDS_FRONT = {
@@ -139,13 +139,12 @@ public final class Constants {
     public static final double LOW_PLACEMENT_BACK = 270 + 0;
     public static final double MID_PLACEMENT_BACK = 270 - 44;
     public static final double HIGH_PLACEMENT_BACK = 270 - 54;
-    public static final double RESET_PLACEMENT_BACK = 78;
 
     public static final double[] PLACEMENT_POSITIONS_BACK = {
         LOW_PLACEMENT_BACK,
         MID_PLACEMENT_BACK,
         HIGH_PLACEMENT_BACK,
-        RESET_PLACEMENT_BACK
+        RESET_PLACEMENT
     };
 
     
