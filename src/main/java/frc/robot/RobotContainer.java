@@ -131,12 +131,14 @@ public class RobotContainer implements Loggable{
   }
 
   public Command movePivotAndClaw(int index) {
-    return new AutoSetPivotRotation(pivot, claw, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
+    return new AutoSetPivotRotation(pivot, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
     .andThen(new InstantCommand(() -> claw.setSpeed(shootingBackwards ? PlacementConstants.PLACEMENT_SPEEDS_BACK[index] : PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
     .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     .andThen(new InstantCommand(() -> claw.setSpeed(0)))
-    .andThen(new WaitCommand(2))
-    .andThen(new AutoSetPivotRotation(pivot, claw, PlacementConstants.RESET_PLACEMENT)); 
+    // Maybe make this an instant command directly telling the pivot to move instead of having 
+    // to wait for the claw to go back to stow
+    // .andThen(new InstantCommand(() -> pivot.setDesiredRotation(PlacementConstants.RESET_PLACEMENT)));
+    .andThen(new AutoSetPivotRotation(pivot, PlacementConstants.RESET_PLACEMENT)); 
   }
 
   /**
