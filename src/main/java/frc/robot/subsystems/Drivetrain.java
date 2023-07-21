@@ -120,10 +120,6 @@ public class Drivetrain extends SubsystemBase {
     return gyro.getAngle();
   }
 
-  public Pose2d getPose() {
-    return odometry.getPoseMeters();
-  }
-
   public RelativeEncoder getLeftEncoder() {
     return leftEncoder;
   }
