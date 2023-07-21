@@ -5,15 +5,12 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3.Register;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
-import frc.robot.commands.ManualSetClawSpeed;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.AutoSetPivotRotation;
 import frc.robot.subsystems.Claw;
@@ -22,9 +19,7 @@ import frc.robot.subsystems.Pivot;
 import io.github.oblarg.oblog.Loggable;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 /**
@@ -47,6 +42,7 @@ public class RobotContainer implements Loggable{
 
   private final Pivot pivot = new Pivot();
   private final Claw claw = new Claw();
+  private boolean shootingBackwards;
 
   /*
     () -> Explantion:
@@ -59,13 +55,6 @@ public class RobotContainer implements Loggable{
       drivetrain,
       () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND_FORWARD),
       () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, Constants.DRIVER_DEADBAND_TURN)
-  );
-
-  private final ManualSetClawSpeed manualSetClawSpeed = new ManualSetClawSpeed(
-    claw,
-    () -> driverController.getLeftTriggerAxis() > 0 ? 
-        driverController.getLeftTriggerAxis() :
-        driverController.getRightTriggerAxis()
   );
 
   /**
@@ -103,6 +92,8 @@ public class RobotContainer implements Loggable{
     Trigger leftBumper = new Trigger(() -> operatorController.getLeftBumper());
     Trigger rightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.2);
 
+    Trigger rightStickPressed = new Trigger(() -> operatorController.getRightStickButton());
+
     // High
     y.onTrue(movePivotAndClaw(PlacementConstants.HIGH_INDEX));
     // Middle
@@ -125,6 +116,8 @@ public class RobotContainer implements Loggable{
 
     rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-operatorController.getRightTriggerAxis())))
                 .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
+
+    rightStickPressed.onTrue(new InstantCommand(() -> shootingBackwards = !shootingBackwards));
   }
 
   /**
@@ -137,9 +130,9 @@ public class RobotContainer implements Loggable{
     return null;
   }
 
-  public Command movePivotAndClaw(int index){
-    return new AutoSetPivotRotation(pivot, claw, index)
-    .andThen(new InstantCommand(() -> claw.setSpeed(PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
+  public Command movePivotAndClaw(int index) {
+    return new AutoSetPivotRotation(pivot, claw, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
+    .andThen(new InstantCommand(() -> claw.setSpeed(shootingBackwards ? PlacementConstants.PLACEMENT_SPEEDS_BACK[index] : PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
     .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     .andThen(new InstantCommand(() -> claw.setSpeed(0)));
   }
