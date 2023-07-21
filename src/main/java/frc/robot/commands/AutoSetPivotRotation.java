@@ -17,7 +17,7 @@ public class AutoSetPivotRotation extends CommandBase {
     public boolean backwards;
 
 
-    public AutoSetPivotRotation(Pivot pivot, Claw claw, double placementPosition) {
+    public AutoSetPivotRotation(Pivot pivot, double placementPosition) {
         // set the pivot and placement position
         // add the pivot as a requirement
 
