@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import javax.management.ConstructorParameters;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
