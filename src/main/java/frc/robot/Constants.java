@@ -37,6 +37,8 @@ public final class Constants {
 
   public final static class DrivetrainConstants {
 
+    public static final double DRIVING_SPEED_MULTIPLIER = 0.25;
+
     public static final int LEFT_MOTOR_FRONT_CAN_ID = 1;
     public static final int LEFT_MOTOR_FOLLOWER_CAN_ID = 2;
 
