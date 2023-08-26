@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
 import frc.robot.Constants.PlacementConstants;
-import frc.robot.commands.AutoSetPivotRotation;
+import frc.robot.commands.SetPivotRotation;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -131,14 +131,14 @@ public class RobotContainer implements Loggable{
   }
 
   public Command movePivotAndClaw(int index) {
-    return new AutoSetPivotRotation(pivot, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
+    return new SetPivotRotation(pivot, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
     .andThen(new InstantCommand(() -> claw.setSpeed(shootingBackwards ? PlacementConstants.PLACEMENT_SPEEDS_BACK[index] : PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
     .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
     .andThen(new InstantCommand(() -> claw.setSpeed(0)))
     // Maybe make this an instant command directly telling the pivot to move instead of having 
     // to wait for the claw to go back to stow
     // .andThen(new InstantCommand(() -> pivot.setDesiredRotation(PlacementConstants.RESET_PLACEMENT)));
-    .andThen(new AutoSetPivotRotation(pivot, PlacementConstants.RESET_PLACEMENT)); 
+    .andThen(new SetPivotRotation(pivot, PlacementConstants.RESET_PLACEMENT)); 
   }
 
   /**
