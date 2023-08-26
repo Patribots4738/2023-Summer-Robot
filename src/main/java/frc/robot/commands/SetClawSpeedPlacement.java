@@ -5,14 +5,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.subsystems.Claw;
 
-public class AutoSetClawSpeed extends CommandBase {
+public class SetClawSpeedPlacement extends CommandBase {
   private final Claw claw;
   private final int placementIndex;
   private final double totalPlacementTime;
   private Timer timer;
 
 
-  public AutoSetClawSpeed(Claw claw, int placementIndex) {
+  public SetClawSpeedPlacement(Claw claw, int placementIndex) {
     // set the claw and placement position
     // add the claw as a requirement
     this.claw = claw;

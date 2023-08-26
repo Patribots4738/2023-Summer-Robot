@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.Pivot;
 
-public class AutoSetPivotRotation extends CommandBase {
+public class SetPivotRotation extends CommandBase {
     /** Creates a new BaseDrive. */
     private final Pivot pivot;
     private double placementPosition;
     public boolean backwards;
 
 
-    public AutoSetPivotRotation(Pivot pivot, double placementPosition) {
+    public SetPivotRotation(Pivot pivot, double placementPosition) {
         // set the pivot and placement position
         // add the pivot as a requirement
 
@@ -37,12 +37,6 @@ public class AutoSetPivotRotation extends CommandBase {
          */
         // System.out.println("Setting desired rotation to " + PlacementConstants.PLACEMENT_POSITIONS[placementIndex]);
         pivot.setDesiredRotation(placementPosition);
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        // start the next command for the claw to intake
     }
 
     @Override
