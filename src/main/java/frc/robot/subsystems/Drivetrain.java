@@ -105,6 +105,10 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
+  public Odometry getOdometry() {
+    return odometry;
+  }
+
   public void resetEncoders() {
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
@@ -126,8 +130,20 @@ public class Drivetrain extends SubsystemBase {
     return rightEncoder;
   }
 
+  public void modeBreak(){
+    for (CANSparkMax spark : Constants.SPARK_LIST) {
+      spark.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    }
+  }
+
   public void run(double forward, double turn) {
     this.forward = -forward;
     this.turn = turn;
+  }
+
+  public void modeCoast() {
+    for (CANSparkMax spark : Constants.SPARK_LIST) {
+      spark.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    }
   }
 }
