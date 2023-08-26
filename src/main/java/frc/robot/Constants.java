@@ -61,6 +61,10 @@ public final class Constants {
     public static final double SLEW_RATE_TURN_POSITIVE = 10;
     public static final double SLEW_RATE_DRIVE_POSITIVE = 4;
     public static final double SLEW_RATE_DRIVE_NEGATIVE = -10;
+
+    public static final int DRIVE_TO_DISTANCE_TOLERANCE = 0;
+
+    public static final double ANGLE_TOLERANCE = 0;
   }
 
   public final static class PivotConstants implements Loggable{
