@@ -60,6 +60,10 @@ public class Odometry extends CommandBase {
     return odometry.getPoseMeters();
   }
 
+  public void resetPosition(Pose2d desiredPosition) {
+    odometry.resetPosition(new Rotation2d(0), 0,0 , desiredPosition);
+  }
+
   /**
    * Returns the rotation of the pose in meters.
    * 
