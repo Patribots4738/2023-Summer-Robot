@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
@@ -145,5 +146,17 @@ public class Drivetrain extends SubsystemBase {
     for (CANSparkMax spark : Constants.SPARK_LIST) {
       spark.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
+  }
+
+  public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+    double leftOutput = speeds.leftMetersPerSecond;
+    double rightOutput = speeds.rightMetersPerSecond;
+
+    leftLeadMotor.set(leftOutput);
+    rightLeadMotor.set(rightOutput);
+  }
+
+  public DifferentialDriveWheelSpeeds getSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
   }
 }
