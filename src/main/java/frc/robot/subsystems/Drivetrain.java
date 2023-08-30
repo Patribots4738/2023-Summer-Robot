@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 
-import java.util.function.Supplier;
-
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
