@@ -1,4 +1,4 @@
-package frc.robot.commands.auto;
+package frc.robot.auto;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
@@ -10,13 +10,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Odometry;
 import frc.robot.subsystems.Drivetrain;
 
-public class FollowTrajectory extends CommandBase {
+public class FollowTrajectory {
 
     private PathPlannerTrajectory trajectory;
     private boolean isFirstPath;
     private Drivetrain drivetrain;
     private Odometry odometry;
 
+    /*
+     * Follows a trajectory using the drivetrain's ramsete controller
+     * 
+     * @param drivetrain The drivetrain subsystem to use
+     * @param trajectory The trajectory to follow
+     * @param isFirstPath Whether or not this is the first path in a sequence (resets odometry if true)
+     */
     public FollowTrajectory(Drivetrain drivetrain, PathPlannerTrajectory trajectory, boolean isFirstPath) {
         this.isFirstPath = isFirstPath;
         this.trajectory = trajectory;
