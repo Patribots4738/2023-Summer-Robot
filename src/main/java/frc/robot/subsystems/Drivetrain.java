@@ -7,10 +7,16 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -39,8 +45,13 @@ public class Drivetrain extends SubsystemBase {
   private final Odometry odometry;
 
   // Create Filters for Slew Rate Limiting
-  SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN_POSITIVE, DrivetrainConstants.SLEW_RATE_TURN_NEGATIVE, 0);
-  SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE_POSITIVE, DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
+  SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN_POSITIVE,
+      DrivetrainConstants.SLEW_RATE_TURN_NEGATIVE, 0);
+  SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE_POSITIVE,
+      DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
+
+  // Create Ramsete Controller
+  private final RamseteController ramseteController = new RamseteController(2, 0.7);
 
   private double forward;
   private double turn;
@@ -101,9 +112,8 @@ public class Drivetrain extends SubsystemBase {
     odometry.execute();
 
     drive.arcadeDrive(
-        driveFilter.calculate(forward), 
-        turn
-    );
+        driveFilter.calculate(forward),
+        turn);
   }
 
   public Odometry getOdometry() {
@@ -131,7 +141,7 @@ public class Drivetrain extends SubsystemBase {
     return rightEncoder;
   }
 
-  public void modeBreak(){
+  public void modeBreak() {
     for (CANSparkMax spark : Constants.SPARK_LIST) {
       spark.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
@@ -158,5 +168,35 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDriveWheelSpeeds getSpeeds() {
     return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+  }
+
+  // TODO: Define these methods
+  public DifferentialDriveKinematics getKinematics() {
+    return null;
+  }
+
+  // TODO: Define these methods
+  public RamseteController getRamseteController() {
+    return ramseteController;
+  }
+
+  // TODO: Define these methods
+  public PIDController getLeftPIDController() {
+    return null;
+  }
+
+  // TODO: Define these methods
+  public PIDController getRightPIDController() {
+    return null;
+  }
+
+  // TODO: Define these methods
+  public SimpleMotorFeedforward getFeedforward() {
+    return null;
+  }
+
+  public void setOutputVolts(double leftOutput, double rightOutput) {
+    this.setSpeeds(
+        new DifferentialDriveWheelSpeeds(leftOutput, rightOutput));
   }
 }
