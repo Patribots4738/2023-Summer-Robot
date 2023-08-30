@@ -56,14 +56,13 @@ public final class Constants {
     public static final double DRIVING_I = 0;
     public static final double DRIVING_D = 0.1;
 
-    // TODO: These values are placeholders and need to be tuned for the robot
     public static final double SLEW_RATE_TURN_NEGATIVE = -10;
     public static final double SLEW_RATE_TURN_POSITIVE = 10;
     public static final double SLEW_RATE_DRIVE_POSITIVE = 4;
     public static final double SLEW_RATE_DRIVE_NEGATIVE = -10;
 
+    //TODO: Tune these values
     public static final int DRIVE_TO_DISTANCE_TOLERANCE = 0;
-
     public static final double ANGLE_TOLERANCE = 0;
   }
 
@@ -77,7 +76,6 @@ public final class Constants {
     public static final double PIVOT_LOW_LIMIT_DEGREES = 90 - 20;
     public static final double PIVOT_HIGH_LIMIT_DEGREES = 90 + 155;
 
-    // TODO: change CAN IDs to match the robot
     public static final int PIVOT_LEAD_CAN_ID = 5;
     public static final int PIVOT_FOLLOWER_CAN_ID = 6;
 
@@ -96,7 +94,6 @@ public final class Constants {
   }
 
   public final static class ClawConstants {
-    // TODO: change CAN IDs to match the robot
 
     // The outtake limit for the claw (its 10 so there is basically nothing limiting it)
     public static final double SLEW_NEGATIVE_LIMIT = -10;
