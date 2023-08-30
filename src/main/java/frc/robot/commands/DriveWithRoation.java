@@ -1,8 +1,6 @@
-package frc.robot.commands.commandgroup;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.auto.DriveToDistance;
-import frc.robot.commands.auto.RotateBot;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveWithRoation extends SequentialCommandGroup {
