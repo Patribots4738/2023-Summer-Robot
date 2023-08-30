@@ -54,7 +54,6 @@ public class Claw extends SubsystemBase {
     this.speed = (speed > 0 && this.speed > speed) ? this.speed : speed; 
   }
 
-  // TODO: add this to the periodic method of the robot container
   public void periodic() {
     leadMotor.set(filter.calculate(speed));
   }
