@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import io.github.oblarg.oblog.Loggable;
 
 /**
@@ -64,6 +66,12 @@ public final class Constants {
     //TODO: Tune these values
     public static final int DRIVE_TO_DISTANCE_TOLERANCE = 0;
     public static final double ANGLE_TOLERANCE = 0;
+
+    // TODO: Tune these values
+    private static final double TRACK_WIDTH_METERS = 0;
+
+    public static final DifferentialDriveKinematics DRIVE_KINEMATICS = 
+        new DifferentialDriveKinematics(DrivetrainConstants.TRACK_WIDTH_METERS);
   }
 
   public final static class PivotConstants implements Loggable{

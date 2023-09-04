@@ -6,8 +6,8 @@ import com.pathplanner.lib.commands.PPRamseteCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Odometry;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Odometry;
 
 public class FollowTrajectory {
 

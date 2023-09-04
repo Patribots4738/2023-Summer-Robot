@@ -9,8 +9,8 @@ import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.commands.Odometry;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Odometry;
 
 public class LoadAutoBuilder {
 

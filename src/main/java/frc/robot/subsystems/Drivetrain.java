@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -20,7 +21,6 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.commands.Odometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -38,6 +38,8 @@ public class Drivetrain extends SubsystemBase {
 
   // Create Differential Drive
   private final DifferentialDrive drive;
+
+  private final DifferentialDriveKinematics kinematics = DrivetrainConstants.DRIVE_KINEMATICS;
 
   // Create Odometry
   private final Odometry odometry;
@@ -77,7 +79,12 @@ public class Drivetrain extends SubsystemBase {
     leftEncoder = leftLeadMotor.getEncoder();
     rightEncoder = rightLeadMotor.getEncoder();
 
-    odometry = new Odometry(this);
+    odometry = new Odometry(
+      Rotation2d.fromDegrees(getAngle()), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition(),
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0))
+      );
 
     leftLeadMotor.restoreFactoryDefaults();
     rightLeadMotor.restoreFactoryDefaults();
@@ -107,7 +114,11 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    odometry.execute();
+    odometry.update(
+      Rotation2d.fromDegrees(getAngle()), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition()
+      );
 
     drive.arcadeDrive(
         driveFilter.calculate(forward),
@@ -168,9 +179,8 @@ public class Drivetrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
   }
 
-  // TODO: Define these methods
   public DifferentialDriveKinematics getKinematics() {
-    return null;
+    return kinematics;
   }
 
   // TODO: Define these methods
