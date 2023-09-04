@@ -17,13 +17,13 @@ import edu.wpi.first.math.geometry.Twist2d;
  * pose resets also require the encoders to be reset to zero.
  */
 public class Odometry {
-  private Pose2d m_poseMeters;
+  protected Pose2d m_poseMeters;
 
-  private Rotation2d m_gyroOffset;
-  private Rotation2d m_previousAngle;
+  protected Rotation2d m_gyroOffset;
+  protected Rotation2d m_previousAngle;
 
-  private double m_prevLeftDistance;
-  private double m_prevRightDistance;
+  protected double m_prevLeftDistance;
+  protected double m_prevRightDistance;
 
   /**
    * Constructs a DifferentialDriveOdometry object.
