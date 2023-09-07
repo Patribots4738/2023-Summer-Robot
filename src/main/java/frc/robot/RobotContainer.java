@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.SetPivotRotation;
 import frc.robot.subsystems.Claw;
@@ -37,8 +38,8 @@ public class RobotContainer implements Loggable{
   // Subsystems
   private final Drivetrain drivetrain = new Drivetrain();
 
-  private final XboxController driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
-  private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT);
+  private final XboxController driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
+  private final XboxController operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
   private final Pivot pivot = new Pivot();
   private final Claw claw = new Claw();
@@ -53,8 +54,8 @@ public class RobotContainer implements Loggable{
   */
   private final BaseDrive baseDrive = new BaseDrive(
       drivetrain,
-      () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND_FORWARD),
-      () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, Constants.DRIVER_DEADBAND_TURN)
+      () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
+      () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN)
   );
 
   /**

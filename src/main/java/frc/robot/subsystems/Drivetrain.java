@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -51,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
       DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
 
   // Create Ramsete Controller
-  private final RamseteController ramseteController = new RamseteController(2, 0.7);
+  private final RamseteController ramseteController = new RamseteController(ControllerConstants.BETA, ControllerConstants.ZETA);
 
   private double forward;
   private double turn;
@@ -183,7 +184,6 @@ public class Drivetrain extends SubsystemBase {
     return kinematics;
   }
 
-  // TODO: Define these methods
   public RamseteController getRamseteController() {
     return ramseteController;
   }

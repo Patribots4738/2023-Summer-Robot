@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import io.github.oblarg.oblog.Loggable;
 
@@ -29,13 +28,17 @@ public final class Constants {
   // This is a list of all of our motors that we use to burn flashes without complication
   public static ArrayList<CANSparkMax> SPARK_LIST = new ArrayList<CANSparkMax>();
 
-  public static final int DRIVER_CONTROLLER_PORT = 0;
-  public static final int OPERATOR_CONTROLLER_PORT = 1;
+  public final static class ControllerConstants {
+    public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int OPERATOR_CONTROLLER_PORT = 1;
 
-  public static final double DRIVER_DEADBAND_FORWARD = 0.05;
-  public static final double DRIVER_DEADBAND_TURN = 0.03;
-  public static final double OPERATOR_DEADBAND = 0.5;
+    public static final double DRIVER_DEADBAND_FORWARD = 0.05;
+    public static final double DRIVER_DEADBAND_TURN = 0.03;
+    public static final double OPERATOR_DEADBAND = 0.5;
 
+    public static final double BETA = 2;
+    public static final double ZETA = 0.7;
+  }
 
   public final static class DrivetrainConstants {
 
