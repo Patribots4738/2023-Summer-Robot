@@ -1,6 +1,5 @@
 package frc.robot.auto;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
