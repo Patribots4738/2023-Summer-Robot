@@ -11,40 +11,40 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class BaseDrive extends CommandBase {
-  /** Creates a new BaseDrive. */
-  private final Drivetrain drive;
-  private DoubleSupplier turn;
-  private DoubleSupplier forward;
-  
-  
-  public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
-    this.drive = drive;
-    this.forward = forward;
-    this.turn = turn;
-    addRequirements(drive);
-  }
+    /** Creates a new BaseDrive. */
+    private final Drivetrain drive;
+    private DoubleSupplier turn;
+    private DoubleSupplier forward;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    public BaseDrive(Drivetrain drive, DoubleSupplier forward, DoubleSupplier turn) {
+        this.drive = drive;
+        this.forward = forward;
+        this.turn = turn;
+        addRequirements(drive);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    drive.run(forward.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER, 
-      turn.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER);
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    drive.run(0.0, 0.0);
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        drive.run(forward.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER,
+                turn.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER);
+    }
 
-  // Returns true when the command should end.
-  // We never want this command to end, so it always returns false
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        drive.run(0.0, 0.0);
+    }
+
+    // Returns true when the command should end.
+    // We never want this command to end, so it always returns false
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

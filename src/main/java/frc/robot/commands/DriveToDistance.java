@@ -6,37 +6,37 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveToDistance extends PIDCommand {
-  
-  private final Drivetrain drivetrain;
 
-  public DriveToDistance(Drivetrain drivetrain, double distance) {
-    super(
-      new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D),
-      () -> drivetrain.getLeftEncoder().getPosition(),
-      () -> distance,
-      output -> drivetrain.run(output, 0)
-      );
+    private final Drivetrain drivetrain;
 
-    getController().setTolerance(4);
-    this.drivetrain = drivetrain;
-  }
+    public DriveToDistance(Drivetrain drivetrain, double distance) {
+        super(
+                new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I,
+                        DrivetrainConstants.DRIVING_D),
+                () -> drivetrain.getLeftEncoder().getPosition(),
+                () -> distance,
+                output -> drivetrain.run(output, 0));
 
-  @Override
-  public void initialize() {
-    // Drive to point
-    drivetrain.resetEncoders();
-    drivetrain.modeBreak();
-  }
+        getController().setTolerance(4);
+        this.drivetrain = drivetrain;
+    }
 
-  @Override
-  public void end(boolean interrupted) {
-    // Stop motors
-    drivetrain.run(0, 0);
-  }
+    @Override
+    public void initialize() {
+        // Drive to point
+        drivetrain.resetEncoders();
+        drivetrain.modeBreak();
+    }
 
-  @Override
-  public boolean isFinished() {
-    return getController().atSetpoint();
-  }
+    @Override
+    public void end(boolean interrupted) {
+        // Stop motors
+        drivetrain.run(0, 0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return getController().atSetpoint();
+    }
 
 }

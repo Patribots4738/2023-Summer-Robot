@@ -6,6 +6,7 @@ public enum StreamMode {
     SECONDARY_CAMERA(2);
 
     private int stream;
+
     private StreamMode(int stream) {
         this.stream = stream;
     }

@@ -24,10 +24,9 @@ public class EventMap {
         this.command = new FollowTrajectory(this.drivetrain, this.basePath, false).run();
 
         this.followPath = new FollowPathWithEvents(
-            this.command,
-            this.basePath.getMarkers(),
-            this.eventMap
-        );
+                this.command,
+                this.basePath.getMarkers(),
+                this.eventMap);
     }
 
     public void addEvent(String event, Command command) {

@@ -14,34 +14,34 @@ import frc.robot.subsystems.Odometry;
 
 public class LoadAutoBuilder {
 
-  private DifferentialDriveKinematics kinematics;
-  private HashMap<String, Command> eventMap;
-  private RamseteAutoBuilder autoBuilder;
-  private Drivetrain drivetrain;
-  private Odometry odometry;
-  private ArrayList<PathPlannerTrajectory> trajectory;
+    private DifferentialDriveKinematics kinematics;
+    private HashMap<String, Command> eventMap;
+    private RamseteAutoBuilder autoBuilder;
+    private Drivetrain drivetrain;
+    private Odometry odometry;
+    private ArrayList<PathPlannerTrajectory> trajectory;
 
-  public LoadAutoBuilder(Drivetrain drivetrain, HashMap<String, Command> eventMap,
-      ArrayList<PathPlannerTrajectory> trajectory) {
+    public LoadAutoBuilder(Drivetrain drivetrain, HashMap<String, Command> eventMap,
+            ArrayList<PathPlannerTrajectory> trajectory) {
 
-    this.eventMap = eventMap;
-    this.drivetrain = drivetrain;
-    this.kinematics = this.drivetrain.getKinematics();
-    this.odometry = this.drivetrain.getOdometry();
-    this.trajectory = trajectory;
+        this.eventMap = eventMap;
+        this.drivetrain = drivetrain;
+        this.kinematics = this.drivetrain.getKinematics();
+        this.odometry = this.drivetrain.getOdometry();
+        this.trajectory = trajectory;
 
-    this.autoBuilder = new RamseteAutoBuilder(
-        this.odometry::getPoseMeters,
-        this.odometry::resetPosition,
-        this.drivetrain.getRamseteController(),
-        this.kinematics,
-        this.drivetrain::setOutputVolts,
-        this.eventMap,
-        true,
-        this.drivetrain);
-  }
+        this.autoBuilder = new RamseteAutoBuilder(
+                this.odometry::getPoseMeters,
+                this.odometry::resetPosition,
+                this.drivetrain.getRamseteController(),
+                this.kinematics,
+                this.drivetrain::setOutputVolts,
+                this.eventMap,
+                true,
+                this.drivetrain);
+    }
 
-  public CommandBase getAuto() {
-    return autoBuilder.fullAuto(trajectory);
-  }
+    public CommandBase getAuto() {
+        return autoBuilder.fullAuto(trajectory);
+    }
 }

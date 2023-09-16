@@ -20,8 +20,11 @@ public class FollowTrajectory {
      * Follows a trajectory using the drivetrain's ramsete controller
      * 
      * @param drivetrain The drivetrain subsystem to use
+     * 
      * @param trajectory The trajectory to follow
-     * @param isFirstPath Whether or not this is the first path in a sequence (resets odometry if true)
+     * 
+     * @param isFirstPath Whether or not this is the first path in a sequence
+     * (resets odometry if true)
      */
     public FollowTrajectory(Drivetrain drivetrain, PathPlannerTrajectory trajectory, boolean isFirstPath) {
         this.isFirstPath = isFirstPath;

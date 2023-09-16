@@ -5,6 +5,7 @@ public enum Pipeline {
     BLUE(1);
 
     private int pipeline;
+
     private Pipeline(int pipeline) {
         this.pipeline = pipeline;
     }

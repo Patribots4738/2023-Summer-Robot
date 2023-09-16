@@ -5,9 +5,9 @@ import frc.robot.subsystems.Drivetrain;
 
 public class DriveWithRoation extends SequentialCommandGroup {
 
-  public DriveWithRoation(Drivetrain drivetrain, double distance, double angle) {
-    addCommands(
-        new RotateBot(drivetrain, angle)
-        .andThen(new DriveToDistance(drivetrain, distance)));
-  }
+    public DriveWithRoation(Drivetrain drivetrain, double distance, double angle) {
+        addCommands(
+                new RotateBot(drivetrain, angle)
+                        .andThen(new DriveToDistance(drivetrain, distance)));
+    }
 }
