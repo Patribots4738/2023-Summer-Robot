@@ -17,7 +17,7 @@ public class DriveToDistance extends PIDCommand {
                 () -> distance,
                 output -> drivetrain.run(output, 0));
 
-        getController().setTolerance(4);
+        getController().setTolerance(DrivetrainConstants.DRIVE_TO_DISTANCE_TOLERANCE);
         this.drivetrain = drivetrain;
     }
 

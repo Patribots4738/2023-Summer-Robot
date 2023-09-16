@@ -35,7 +35,6 @@ public final class Constants {
 
         public static final double DRIVER_DEADBAND_FORWARD = 0.05;
         public static final double DRIVER_DEADBAND_TURN = 0.03;
-        public static final double OPERATOR_DEADBAND = 0.5;
 
         public static final double BETA = 2;
         public static final double ZETA = 0.7;
@@ -54,6 +53,7 @@ public final class Constants {
         public static final boolean RIGHT_MOTOR_INVERT = false;
         public static final boolean LEFT_MOTOR_INVERT = false;
 
+        // TODO: Use these values
         public static final double TURNING_P = 0.6;
         public static final double TURNING_I = 0;
         public static final double TURNING_D = 0.1;
@@ -68,7 +68,7 @@ public final class Constants {
         public static final double SLEW_RATE_DRIVE_NEGATIVE = -10;
 
         // TODO: Tune these values
-        public static final int DRIVE_TO_DISTANCE_TOLERANCE = 0;
+        public static final int DRIVE_TO_DISTANCE_TOLERANCE = 4;
         public static final double ANGLE_TOLERANCE = 0;
 
         // TODO: Tune these values
@@ -80,9 +80,12 @@ public final class Constants {
 
     public final static class PivotConstants implements Loggable {
 
+        // TODO: Use these values
         public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
+        // TODO: Use these values
         public static final double ZERO_OFFSET_OFFSET = 180;
 
+        // TODO: Use these values
         public static final double PIVOT_DEADBAND_DEGREES = 2;
 
         public static final double PIVOT_LOW_LIMIT_DEGREES = 90 - 20;
@@ -141,6 +144,7 @@ public final class Constants {
                 RESET_PLACEMENT
         };
 
+        // TODO: Use these values
         public static final double[] PLACEMENT_SPEEDS_FRONT = {
                 // Low | Index 0
                 -0.15,
@@ -164,6 +168,7 @@ public final class Constants {
                 RESET_PLACEMENT
         };
 
+        // TODO: Use these values
         public static final double[] PLACEMENT_SPEEDS_BACK = {
                 // Low | Index 0
                 -0.15,
@@ -175,18 +180,6 @@ public final class Constants {
                 0.0
 
         };
-
-        // This is an array of times for each placement position
-        // If we wanted the outtake time to be different for each position, we could
-        public static final double[] PLACEMENT_TIMES = {
-                // Low | Index 0
-                1, // seconds
-                   // Mid | Index 1
-                1, // seconds
-                   // High | Index 2
-                1, // seconds
-                   // Reset | Index 3
-                0 // seconds
-        };
+        
     }
 }
