@@ -15,7 +15,7 @@ public class DriveToDistance extends PIDCommand {
                         DrivetrainConstants.DRIVING_D),
                 () -> drivetrain.getLeftEncoder().getPosition(),
                 () -> distance,
-                output -> drivetrain.run(output, 0));
+                output -> drivetrain.drive(output, 0));
 
         getController().setTolerance(DrivetrainConstants.DRIVE_TO_DISTANCE_TOLERANCE);
         this.drivetrain = drivetrain;
@@ -31,7 +31,7 @@ public class DriveToDistance extends PIDCommand {
     @Override
     public void end(boolean interrupted) {
         // Stop motors
-        drivetrain.run(0, 0);
+        drivetrain.drive(0, 0);
     }
 
     @Override

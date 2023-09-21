@@ -15,9 +15,11 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.Constants.ControllerConstants;
@@ -58,8 +60,10 @@ public class Drivetrain extends SubsystemBase {
     private double forward;
     private double turn;
 
-    // Create Gyro
+    // TODO: Why is this here? 
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
+
+    private static Drivetrain instance;
 
     public Drivetrain() {
 
@@ -142,6 +146,13 @@ public class Drivetrain extends SubsystemBase {
         return gyro.getAngle();
     }
 
+    public void zeroGyro() {
+        gyro.reset();
+    }
+
+    // TODO: How do we use this? ADIS16740 doesnt have a  setYaw(double angle) method
+    public void zeroGyro(double angle) {}
+
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
     }
@@ -155,8 +166,8 @@ public class Drivetrain extends SubsystemBase {
             spark.setIdleMode(CANSparkMax.IdleMode.kBrake);
         }
     }
-
-    public void run(double forward, double turn) {
+    
+    public void drive(double forward, double turn) {
         this.forward = -forward;
         this.turn = turn;
     }
@@ -206,4 +217,18 @@ public class Drivetrain extends SubsystemBase {
         this.setSpeeds(
                 new DifferentialDriveWheelSpeeds(leftOutput, rightOutput));
     }
+
+    public static Drivetrain getInstance() {
+        if (instance == null) {
+            instance = new Drivetrain();
+        }
+        return instance;
+    }
+
+    public void stop() {
+        drive.stopMotor();
+    }
+
+
+    
 }

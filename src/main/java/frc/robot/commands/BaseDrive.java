@@ -31,14 +31,14 @@ public class BaseDrive extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        drive.run(forward.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER,
+        drive.drive(forward.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER,
                 turn.getAsDouble() * DrivetrainConstants.DRIVING_SPEED_MULTIPLIER);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        drive.run(0.0, 0.0);
+        drive.drive(0.0, 0.0);
     }
 
     // Returns true when the command should end.

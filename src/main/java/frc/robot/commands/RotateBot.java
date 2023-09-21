@@ -20,7 +20,7 @@ public class RotateBot extends CommandBase {
     @Override
     public void initialize() {
         // rotate to angle
-        drivetrain.run(0, angle);
+        drivetrain.drive(0, angle);
     }
 
     @Override

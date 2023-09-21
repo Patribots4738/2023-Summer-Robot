@@ -121,5 +121,9 @@ public class LimelightBase {
      */
     public double getSelectedPipeline() {
         return limelightTable.getEntry("pipeline").getDouble(0);
+    }
+
+    public LimelightBase getInstance() {
+        return this;
     };
 }

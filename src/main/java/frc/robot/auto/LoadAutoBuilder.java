@@ -21,6 +21,8 @@ public class LoadAutoBuilder {
     private Odometry odometry;
     private ArrayList<PathPlannerTrajectory> trajectory;
 
+    private static LoadAutoBuilder instance;
+
     public LoadAutoBuilder(Drivetrain drivetrain, HashMap<String, Command> eventMap,
             ArrayList<PathPlannerTrajectory> trajectory) {
 
@@ -39,6 +41,20 @@ public class LoadAutoBuilder {
                 this.eventMap,
                 true,
                 this.drivetrain);
+    }
+
+    public static LoadAutoBuilder getInstance(){
+        if (instance == null) {
+            instance = new LoadAutoBuilder(
+                Drivetrain.getInstance(), 
+                new HashMap<String, Command>(), 
+                new ArrayList<PathPlannerTrajectory>());
+        }
+        return instance;
+    }
+
+    public RamseteAutoBuilder getAutoBuilder() {
+        return autoBuilder;
     }
 
     public CommandBase getAuto() {
