@@ -1,90 +1,120 @@
 package frc.robot.auto;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
-
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.DriveToPoint;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
 
+/**
+ * Store trajectories for autonomous. Edit points here. 
+ * @author Daniel Wang
+ */
 public class Trajectories {
+    private static final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA),
+            DrivetrainConstants.DRIVE_KINEMATICS, DrivetrainConstants.MAX_DRIVE_VOLTAGE);
 
-    private static HashMap<String, List<PathPlannerTrajectory>> trajectories = new HashMap<String, List<PathPlannerTrajectory>>();
+    private static final TrajectoryConfig forwardTrajConfig = new TrajectoryConfig(DrivetrainConstants.MAX_DRIVE_VELOCITY,
+            DrivetrainConstants.MAX_DRIVE_ACCELERATION)
+            .setKinematics(DrivetrainConstants.DRIVE_KINEMATICS)
+            .addConstraint(autoVoltageConstraint)
+            .setReversed(false);
 
-    private static RamseteAutoBuilder builder;
+    private static final TrajectoryConfig backwardsTrajConfig = new TrajectoryConfig(DrivetrainConstants.MAX_DRIVE_VELOCITY,
+            DrivetrainConstants.MAX_DRIVE_ACCELERATION)
+            .setKinematics(DrivetrainConstants.DRIVE_KINEMATICS)
+            .addConstraint(autoVoltageConstraint)
+            .setReversed(true);
 
-    private static HashMap<String, Command> CommandEventMap = new HashMap<String, Command>();
+    public static Trajectory driveBack30In = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(),
+        new Pose2d(Units.inchesToMeters(-30), 0, new Rotation2d(0)),
+        backwardsTrajConfig);
 
-    private static Drivetrain drivetrain = Drivetrain.getInstance();
+    public static Trajectory twoBallTraj = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(),
+        new Pose2d(Units.inchesToMeters(40), 0, new Rotation2d(0)),
+        forwardTrajConfig);
 
-    // TODO: add max speed
-    public static double autoSpeed = DrivetrainConstants.MAX_SPEED;
+    public static Trajectory driveForwards500In = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(),
+        new Pose2d(Units.inchesToMeters(250), 0, new Rotation2d(0)),
+        forwardTrajConfig);
 
-    // private static Intake intake = Intake.getInstance();
+    private static HashMap<String, Trajectory> trajectories = new HashMap<String, Trajectory>();
 
-    public static void initTrajectories() {
-        // TODO: add trajectories
-        final String[] trajectoryNames = { "" };
-
-        for (String name : trajectoryNames) {
-            trajectories.put(name, PathPlanner.loadPathGroup(
-                                        name, 
-                                        new PathConstraints(DrivetrainConstants.MAX_SPEED, 
-                                                            DrivetrainConstants.AUTO_SPEED)));
+    static{
+        final String[] trajectoryNames = {
+            "S2H2_i",
+            "S2H2_ii",
+            "S2H1",
+            "S2H2_iii",
+            "S2H2_iv",
+            "4Ball_Terminal180_i",
+            "4Ball_Terminal180_ii",
+            "Terminal2Tarmac",
+            "Tarmac2Terminal",
+            "Billiards_i",
+            "Billiards_ii",
+            "3Ballv2_i",
+            "3Ballv2_ii",
+            "5Ballv2_i",
+            "5Ballv2_ii",
+            "S1H1_i",
+            "S1H1_ii",
+            "S1H2_ii",
+            "S1H2_iii"
+        };
+        for (String trajectoryName : trajectoryNames) {
+            Path path = Filesystem.getDeployDirectory().toPath().resolve("paths").resolve(trajectoryName + ".wpilib.json");
+            try {
+                trajectories.put(trajectoryName, TrajectoryUtil.fromPathweaverJson(path));
+            } catch (IOException ex) {
+                DriverStation.reportError("IOException loading trajectory " + trajectoryName, true);
+            }
         }
-
-        builder = LoadAutoBuilder.getInstance().getAutoBuilder();    
+        trajectories.put("driveBack30In", driveBack30In);
+        trajectories.put("twoBallTraj", twoBallTraj);
+        trajectories.put("driveForwards500In", driveForwards500In);
     }
 
-    public static CommandBase get(String name) {
-        return builder.fullAuto(trajectories.get(name));
+    public static Trajectory get(String name) {
+        return trajectories.get(name);
     }
-
-    public static PathPlannerTrajectory line(Pose2d start, Pose2d end) {
-        return PathPlanner.generatePath(
-                new PathConstraints(DrivetrainConstants.MAX_SPEED, DrivetrainConstants.MAX_ACCELERATION),
-                new PathPoint(start.getTranslation(), start.getRotation()),
-                new PathPoint(end.getTranslation(), end.getRotation()));
+    
+    public static Command trajectoryCmd(String traj) {
+        Drivetrain drive = Drivetrain.getInstance();
+        return new RamseteCommand(
+                        trajectories.get(traj),
+                        drive::getPose,
+                        drive.getRamseteController(),
+                        new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA),
+                        DrivetrainConstants.DRIVE_KINEMATICS,
+                        drive::getWheelSpeeds,
+                        new PIDController(ControllerConstants.RAMSETE_KP, ControllerConstants.RAMSETE_KI, ControllerConstants.REMSETE_KD),
+                        new PIDController(ControllerConstants.RAMSETE_KP, ControllerConstants.RAMSETE_KI, ControllerConstants.REMSETE_KD),
+                        drive::tankDriveVolts,
+                        drive)
+                .andThen(() -> drive.stop());
     }
-
-    public static CommandBase lineCmd(Pose2d start, Pose2d end) {
-        return builder.fullAuto(line(start, end));
-    }
-
-    public static CommandBase resetOdometry() {
-        return Commands.sequence(
-            new InstantCommand(()-> Vision.AUTO_ENABLED = true),
-            new InstantCommand(()-> drivetrain.zeroGyro((DriverStation.getAlliance() == Alliance.Red) || (DriverStation.getAlliance() == Alliance.Blue) ? 0 : 180)),
-            new DriveToPoint(new Translation2d(DriverStation.getAlliance() == Alliance.Red ? -2.5 : 2.5, 0), new Rotation2d(), drivetrain)
-                .until(() -> Vision.getInstance().getCamera(VisionConstants.FRONT).hasValidTarget()),
-            new InstantCommand(()-> drivetrain.stop(), drivetrain),
-            new InstantCommand(()-> Vision.getInstance().visionReset())
-        ).withTimeout(2);
-    }
-
 }

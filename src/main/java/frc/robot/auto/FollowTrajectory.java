@@ -33,11 +33,11 @@ public class FollowTrajectory {
         this.odometry = drivetrain.getOdometry();
     }
 
-    public Command run() {
+    public Command createCommand() {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {
                     if (isFirstPath) {
-                        drivetrain.getOdometry().resetPosition(trajectory.getInitialPose());
+                        drivetrain.getOdometry().resetPose(trajectory.getInitialPose());
                     }
                 }),
                 new PPRamseteCommand(

@@ -38,6 +38,10 @@ public final class Constants {
 
         public static final double BETA = 2;
         public static final double ZETA = 0.7;
+
+        public static final double RAMSETE_KP = 2;
+        public static final double RAMSETE_KI = 0;
+        public static final double REMSETE_KD = 0;
     }
 
     public final static class DrivetrainConstants {
@@ -73,6 +77,18 @@ public final class Constants {
 
         // TODO: Tune these values
         private static final double TRACK_WIDTH_METERS = 0;
+
+        //TODO: Tune these values
+        public static final double MAX_DRIVE_VELOCITY = 0;
+        public static final double MAX_DRIVE_ACCELERATION = 0;
+
+        //TODO: Tune these values
+        public static final double MAX_DRIVE_VOLTAGE = 0;
+
+        //TODO: Tune these values
+        public static final double kS = 0;
+        public static final double kV = 0;
+        public static final double kA = 0;
 
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
                 DrivetrainConstants.TRACK_WIDTH_METERS);

@@ -21,7 +21,7 @@ public class EventMap {
         this.eventMap = new HashMap<String, Command>();
         this.basePath = basePath;
         this.drivetrain = drivetrain;
-        this.command = new FollowTrajectory(this.drivetrain, this.basePath, false).run();
+        this.command = new FollowTrajectory(this.drivetrain, this.basePath, false).createCommand();
 
         this.followPath = new FollowPathWithEvents(
                 this.command,

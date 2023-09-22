@@ -13,6 +13,8 @@ public class LimelightBase {
 
     public NetworkTable limelightTable;
 
+    private static LimelightBase instance;
+    
     public LimelightBase(String name, double cameraAngle, double cameraHeight, double frontDistance) {
         this.name = name;
 
@@ -123,7 +125,10 @@ public class LimelightBase {
         return limelightTable.getEntry("pipeline").getDouble(0);
     }
 
-    public LimelightBase getInstance() {
-        return this;
+    public static LimelightBase getInstance() {
+        if (instance == null) {
+            instance = new LimelightBase("limelight", 0, 0, 0);
+        }
+        return instance;
     };
 }

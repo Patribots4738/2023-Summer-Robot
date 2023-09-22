@@ -98,7 +98,7 @@ public class Odometry {
      * 
      * @param poseMeters The position on the field that your robot is at.
      */
-    public void resetPosition(Pose2d poseMeters) {
+    public void resetPose(Pose2d poseMeters) {
         resetPosition(m_previousAngle, m_prevLeftDistance, m_prevRightDistance, poseMeters);
     }
 

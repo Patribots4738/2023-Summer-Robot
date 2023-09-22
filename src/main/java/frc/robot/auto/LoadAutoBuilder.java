@@ -34,7 +34,7 @@ public class LoadAutoBuilder {
 
         this.autoBuilder = new RamseteAutoBuilder(
                 this.odometry::getPoseMeters,
-                this.odometry::resetPosition,
+                this.odometry::resetPose,
                 this.drivetrain.getRamseteController(),
                 this.kinematics,
                 this.drivetrain::setOutputVolts,

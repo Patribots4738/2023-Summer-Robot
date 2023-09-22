@@ -15,11 +15,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.Constants.ControllerConstants;
@@ -60,7 +59,6 @@ public class Drivetrain extends SubsystemBase {
     private double forward;
     private double turn;
 
-    // TODO: Why is this here? 
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
     private static Drivetrain instance;
@@ -142,6 +140,10 @@ public class Drivetrain extends SubsystemBase {
         return Rotation2d.fromDegrees(getAngle());
     }
 
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
     public double getAngle() {
         return gyro.getAngle();
     }
@@ -170,6 +172,13 @@ public class Drivetrain extends SubsystemBase {
     public void drive(double forward, double turn) {
         this.forward = -forward;
         this.turn = turn;
+        drive.feed();
+    }
+
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        drive(leftVolts / RobotController.getBatteryVoltage(), 
+            rightVolts / RobotController.getBatteryVoltage());
+        drive.feed();
     }
 
     public void modeCoast() {
@@ -186,7 +195,7 @@ public class Drivetrain extends SubsystemBase {
         rightLeadMotor.set(rightOutput);
     }
 
-    public DifferentialDriveWheelSpeeds getSpeeds() {
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
     }
 
