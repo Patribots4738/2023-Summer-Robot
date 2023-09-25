@@ -42,7 +42,11 @@ public class DriveToPoint extends CommandBase{
 
         Translation2d translation = new Translation2d(twist.dx, twist.dy);
 
-        drivetrain.drive(translation.getNorm()/0.02, twist.dtheta/0.02);
+        double norm = 1;
+        if (startPose.getTranslation().getNorm() < endPose.getTranslation().getNorm())
+          norm = -1;
+        drivetrain.drive(( translation.getNorm() * norm )/0.02, twist.dtheta/0.02);
+          
     }
 
 

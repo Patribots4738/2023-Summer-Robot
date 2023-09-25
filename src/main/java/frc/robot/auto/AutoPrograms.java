@@ -39,7 +39,8 @@ public class AutoPrograms {
 
     public Command getAutonomousCommand() {
         //TODO: get selected auto from dashboard
-        String selectedAutoName = .getSelectedAutoName();
+        String selectedAutoName = null;
+        // .getSelectedAutoName();
 
         if (selectedAutoName == null) {
             selectedAutoName = "Intake 0";
@@ -56,7 +57,7 @@ public class AutoPrograms {
             default:
                 //TODO: see if this will be an issue
                 //TODO: what is Log
-                Log.info("Auto Selector", "Something went wrong in getting the auto name - misspelling?");
+                // Log.info("Auto Selector", "Something went wrong in getting the auto name - misspelling?");
                 break;
         }
 

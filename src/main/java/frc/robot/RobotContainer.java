@@ -7,10 +7,15 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
+import frc.robot.commands.DriveToPoint;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
@@ -153,7 +158,7 @@ public class RobotContainer implements Loggable {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return null;
+        return new DriveToPoint(drivetrain.getPose(), new Pose2d(drivetrain.getPose().getTranslation().plus(new Translation2d(1, 1)), drivetrain.getPose().getRotation()), drivetrain);
     }
 
     /**

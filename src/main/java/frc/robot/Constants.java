@@ -66,10 +66,10 @@ public final class Constants {
         public static final double DRIVING_I = 0;
         public static final double DRIVING_D = 0.1;
 
-        public static final double SLEW_RATE_TURN_NEGATIVE = -10;
-        public static final double SLEW_RATE_TURN_POSITIVE = 10;
-        public static final double SLEW_RATE_DRIVE_POSITIVE = 4;
-        public static final double SLEW_RATE_DRIVE_NEGATIVE = -10;
+        public static final double SLEW_RATE_TURN_NEGATIVE = -5;
+        public static final double SLEW_RATE_TURN_POSITIVE = 5;
+        public static final double SLEW_RATE_DRIVE_POSITIVE = 5;
+        public static final double SLEW_RATE_DRIVE_NEGATIVE = -5;
 
         // TODO: Tune these values
         public static final int DRIVE_TO_DISTANCE_TOLERANCE = 4;
