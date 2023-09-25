@@ -1,4 +1,4 @@
-package frc.team3128.autonomous;
+package frc.robot.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
