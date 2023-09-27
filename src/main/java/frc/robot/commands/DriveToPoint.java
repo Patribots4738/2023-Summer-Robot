@@ -1,54 +1,51 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.wpi.first.math.WPIMathJNI;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveToPoint extends CommandBase{
 
-    private Drivetrain drivetrain;
+    private final Drivetrain drivetrain;
 
-    private Pose2d startPose;
-    private Pose2d endPose;
+    private final Pose2d startPose;
+    private final Translation2d endTranslation;
+    private final double dt;
 
-    public Twist2d twist;
+    private Twist2d twist;
 
-    public DriveToPoint(Pose2d startPose, Pose2d endPose, Drivetrain drivetrain){
+    private Rotation2d endRotation;
+
+
+    public DriveToPoint(Pose2d startPose, Translation2d endTranslation, double dt, Drivetrain drivetrain){
         this.drivetrain = drivetrain;
-
         this.startPose = startPose;
-        this.endPose = endPose;
-        
+        this.endTranslation = endTranslation;
+        this.dt = dt;
+
+        double dx = endTranslation.getX() - startPose.getTranslation().getX();
+        double dy = endTranslation.getY() - startPose.getTranslation().getY();
+
+        endRotation = new Rotation2d( -(startPose.getRotation().getDegrees()) + Math.atan2(dx, dy) );
+
         addRequirements(drivetrain);
     }
     
     @Override
     public void initialize(){
-        drivetrain.getOdometry().resetPose(startPose);
+        twist = startPose.log(new Pose2d(endTranslation.getX(), endTranslation.getY(), endRotation));
+        double dxt = twist.dx / dt;
+        double dyt = twist.dy / dt;
+        double dtheta = twist.dtheta / dt;
+        twist = new Twist2d(dxt, dyt, dtheta);
 
-        // get the velocities of the robot to get to the end pose
-        twist = startPose.log(endPose);
-
-        Translation2d translation = new Translation2d(twist.dx, twist.dy);
-
-        double norm = translation.getNorm();
-        if (endPose.getTranslation().getNorm() < startPose.getTranslation().getNorm())
-          norm *= -1;
-        System.out.println(twist.dtheta);
-        drivetrain.drive(norm/5, twist.dtheta*5);
-          
+        drivetrain.drive(Math.abs((twist.dx - twist.dy)), twist.dtheta);
     }
+
+
 
 
     @Override
@@ -58,11 +55,10 @@ public class DriveToPoint extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        boolean isClose = Math.abs(drivetrain.getPose().minus(endPose).getTranslation().getNorm()) < 0.1;
-
-        return isClose;
+        if (startPose.getTranslation().getDistance(endTranslation) < 0.1){
+            return true;
+        }
+        return false;
     }
-
-
     
 }
