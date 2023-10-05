@@ -45,7 +45,7 @@ public class FollowTrajectory {
                         odometry::getPoseMeters,
                         drivetrain.getRamseteController(),
                         drivetrain.getKinematics(),
-                        drivetrain::setOutputVolts,
+                        drivetrain::setOutputSpeeds,
                         true,
                         drivetrain));
     }

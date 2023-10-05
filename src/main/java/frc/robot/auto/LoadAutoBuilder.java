@@ -37,7 +37,7 @@ public class LoadAutoBuilder {
                 this.odometry::resetPose,
                 this.drivetrain.getRamseteController(),
                 this.kinematics,
-                this.drivetrain::setOutputVolts,
+                this.drivetrain::setOutputSpeeds,
                 this.eventMap,
                 true,
                 this.drivetrain);

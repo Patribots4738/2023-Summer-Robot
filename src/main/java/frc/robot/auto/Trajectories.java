@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +24,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
@@ -27,94 +37,52 @@ import frc.robot.subsystems.Drivetrain;
  * @author Daniel Wang
  */
 public class Trajectories {
-    private static final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA),
-            DrivetrainConstants.DRIVE_KINEMATICS, DrivetrainConstants.MAX_DRIVE_VOLTAGE);
+    private static HashMap<String, List<PathPlannerTrajectory>> trajectories = new HashMap<String, List<PathPlannerTrajectory>>();
 
-    private static final TrajectoryConfig forwardTrajConfig = new TrajectoryConfig(DrivetrainConstants.MAX_DRIVE_VELOCITY,
-            DrivetrainConstants.MAX_DRIVE_ACCELERATION)
-            .setKinematics(DrivetrainConstants.DRIVE_KINEMATICS)
-            .addConstraint(autoVoltageConstraint)
-            .setReversed(false);
+    private static RamseteAutoBuilder builder;
 
-    private static final TrajectoryConfig backwardsTrajConfig = new TrajectoryConfig(DrivetrainConstants.MAX_DRIVE_VELOCITY,
-            DrivetrainConstants.MAX_DRIVE_ACCELERATION)
-            .setKinematics(DrivetrainConstants.DRIVE_KINEMATICS)
-            .addConstraint(autoVoltageConstraint)
-            .setReversed(true);
+    private static HashMap<String, Command> CommandEventMap = new HashMap<String, Command>();
 
-    public static Trajectory driveBack30In = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(),
-        new Pose2d(Units.inchesToMeters(-30), 0, new Rotation2d(0)),
-        backwardsTrajConfig);
+    private static Drivetrain drivetrain = Drivetrain.getInstance();
 
-    public static Trajectory twoBallTraj = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(),
-        new Pose2d(Units.inchesToMeters(40), 0, new Rotation2d(0)),
-        forwardTrajConfig);
+    public static double autoSpeed = DrivetrainConstants.MAX_DRIVE_SPEED;
 
-    public static Trajectory driveForwards500In = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(),
-        new Pose2d(Units.inchesToMeters(250), 0, new Rotation2d(0)),
-        forwardTrajConfig);
-
-    private static HashMap<String, Trajectory> trajectories = new HashMap<String, Trajectory>();
-
-    static{
+    public static void initTrajectories() {
         final String[] trajectoryNames = {
-            "S2H2_i",
-            "S2H2_ii",
-            "S2H1",
-            "S2H2_iii",
-            "S2H2_iv",
-            "4Ball_Terminal180_i",
-            "4Ball_Terminal180_ii",
-            "Terminal2Tarmac",
-            "Tarmac2Terminal",
-            "Billiards_i",
-            "Billiards_ii",
-            "3Ballv2_i",
-            "3Ballv2_ii",
-            "5Ballv2_i",
-            "5Ballv2_ii",
-            "S1H1_i",
-            "S1H1_ii",
-            "S1H2_ii",
-            "S1H2_iii"
+
         };
+        
+        // TODO: put in Commands for automous
+        
+
         for (String trajectoryName : trajectoryNames) {
-            Path path = Filesystem.getDeployDirectory().toPath().resolve("paths").resolve(trajectoryName + ".wpilib.json");
-            try {
-                trajectories.put(trajectoryName, TrajectoryUtil.fromPathweaverJson(path));
-            } catch (IOException ex) {
-                DriverStation.reportError("IOException loading trajectory " + trajectoryName, true);
-            }
+            trajectories.put(trajectoryName, PathPlanner.loadPathGroup(trajectoryName, new PathConstraints(DrivetrainConstants.MAX_DRIVE_SPEED, DrivetrainConstants.MAX_DRIVE_ACCELERATION)));
         }
-        trajectories.put("driveBack30In", driveBack30In);
-        trajectories.put("twoBallTraj", twoBallTraj);
-        trajectories.put("driveForwards500In", driveForwards500In);
+
+        builder = new RamseteAutoBuilder(
+            Drivetrain.getInstance()::getPose,
+            Drivetrain.getInstance().getOdometry()::resetPose,
+            Drivetrain.getInstance().getRamseteController(),
+            DrivetrainConstants.DRIVE_KINEMATICS,
+            Drivetrain.getInstance()::setOutputSpeeds,
+            CommandEventMap,
+            Drivetrain.getInstance()
+        );
     }
 
-    public static Trajectory get(String name) {
-        return trajectories.get(name);
+    public static CommandBase get(String name){
+        return builder.fullAuto(trajectories.get(name));
     }
-    
-    public static Command trajectoryCmd(String traj) {
-        Drivetrain drive = Drivetrain.getInstance();
-        return new RamseteCommand(
-                        trajectories.get(traj),
-                        drive::getPose,
-                        drive.getRamseteController(),
-                        new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA),
-                        DrivetrainConstants.DRIVE_KINEMATICS,
-                        drive::getWheelSpeeds,
-                        new PIDController(ControllerConstants.RAMSETE_KP, ControllerConstants.RAMSETE_KI, ControllerConstants.REMSETE_KD),
-                        new PIDController(ControllerConstants.RAMSETE_KP, ControllerConstants.RAMSETE_KI, ControllerConstants.REMSETE_KD),
-                        drive::tankDriveVolts,
-                        drive)
-                .andThen(() -> drive.stop());
+
+    public static PathPlannerTrajectory line(Pose2d start, Pose2d end){
+        return PathPlanner.generatePath(
+            new PathConstraints(DrivetrainConstants.MAX_DRIVE_SPEED, DrivetrainConstants.MAX_DRIVE_ACCELERATION),
+            new PathPoint(start.getTranslation(), start.getRotation()),
+            new PathPoint(end.getTranslation(), end.getRotation())
+        );
+    }
+
+    public static CommandBase lineCmd(Pose2d start, Pose2d end){
+        return builder.fullAuto(line(start, end));
     }
 }

@@ -5,8 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.auto.AutoPrograms;
+import frc.robot.subsystems.Drivetrain;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -20,8 +25,9 @@ import io.github.oblarg.oblog.Logger;
  */
 public class Robot extends TimedRobot {
     private Command autonomousCommand;
-
+    public Timer timer;
     private RobotContainer robotContainer;
+    public static AutoPrograms autoPrograms = new AutoPrograms();
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -51,24 +57,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        // Runs the Scheduler. This is responsible for polling buttons, adding
-        // newly-scheduled
-        // commands, running already-scheduled commands, removing finished or
-        // interrupted commands,
-        // and running subsystem periodic() methods. This must be called from the
-        // robot's periodic
-        // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+        Shuffleboard.update();
         Logger.updateEntries();
-    }
-
-    /** This function is called once each time the robot enters Disabled mode. */
-    @Override
-    public void disabledInit() {
-    }
-
-    @Override
-    public void disabledPeriodic() {
     }
 
     /**
@@ -77,43 +68,43 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        autonomousCommand = robotContainer.getAutonomousCommand();
-
-        // schedule the autonomous command (example)
-        if (autonomousCommand != null) {
+        timer = new Timer();
+        autonomousCommand = autoPrograms.getAutonomousCommand();
+        if(autonomousCommand != null) {
             autonomousCommand.schedule();
+            timer.start();
         }
     }
 
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
+        if(timer.hasElapsed(14.75)){
+            new RunCommand(() -> { 
+                Drivetrain.getInstance().drive(0, 0); 
+                Drivetrain.getInstance().modeBreak(); 
+            }, Drivetrain.getInstance());
+        }
     }
 
     @Override
     public void teleopInit() {
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        if (autonomousCommand != null) {
-            autonomousCommand.cancel();
-        }
+        timer = new Timer();
+        timer.start();
+        CommandScheduler.getInstance().cancelAll();
     }
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+        CommandScheduler.getInstance().run();
+        if(timer.hasElapsed(134.75)){
+            new RunCommand(() -> {
+                Drivetrain.getInstance().drive(0, 0);
+                Drivetrain.getInstance().modeBreak();
+            }, Drivetrain.getInstance());
+        }
     }
-
-    @Override
-    public void testInit() {
-        // Cancels all running commands at the start of test mode.
-        CommandScheduler.getInstance().cancelAll();
-    }
-
-    /** This function is called periodically during test mode. */
-    @Override
-    public void testPeriodic() {
-    }
+    
 }

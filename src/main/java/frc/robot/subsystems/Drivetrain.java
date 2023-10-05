@@ -17,9 +17,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
@@ -60,6 +63,7 @@ public class Drivetrain extends SubsystemBase {
     private double turn;
 
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
+    private Field2d field = new Field2d();
 
     private static Drivetrain instance;
 
@@ -110,6 +114,10 @@ public class Drivetrain extends SubsystemBase {
         // Set the default command for a subsystem here.
         drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
 
+
+        // create a field for displaying robot position on the dashboard
+        SmartDashboard.putData("Field", this.field);
+
         // Flash is burnt in robotContainer... incinerateMotors()
         super.register();
     }
@@ -117,14 +125,17 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        odometry.update(
-                Rotation2d.fromDegrees(getAngle()),
-                leftEncoder.getPosition(),
-                rightEncoder.getPosition());
-
+        
         drive.arcadeDrive(
-                driveFilter.calculate(forward),
-                turn);
+          driveFilter.calculate(forward),
+          turn);
+          
+          odometry.update(
+                  Rotation2d.fromDegrees(getAngle()),
+                  leftEncoder.getPosition(),
+                  rightEncoder.getPosition());
+        
+                  field.setRobotPose(odometry.getPoseMeters());
     }
 
     public Odometry getOdometry() {
@@ -222,7 +233,7 @@ public class Drivetrain extends SubsystemBase {
         return null;
     }
 
-    public void setOutputVolts(double leftOutput, double rightOutput) {
+    public void setOutputSpeeds(double leftOutput, double rightOutput) {
         this.setSpeeds(
                 new DifferentialDriveWheelSpeeds(leftOutput, rightOutput));
     }

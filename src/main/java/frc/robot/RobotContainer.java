@@ -160,8 +160,8 @@ public class RobotContainer implements Loggable {
         // An ExampleCommand will run in autonomous
         return new DriveToPoint(
             drivetrain.getPose(),
-            new Translation2d(1, 1),
-            0.5,
+            new Translation2d(1.0, 1.0),
+            4.0,
           drivetrain);
     }
 

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -19,34 +20,41 @@ public class DriveToPoint extends CommandBase{
 
     private Rotation2d endRotation;
 
+    private Timer timer;
+
 
     public DriveToPoint(Pose2d startPose, Translation2d endTranslation, double dt, Drivetrain drivetrain){
         this.drivetrain = drivetrain;
         this.startPose = startPose;
-        this.endTranslation = endTranslation;
+        this.endTranslation = new Translation2d(
+            startPose.getTranslation().getX() + endTranslation.getX(), 
+            startPose.getTranslation().getY() + endTranslation.getY());
         this.dt = dt;
 
         double dx = endTranslation.getX() - startPose.getTranslation().getX();
         double dy = endTranslation.getY() - startPose.getTranslation().getY();
 
-        endRotation = new Rotation2d( -(startPose.getRotation().getDegrees()) + Math.atan2(dx, dy) );
+        this.endRotation = new Rotation2d( -(startPose.getRotation().getRadians()) + ((2.0) * Math.atan2(dy, dx)) - Math.PI );
 
+        this.timer = new Timer();
+        
         addRequirements(drivetrain);
     }
     
     @Override
     public void initialize(){
         twist = startPose.log(new Pose2d(endTranslation.getX(), endTranslation.getY(), endRotation));
+        
         double dxt = twist.dx / dt;
         double dyt = twist.dy / dt;
         double dtheta = twist.dtheta / dt;
+
         twist = new Twist2d(dxt, dyt, dtheta);
 
-        drivetrain.drive(Math.abs((twist.dx - twist.dy)), twist.dtheta);
+        timer.start();
+
+        drivetrain.drive(twist.dx, twist.dtheta);
     }
-
-
-
 
     @Override
     public void end(boolean interrupted){
@@ -55,7 +63,9 @@ public class DriveToPoint extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        if (startPose.getTranslation().getDistance(endTranslation) < 0.1){
+        if (timer.hasElapsed(this.dt)){
+            timer.stop();
+            timer.reset();
             return true;
         }
         return false;

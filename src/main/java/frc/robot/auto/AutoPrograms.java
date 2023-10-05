@@ -2,18 +2,13 @@ package frc.robot.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ProxyScheduleCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.limelight.LimelightBase;
 
-import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Class to store information about autonomous routines.
@@ -22,47 +17,47 @@ import java.util.function.Supplier;
 
 public class AutoPrograms {
 
-    private Drivetrain drive;
-    private LimelightBase limelights;
+    private HashMap<String, Command> auto;
+    public Drivetrain drive;
+    public LimelightBase limelights;
+
+    private static SendableChooser<String> autoList = new SendableChooser<>();
 
     public AutoPrograms() {
         drive = Drivetrain.getInstance();
         limelights = LimelightBase.getInstance();
+
         initAutoSelector();
     }
 
     private void initAutoSelector() {
-        String[] autoStrings = new String[] {"Intake 0", "Intake 1", "Intake 2", "Intake 1 Hoard 2"};
+        auto = new HashMap<String, Command>();
+
+        Trajectories.autoSpeed = 2.5;
         //TODO: add to autoStrings to dashboard
+
+        Set<String> keySet = auto.keySet();
+        String[] keySetCopy = new String[keySet.size()];
+
+        int index = 0;
+        for(String x : keySet){
+            keySetCopy[index] = x;
+            index++;
+        }
         
+        for (int i = 0; i < auto.size(); i++){
+            autoList.addOption(keySetCopy[i], keySetCopy[i]);
+        }
     }
 
     public Command getAutonomousCommand() {
-        //TODO: get selected auto from dashboard
-        String selectedAutoName = null;
-        // .getSelectedAutoName();
+        String selectedAutoName = autoList.getSelected();
 
-        if (selectedAutoName == null) {
-            selectedAutoName = "Intake 0";
+        if(selectedAutoName == null){
+            return auto.get("DEFAULT");
         }
 
-        Pose2d initialPose = null;
-        Command autoCommand = null;
-
-        switch (selectedAutoName) {
-            case "Intake 0":
-            
-                break;
-
-            default:
-                //TODO: see if this will be an issue
-                //TODO: what is Log
-                // Log.info("Auto Selector", "Something went wrong in getting the auto name - misspelling?");
-                break;
-        }
-
-        drive.getOdometry().resetPose(initialPose);
-        return autoCommand;
+        return auto.get(selectedAutoName);
     }
 
     /**
