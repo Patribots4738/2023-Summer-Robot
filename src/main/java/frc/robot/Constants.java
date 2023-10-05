@@ -92,6 +92,8 @@ public final class Constants {
 
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
                 DrivetrainConstants.TRACK_WIDTH_METERS);
+
+        public static final double MAX_DRIVE_SPEED = 0.8;
     }
 
     public final static class PivotConstants implements Loggable {
