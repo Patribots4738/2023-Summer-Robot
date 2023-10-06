@@ -125,7 +125,7 @@ public class LimelightBase {
         return limelightTable.getEntry("pipeline").getDouble(0);
     }
 
-    public static LimelightBase getInstance() {
+    public static synchronized LimelightBase getInstance() {
         if (instance == null) {
             instance = new LimelightBase("limelight", 0, 0, 0);
         }

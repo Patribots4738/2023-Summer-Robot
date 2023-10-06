@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -61,10 +62,18 @@ public class Drivetrain extends SubsystemBase {
     private double forward;
     private double turn;
 
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA);
+
+    private PIDController leftPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
+    private PIDController rightPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
+
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
     private Field2d field = new Field2d();
 
     private static Drivetrain instance;
+
+    private MotorControllerGroup leftMotors;
+    private MotorControllerGroup rightMotors;
 
     public Drivetrain() {
 
@@ -82,6 +91,9 @@ public class Drivetrain extends SubsystemBase {
         Constants.SPARK_LIST.add(rightLeadMotor);
         Constants.SPARK_LIST.add(leftFollower);
         Constants.SPARK_LIST.add(rightFollower);
+
+        leftMotors = new MotorControllerGroup(leftFollower, leftLeadMotor);
+        rightMotors = new MotorControllerGroup(rightFollower, rightLeadMotor);
 
         leftEncoder = leftLeadMotor.getEncoder();
         rightEncoder = rightLeadMotor.getEncoder();
@@ -111,22 +123,26 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
 
         // Set the default command for a subsystem here.
-        drive = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
+        drive = new DifferentialDrive(leftMotors, rightMotors);
 
 
         // create a field for displaying robot position on the dashboard
         SmartDashboard.putData("Field", this.field);
 
         // Flash is burnt in robotContainer... incinerateMotors()
-        super.register();
+        // super.register();
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         
-        drive.arcadeDrive(
-          driveFilter.calculate(forward),
+        // drive.arcadeDrive(
+        //   driveFilter.calculate(forward),
+        //   turn);
+          
+        drive.tankDrive(
+          forward,
           turn);
           
           odometry.update(
@@ -186,9 +202,9 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        drive(leftVolts / RobotController.getBatteryVoltage(), 
-            rightVolts / RobotController.getBatteryVoltage());
-        drive.feed();
+      leftMotors.setVoltage(leftVolts);
+      rightMotors.setVoltage(rightVolts);
+      drive.feed();
     }
 
     public void modeCoast() {
@@ -217,19 +233,16 @@ public class Drivetrain extends SubsystemBase {
         return ramseteController;
     }
 
-    // TODO: Define these methods
     public PIDController getLeftPIDController() {
-        return null;
+        return leftPIDController;
     }
 
-    // TODO: Define these methods
     public PIDController getRightPIDController() {
-        return null;
+        return rightPIDController;
     }
 
-    // TODO: Define these methods
     public SimpleMotorFeedforward getFeedforward() {
-        return null;
+        return feedforward;
     }
 
     public void setOutputSpeeds(double leftOutput, double rightOutput) {
@@ -237,7 +250,7 @@ public class Drivetrain extends SubsystemBase {
                 new DifferentialDriveWheelSpeeds(leftOutput, rightOutput));
     }
 
-    public static Drivetrain getInstance() {
+    public static synchronized Drivetrain getInstance() {
         if (instance == null) {
             instance = new Drivetrain();
         }

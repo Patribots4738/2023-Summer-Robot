@@ -36,7 +36,7 @@ public class RobotContainer implements Loggable {
     // The robot's subsystems and commands are defined here...
 
     // Subsystems
-    private final Drivetrain drivetrain = new Drivetrain();
+    private final Drivetrain drivetrain = Drivetrain.getInstance();
 
     private final XboxController driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
     private final XboxController operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
@@ -52,10 +52,15 @@ public class RobotContainer implements Loggable {
      * supplier the controller axis, without calling the controller axis once.
      * This is why we use () ->
      */
+    // private final BaseDrive baseDrive = new BaseDrive(
+    //         drivetrain,
+    //         () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
+    //         () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
+
     private final BaseDrive baseDrive = new BaseDrive(
-            drivetrain,
-            () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
-            () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
+      drivetrain,
+      () -> MathUtil.applyDeadband(driverController.getRightY(), ControllerConstants.DRIVER_DEADBAND_TURN),
+      () -> MathUtil.applyDeadband(-driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD));
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
