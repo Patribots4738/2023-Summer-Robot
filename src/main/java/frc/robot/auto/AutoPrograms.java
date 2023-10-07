@@ -3,24 +3,19 @@ package frc.robot.auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.DriveToPoint;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.limelight.LimelightBase;
-import io.github.oblarg.oblog.annotations.Log;
-
 import java.util.HashMap;
 import java.util.Set;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 
 /**
  * Class to store information about autonomous routines.
@@ -47,14 +42,14 @@ public class AutoPrograms {
     private void initAutoSelector() {
         auto = new HashMap<String, Command>();
 
-        Trajectories.autoSpeed = 2.5;
         //TODO: add to autoStrings to dashboard
+
+        //TODO: test this out
         auto.put("DEFAULT", new DriveToPoint(Drivetrain.getInstance().getPose(), 
                 new Translation2d(1.0, 1.0), 
                 4.0, 
                 Drivetrain.getInstance()));
 
-        Trajectories.autoSpeed = 2.5;
         PathConstraints constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
 
         RamseteCommand command = new RamseteCommand(
@@ -69,6 +64,7 @@ public class AutoPrograms {
           Drivetrain.getInstance()::tankDriveVolts,
           Drivetrain.getInstance());
 
+          Drivetrain.getInstance().getOdometry().resetPose(c);
         auto.put("BASIC_CHARGE", command.andThen(() -> Drivetrain.getInstance().drive(0, 0)));
 
         Set<String> keySet = auto.keySet();
