@@ -129,8 +129,6 @@ public class Drivetrain extends SubsystemBase {
         // create a field for displaying robot position on the dashboard
         SmartDashboard.putData("Field", this.field);
 
-        // Flash is burnt in robotContainer... incinerateMotors()
-        // super.register();
     }
 
     @Override

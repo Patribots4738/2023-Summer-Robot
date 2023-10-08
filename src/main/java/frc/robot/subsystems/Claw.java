@@ -16,6 +16,15 @@ public class Claw extends SubsystemBase {
 
     private final SlewRateLimiter filter;
 
+    private static Claw instance;
+
+    public static Claw getInstance() {
+        if (instance == null) {
+            instance = new Claw();
+        }
+        return instance;
+    }
+
     public Claw() {
         speed = 0.0;
 
@@ -35,9 +44,6 @@ public class Claw extends SubsystemBase {
         followerMotor.follow(leadMotor, true);
 
         // Flash is burnt in robotContainer... incinerateMotors()
-
-        // registers the periodic method each program loop
-        super.register();
 
     }
 
