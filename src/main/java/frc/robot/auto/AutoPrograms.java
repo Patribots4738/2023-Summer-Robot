@@ -51,20 +51,9 @@ public class AutoPrograms {
                 Drivetrain.getInstance()));
 
         PathConstraints constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
+        LoadPath newPath = new LoadPath();
+        RamseteCommand command = newPath.loadPath("Charge", constraints);
 
-        RamseteCommand command = new RamseteCommand(
-          PathPlanner.loadPath("Charge", constraints), 
-          Drivetrain.getInstance()::getPose, 
-          Drivetrain.getInstance().getRamseteController(),
-          Drivetrain.getInstance().getFeedforward(),
-          Drivetrain.getInstance().getKinematics(),
-          Drivetrain.getInstance()::getWheelSpeeds,
-          Drivetrain.getInstance().getLeftPIDController(),
-          Drivetrain.getInstance().getRightPIDController(),
-          Drivetrain.getInstance()::tankDriveVolts,
-          Drivetrain.getInstance());
-
-          Drivetrain.getInstance().getOdometry().resetPose(c);
         auto.put("BASIC_CHARGE", command.andThen(() -> Drivetrain.getInstance().drive(0, 0)));
 
         Set<String> keySet = auto.keySet();
