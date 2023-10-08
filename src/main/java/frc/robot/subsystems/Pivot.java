@@ -39,8 +39,11 @@ public class Pivot extends SubsystemBase implements Loggable {
     @Config
     public static double PIVOT_D = 0.02;
 
+    public static int placementIndex;
+
     public Pivot() {
         this.desiredRotation = 0.0;
+        Pivot.placementIndex = PlacementConstants.RESET_INDEX;
 
         // Initialize the motors
         pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
@@ -102,21 +105,25 @@ public class Pivot extends SubsystemBase implements Loggable {
     }
 
     public void setArmHigh(boolean isBackwards) {
+        Pivot.placementIndex = PlacementConstants.HIGH_INDEX;
         setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.HIGH_INDEX]
                 : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.HIGH_INDEX]);
     }
 
     public void setArmLow(boolean isBackwards) {
+        Pivot.placementIndex = PlacementConstants.LOW_INDEX;
         setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.LOW_INDEX]
                 : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.LOW_INDEX]);
     }
 
     public void setArmMid(boolean isBackwards) {
+        Pivot.placementIndex = PlacementConstants.MID_INDEX;
         setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.MID_INDEX]
                 : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.MID_INDEX]);
     }
 
     public void setArmReset() {
+        Pivot.placementIndex = PlacementConstants.RESET_INDEX;
         setDesiredRotation(PlacementConstants.RESET_PLACEMENT);
     }
 

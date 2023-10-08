@@ -6,6 +6,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClawConstants;
+import frc.robot.Constants.PlacementConstants;
 
 public class Claw extends SubsystemBase {
 
@@ -50,6 +51,16 @@ public class Claw extends SubsystemBase {
     // Set the speed of the motors, positive is out, negative is in
     // range: -1, 1
     public void setSpeed(double speed) {
+        leadMotor.setSmartCurrentLimit(
+                speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
+                ClawConstants.CLAW_FREE_CURRENT_LIMIT);
+
+        // if we are intaking, only set the speed if it is faster than the current speed
+        this.speed = (speed > 0 && this.speed > speed) ? this.speed : speed;
+    }
+
+    public void setSpeed(int index, boolean isBackwards){
+        this.speed = (!isBackwards) ? PlacementConstants.PLACEMENT_SPEEDS_FRONT[index] : -PlacementConstants.PLACEMENT_SPEEDS_BACK[index];
         leadMotor.setSmartCurrentLimit(
                 speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
                 ClawConstants.CLAW_FREE_CURRENT_LIMIT);
