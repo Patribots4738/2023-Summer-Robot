@@ -42,7 +42,7 @@ public class RobotContainer implements Loggable {
     private final XboxController operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
     private final Pivot pivot = new Pivot();
-    private final Claw claw = new Claw();
+    private final Claw claw = Claw.getInstance();
     private boolean shootingBackwards;
 
     /*
