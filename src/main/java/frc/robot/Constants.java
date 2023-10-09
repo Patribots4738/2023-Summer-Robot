@@ -102,8 +102,8 @@ public final class Constants {
     public static final int CLAW_LEAD_CAN_ID = 8;
     public static final int CLAW_FOLLOWER_CAN_ID = 7;
 
-    public static final int CLAW_FREE_CURRENT_LIMIT = 30;
-    public static final int CLAW_STALL_CURRENT_LIMIT = 10;
+    public static final int CLAW_FREE_CURRENT_LIMIT = 15;
+    public static final int CLAW_STALL_CURRENT_LIMIT = 7;
     public static final int CLAW_OUTTAKE_CURRENT_LIMIT = 40;
 
   }
