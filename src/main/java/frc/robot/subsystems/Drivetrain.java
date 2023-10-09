@@ -135,13 +135,13 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         
-        // drive.arcadeDrive(
-        //   driveFilter.calculate(forward),
-        //   turn);
-          
-        drive.tankDrive(
-          forward,
+        drive.arcadeDrive(
+          driveFilter.calculate(forward),
           turn);
+          
+        // drive.tankDrive(
+        //   forward,
+        //   turn);
           
           odometry.update(
                   Rotation2d.fromDegrees(getAngle()),
