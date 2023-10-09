@@ -136,7 +136,7 @@ public final class Constants {
         public static final int CLAW_FOLLOWER_CAN_ID = 7;
 
         public static final int CLAW_FREE_CURRENT_LIMIT = 15;
-        public static final int CLAW_STALL_CURRENT_LIMIT = 7;
+        public static final int CLAW_STALL_CURRENT_LIMIT = 4;
         public static final int CLAW_OUTTAKE_CURRENT_LIMIT = 40;
 
     }
@@ -148,8 +148,8 @@ public final class Constants {
         public static final int RESET_INDEX = 3;
 
         public static final double LOW_PLACEMENT_FRONT = 90 + 0;
-        public static final double MID_PLACEMENT_FRONT = 90 + 44;
-        public static final double HIGH_PLACEMENT_FRONT = 90 + 54;
+        public static final double MID_PLACEMENT_FRONT = 90 + 40;
+        public static final double HIGH_PLACEMENT_FRONT = 90 + 60;
         public static final double RESET_PLACEMENT = 78;
 
         public static final double[] PLACEMENT_POSITIONS_FRONT = {
@@ -173,8 +173,8 @@ public final class Constants {
         };
 
         public static final double LOW_PLACEMENT_BACK = 270 + 0;
-        public static final double MID_PLACEMENT_BACK = 270 - 44;
-        public static final double HIGH_PLACEMENT_BACK = 270 - 54;
+        public static final double MID_PLACEMENT_BACK = 270 - 50;
+        public static final double HIGH_PLACEMENT_BACK = 270 - 60;
 
         public static final double[] PLACEMENT_POSITIONS_BACK = {
                 LOW_PLACEMENT_BACK,
