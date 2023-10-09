@@ -39,10 +39,10 @@ public class Claw extends SubsystemBase {
         leadMotor.restoreFactoryDefaults();
         followerMotor.restoreFactoryDefaults();
 
-        leadMotor.setInverted(true);
         leadMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
+        followerMotor.setSmartCurrentLimit(ClawConstants.CLAW_STALL_CURRENT_LIMIT, ClawConstants.CLAW_FREE_CURRENT_LIMIT);
 
-        followerMotor.follow(leadMotor, true);
+        // followerMotor.follow(leadMotor, true);
 
         // Flash is burnt in robotContainer... incinerateMotors()
 
@@ -52,8 +52,12 @@ public class Claw extends SubsystemBase {
     // range: -1, 1
     public void setSpeed(double speed) {
         leadMotor.setSmartCurrentLimit(
-                speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
-                ClawConstants.CLAW_FREE_CURRENT_LIMIT);
+          speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
+          ClawConstants.CLAW_FREE_CURRENT_LIMIT);
+
+        followerMotor.setSmartCurrentLimit(
+          speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
+          ClawConstants.CLAW_FREE_CURRENT_LIMIT);
 
         // if we are intaking, only set the speed if it is faster than the current speed
         this.speed = (speed > 0 && this.speed > speed) ? this.speed : speed;
@@ -61,15 +65,13 @@ public class Claw extends SubsystemBase {
 
     public void setSpeed(int index, boolean isBackwards){
         this.speed = (!isBackwards) ? PlacementConstants.PLACEMENT_SPEEDS_FRONT[index] : -PlacementConstants.PLACEMENT_SPEEDS_BACK[index];
-        leadMotor.setSmartCurrentLimit(
-                speed < 0 ? ClawConstants.CLAW_OUTTAKE_CURRENT_LIMIT : ClawConstants.CLAW_STALL_CURRENT_LIMIT,
-                ClawConstants.CLAW_FREE_CURRENT_LIMIT);
-
-        // if we are intaking, only set the speed if it is faster than the current speed
-        this.speed = (speed > 0 && this.speed > speed) ? this.speed : speed;
+        setSpeed(speed);
     }
 
     public void periodic() {
-        leadMotor.set(filter.calculate(speed));
+        double calculatedSpeed = filter.calculate(speed);
+        leadMotor.set(-calculatedSpeed);
+        followerMotor.set(calculatedSpeed);
     }
 }
+

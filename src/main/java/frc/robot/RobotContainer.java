@@ -140,7 +140,7 @@ public class RobotContainer implements Loggable {
         POVLeft.onTrue((new InstantCommand(() -> shootingBackwards = false)));
 
         // TODO: set speed values to constant
-        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(0.3)));
+        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(0.15)));
         rightTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(Pivot.placementIndex, shootingBackwards)));
 
         // CLAW STOP
