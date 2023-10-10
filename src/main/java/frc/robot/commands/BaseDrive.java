@@ -38,7 +38,8 @@ public class BaseDrive extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        drive.drive(0.0, 0.0);
+        StopDrive stop = new StopDrive();
+        stop.execute();
     }
 
     // Returns true when the command should end.

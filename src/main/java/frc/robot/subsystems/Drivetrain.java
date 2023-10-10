@@ -117,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
                 Rotation2d.fromDegrees(getAngle()),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition(),
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+                new Pose2d());
 
         leftLeadMotor.setInverted(true);
         rightLeadMotor.setInverted(false);
@@ -161,12 +161,12 @@ public class Drivetrain extends SubsystemBase {
         //   forward,
         //   turn);
           
-          odometry.update(
-                  Rotation2d.fromDegrees(getAngle()),
-                  leftEncoder.getPosition(),
-                  rightEncoder.getPosition());
+        odometry.update(
+                Rotation2d.fromDegrees(getAngle()),
+                leftEncoder.getPosition(),
+                rightEncoder.getPosition());
         
-                  field.setRobotPose(odometry.getPoseMeters());
+        field.setRobotPose(odometry.getPoseMeters());
     }
 
     public Odometry getOdometry() {
@@ -218,8 +218,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-      leftMotors.setVoltage(leftVolts);
-      rightMotors.setVoltage(rightVolts);
+      // leftMotors.setVoltage(leftVolts);
+      // rightMotors.setVoltage(rightVolts);
+
+      leftMotors.set(leftVolts);
+      rightMotors.set(rightVolts);
+
       drive.feed();
     }
 

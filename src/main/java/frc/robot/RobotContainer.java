@@ -161,20 +161,6 @@ public class RobotContainer implements Loggable {
     }
 
     /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
-        return new DriveToPoint(
-            drivetrain.getPose(),
-            new Translation2d(1.0, 1.0),
-            4.0,
-          drivetrain);
-    }
-
-    /**
      * Run burnFlash() for all controllers initialized. burnFlash() stops comms
      * w/deivce for 200ms or more.
      * Might include calls from before method was called or calls from after.
