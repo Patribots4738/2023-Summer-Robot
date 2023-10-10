@@ -26,7 +26,7 @@ public class RotateBot extends CommandBase {
     @Override
     public void execute() {
         // check if at angle
-        if (drivetrain.getAngle() - angle < DrivetrainConstants.ANGLE_TOLERANCE) {
+        if (drivetrain.getGyroAngleDegrees() - angle < DrivetrainConstants.ANGLE_TOLERANCE) {
             isFinished = true;
         }
     }
