@@ -56,7 +56,7 @@ public class AutoPrograms {
                 4.0, 
                 Drivetrain.getInstance()));
 
-        constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
+        constraints = new PathConstraints(2, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
         SequentialCommandGroup command = LoadPath.loadPath("Charge", constraints);
         auto.put("BASIC_CHARGE", new SequentialCommandGroup(command, StopDrive.getCommand()));
 
