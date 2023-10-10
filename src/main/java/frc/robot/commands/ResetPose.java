@@ -7,7 +7,14 @@ import frc.robot.subsystems.Drivetrain;
 
 public class ResetPose extends CommandBase {
     private static Pose2d desiredPose = new Pose2d();
-    private static InstantCommand command = new InstantCommand(() -> Drivetrain.getInstance().getOdometry().resetPose(desiredPose));
+    private static InstantCommand command = 
+        new InstantCommand(() -> Drivetrain.getInstance()
+            .getOdometry()
+            .resetPose(
+                Drivetrain.getInstance()
+                    .getGyroAngleRotation2d(), 
+                    desiredPose)
+    );
     private static ResetPose instance;
 
     public ResetPose(){
@@ -33,6 +40,6 @@ public class ResetPose extends CommandBase {
 
     @Override
     public void initialize() {
-        command.execute();;
+        command.execute();
     }
 }
