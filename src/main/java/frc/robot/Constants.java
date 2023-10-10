@@ -46,6 +46,12 @@ public final class Constants {
 
     public final static class DrivetrainConstants {
 
+        public static final double WHEEL_DIAMETER_METERS = 0.15;
+        public static final double WHEEL_CIRC_METERS = WHEEL_DIAMETER_METERS * Math.PI;
+        public static final double DRIVETRAIN_GEAR_RATIO = 10.71;
+        public static final double DRIVING_ENCODER_POS_FACTOR = WHEEL_CIRC_METERS / DRIVETRAIN_GEAR_RATIO; // meters
+        public static final double DRIVING_ENCODER_VEL_FACTOR = DRIVING_ENCODER_POS_FACTOR / 60; // m/s
+
         public static final double DRIVING_SPEED_MULTIPLIER = 1;
 
         public static final int LEFT_MOTOR_FRONT_CAN_ID = 1;

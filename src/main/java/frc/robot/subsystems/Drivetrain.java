@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -44,31 +43,28 @@ public class Drivetrain extends SubsystemBase {
     // Create Differential Drive
     private final DifferentialDrive drive;
 
-    private final DifferentialDriveKinematics kinematics = DrivetrainConstants.DRIVE_KINEMATICS;
+    private final DifferentialDriveKinematics kinematics;
 
     // Create Odometry
     private final Odometry odometry;
 
     // Create Filters for Slew Rate Limiting
-    SlewRateLimiter turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN_POSITIVE,
-            DrivetrainConstants.SLEW_RATE_TURN_NEGATIVE, 0);
-    SlewRateLimiter driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE_POSITIVE,
-            DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
+    SlewRateLimiter turnFilter;
+    SlewRateLimiter driveFilter;
 
     // Create Ramsete Controller
-    private final RamseteController ramseteController = new RamseteController(ControllerConstants.BETA,
-            ControllerConstants.ZETA);
+    private final RamseteController ramseteController;
 
     private double forward;
     private double turn;
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA);
+    private SimpleMotorFeedforward feedforward;
 
-    private PIDController leftPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
-    private PIDController rightPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
+    private PIDController leftPIDController;
+    private PIDController rightPIDController;
 
-    private final ADIS16470_IMU gyro = new ADIS16470_IMU();
-    private Field2d field = new Field2d();
+    private final ADIS16470_IMU gyro;
+    private Field2d field;
 
     private static Drivetrain instance;
 
@@ -76,6 +72,21 @@ public class Drivetrain extends SubsystemBase {
     private MotorControllerGroup rightMotors;
 
     public Drivetrain() {
+
+        kinematics = DrivetrainConstants.DRIVE_KINEMATICS;
+        feedforward = new SimpleMotorFeedforward(DrivetrainConstants.kS, DrivetrainConstants.kV, DrivetrainConstants.kA);
+        leftPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
+        rightPIDController = new PIDController(DrivetrainConstants.DRIVING_P, DrivetrainConstants.DRIVING_I, DrivetrainConstants.DRIVING_D);
+        
+        turnFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_TURN_POSITIVE,
+                DrivetrainConstants.SLEW_RATE_TURN_NEGATIVE, 0);
+        driveFilter = new SlewRateLimiter(DrivetrainConstants.SLEW_RATE_DRIVE_POSITIVE,
+                DrivetrainConstants.SLEW_RATE_DRIVE_NEGATIVE, 0);
+        ramseteController = new RamseteController(ControllerConstants.BETA,
+                ControllerConstants.ZETA);
+
+        gyro = new ADIS16470_IMU();
+        field = new Field2d();
 
         // Initialize motors
         leftLeadMotor = new CANSparkMax(DrivetrainConstants.LEFT_MOTOR_FRONT_CAN_ID,
@@ -87,27 +98,26 @@ public class Drivetrain extends SubsystemBase {
         rightFollower = new CANSparkMax(DrivetrainConstants.RIGHT_MOTOR_FOLLOWER_CAN_ID,
                 CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        Constants.SPARK_LIST.add(leftLeadMotor);
-        Constants.SPARK_LIST.add(rightLeadMotor);
-        Constants.SPARK_LIST.add(leftFollower);
-        Constants.SPARK_LIST.add(rightFollower);
-
-        leftMotors = new MotorControllerGroup(leftFollower, leftLeadMotor);
-        rightMotors = new MotorControllerGroup(rightFollower, rightLeadMotor);
+        leftLeadMotor.restoreFactoryDefaults();
+        rightLeadMotor.restoreFactoryDefaults();
+        leftFollower.restoreFactoryDefaults();
+        rightFollower.restoreFactoryDefaults();
 
         leftEncoder = leftLeadMotor.getEncoder();
+        leftEncoder.setPositionConversionFactor(DrivetrainConstants.DRIVING_ENCODER_POS_FACTOR);
+        leftEncoder.setPositionConversionFactor(DrivetrainConstants.DRIVING_ENCODER_VEL_FACTOR);
         rightEncoder = rightLeadMotor.getEncoder();
+        rightEncoder.setPositionConversionFactor(DrivetrainConstants.DRIVING_ENCODER_POS_FACTOR);
+        rightEncoder.setVelocityConversionFactor(DrivetrainConstants.DRIVING_ENCODER_VEL_FACTOR);
+
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
 
         odometry = new Odometry(
                 Rotation2d.fromDegrees(getAngle()),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition(),
                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-
-        leftLeadMotor.restoreFactoryDefaults();
-        rightLeadMotor.restoreFactoryDefaults();
-        leftFollower.restoreFactoryDefaults();
-        rightFollower.restoreFactoryDefaults();
 
         leftLeadMotor.setInverted(true);
         rightLeadMotor.setInverted(false);
@@ -122,9 +132,16 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.follow(leftLeadMotor, DrivetrainConstants.LEFT_MOTOR_INVERT);
         rightFollower.follow(rightLeadMotor, DrivetrainConstants.RIGHT_MOTOR_INVERT);
 
+        Constants.SPARK_LIST.add(leftLeadMotor);
+        Constants.SPARK_LIST.add(rightLeadMotor);
+        Constants.SPARK_LIST.add(leftFollower);
+        Constants.SPARK_LIST.add(rightFollower);
+
+        leftMotors = new MotorControllerGroup(leftFollower, leftLeadMotor);
+        rightMotors = new MotorControllerGroup(rightFollower, rightLeadMotor);
+
         // Set the default command for a subsystem here.
         drive = new DifferentialDrive(leftMotors, rightMotors);
-
 
         // create a field for displaying robot position on the dashboard
         SmartDashboard.putData("Field", this.field);
@@ -134,7 +151,8 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        
+        // if (rightEncoder.getPosition() != 0) System.out.println(rightEncoder.getPosition());
+
         drive.arcadeDrive(
           driveFilter.calculate(forward),
           turn);

@@ -36,13 +36,13 @@ public class RobotContainer implements Loggable {
     // The robot's subsystems and commands are defined here...
 
     // Subsystems
-    private final Drivetrain drivetrain = Drivetrain.getInstance();
+    private final Drivetrain drivetrain;
 
-    private final XboxController driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
-    private final XboxController operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
+    private final XboxController driverController;
+    private final XboxController operatorController;
 
-    private final Pivot pivot = new Pivot();
-    private final Claw claw = Claw.getInstance();
+    private final Pivot pivot;
+    private final Claw claw;
     private boolean shootingBackwards;
 
     /*
@@ -52,10 +52,7 @@ public class RobotContainer implements Loggable {
      * supplier the controller axis, without calling the controller axis once.
      * This is why we use () ->
      */
-    private final BaseDrive baseDrive = new BaseDrive(
-            drivetrain,
-            () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
-            () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
+    private final BaseDrive baseDrive;
 
     // private final BaseDrive baseDrive = new BaseDrive(
     //   drivetrain,
@@ -66,6 +63,16 @@ public class RobotContainer implements Loggable {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+
+        drivetrain = Drivetrain.getInstance();
+        driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
+        operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
+        pivot = new Pivot();
+        claw = Claw.getInstance();
+        baseDrive = new BaseDrive(
+            drivetrain,
+            () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
+            () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
         // Configure the button bindings
         drivetrain.setDefaultCommand(baseDrive);
         // claw.setDefaultCommand(manualSetClawSpeed);
