@@ -114,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPosition(0);
 
         odometry = new Odometry(
-                Rotation2d.fromDegrees(getAngle()),
+                getGyroAngleRotation2d(),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition(),
                 new Pose2d());
@@ -162,7 +162,7 @@ public class Drivetrain extends SubsystemBase {
         //   turn);
           
         odometry.update(
-                Rotation2d.fromDegrees(getAngle()),
+                Rotation2d.fromDegrees(getGyroAngleDegrees()),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition());
         
@@ -178,25 +178,18 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPosition(0);
     }
 
-    public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getAngle());
+    public Rotation2d getGyroAngleRotation2d() {
+        return Rotation2d.fromDegrees(getGyroAngleDegrees());
     }
 
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
-    public double getAngle() {
+    public double getGyroAngleDegrees() {
         return gyro.getAngle();
     }
-
-    public void zeroGyro() {
-        gyro.reset();
-    }
-
-    // TODO: How do we use this? ADIS16740 doesnt have a  setYaw(double angle) method
-    public void zeroGyro(double angle) {}
-
+    
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
     }
