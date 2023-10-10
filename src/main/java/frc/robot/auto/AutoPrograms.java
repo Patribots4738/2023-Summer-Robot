@@ -1,14 +1,18 @@
 package frc.robot.auto;
 
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.DriveToPoint;
+import frc.robot.commands.StopDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.limelight.LimelightBase;
 import java.util.HashMap;
@@ -16,6 +20,7 @@ import java.util.Set;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 
 /**
  * Class to store information about autonomous routines.
@@ -41,7 +46,8 @@ public class AutoPrograms {
 
     private void initAutoSelector() {
         auto = new HashMap<String, Command>();
-
+    
+        PathConstraints constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
         //TODO: add to autoStrings to dashboard
 
         //TODO: test this out
@@ -50,11 +56,9 @@ public class AutoPrograms {
                 4.0, 
                 Drivetrain.getInstance()));
 
-        PathConstraints constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        LoadPath newPath = new LoadPath();
-        RamseteCommand command = newPath.loadPath("Charge", constraints);
-
-        auto.put("BASIC_CHARGE", command.andThen(() -> Drivetrain.getInstance().drive(0, 0)));
+        constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
+        SequentialCommandGroup command = LoadPath.loadPath("Charge", constraints);
+        auto.put("BASIC_CHARGE", new SequentialCommandGroup(command, StopDrive.getCommand()));
 
         Set<String> keySet = auto.keySet();
         String[] keySetCopy = new String[keySet.size()];
@@ -71,11 +75,10 @@ public class AutoPrograms {
     }
 
     public Command getAutonomousCommand() {
-      Drivetrain.getInstance().getOdometry().resetPose(new Pose2d());
         String selectedAutoName = autoList.getSelected();
 
         if(selectedAutoName == null){
-            return auto.get("DEFAULT");
+            selectedAutoName = "DEFAULT";
         }
 
         return auto.get(selectedAutoName);

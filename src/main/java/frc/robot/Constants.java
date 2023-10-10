@@ -75,7 +75,14 @@ public final class Constants {
         public static final int DRIVE_TO_DISTANCE_TOLERANCE = 4;
         public static final double ANGLE_TOLERANCE = 0.1;
 
-        private static final double TRACK_WIDTH_METERS = 0.051;
+        private static final double TRACK_WIDTH_METERS = 0.5588;
+
+        public static final double GEAR_RATIO = 12.75;
+        public static final double WHEEL_DIAMETER_METERS = 0.15;
+        public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
+
+        public static final double DRIVING_ENCODER_POSITION_FACTOR = (WHEEL_CIRCUMFERENCE_METERS / GEAR_RATIO); // meters
+        public static final double DRIVING_ENCODER_VELOCITY_FACTOR = (DRIVING_ENCODER_POSITION_FACTOR) / 60.0; // meters per second
 
         public static final double MAX_DRIVE_VELOCITY = 4;
         public static final double MAX_DRIVE_ACCELERATION = 1;

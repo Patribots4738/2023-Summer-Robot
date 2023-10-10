@@ -96,13 +96,18 @@ public class Drivetrain extends SubsystemBase {
         rightMotors = new MotorControllerGroup(rightFollower, rightLeadMotor);
 
         leftEncoder = leftLeadMotor.getEncoder();
+        leftEncoder.setPositionConversionFactor(DrivetrainConstants.DRIVING_ENCODER_POSITION_FACTOR);
+        leftEncoder.setVelocityConversionFactor(DrivetrainConstants.DRIVING_ENCODER_VELOCITY_FACTOR);
+
         rightEncoder = rightLeadMotor.getEncoder();
+        rightEncoder.setPositionConversionFactor(DrivetrainConstants.DRIVING_ENCODER_POSITION_FACTOR);
+        rightEncoder.setVelocityConversionFactor(DrivetrainConstants.DRIVING_ENCODER_VELOCITY_FACTOR);
 
         odometry = new Odometry(
                 Rotation2d.fromDegrees(getAngle()),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition(),
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+                new Pose2d());
 
         leftLeadMotor.restoreFactoryDefaults();
         rightLeadMotor.restoreFactoryDefaults();
@@ -143,12 +148,12 @@ public class Drivetrain extends SubsystemBase {
         //   forward,
         //   turn);
           
-          odometry.update(
-                  Rotation2d.fromDegrees(getAngle()),
-                  leftEncoder.getPosition(),
-                  rightEncoder.getPosition());
+        odometry.update(
+                Rotation2d.fromDegrees(getAngle()),
+                leftEncoder.getPosition(),
+                rightEncoder.getPosition());
         
-                  field.setRobotPose(odometry.getPoseMeters());
+        field.setRobotPose(odometry.getPoseMeters());
     }
 
     public Odometry getOdometry() {
@@ -200,8 +205,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-      leftMotors.setVoltage(leftVolts);
-      rightMotors.setVoltage(rightVolts);
+      // leftMotors.setVoltage(leftVolts);
+      // rightMotors.setVoltage(rightVolts);
+
+      leftMotors.set(leftVolts);
+      rightMotors.set(rightVolts);
+
       drive.feed();
     }
 

@@ -3,38 +3,47 @@ package frc.robot.auto;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.ResetPose;
 import frc.robot.subsystems.Drivetrain;
 
 public class LoadPath {
     
-    private PathConstraints constraints;
-    private PathPlannerTrajectory trajectory;
-    private RamseteCommand command;
+    private static PathConstraints constraints;
+    private static PathPlannerTrajectory trajectory;
+    private static PPRamseteCommand command;
 
     public LoadPath() {
-        this.constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        this.command = loadPath("DEFAULT", this.constraints);
+      init();
     }
 
-    public RamseteCommand loadPath(String pathName, PathConstraints constraints) {
+    private static void init(){
+      LoadPath.constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
+  }
 
-        this.trajectory = PathPlanner.loadPath(pathName, constraints);
-        this.command = new RamseteCommand(
-            this.trajectory, 
-            Drivetrain.getInstance()::getPose, 
-            Drivetrain.getInstance().getRamseteController(),
-            Drivetrain.getInstance().getFeedforward(),
-            Drivetrain.getInstance().getKinematics(),
-            Drivetrain.getInstance()::getWheelSpeeds,
-            Drivetrain.getInstance().getLeftPIDController(),
-            Drivetrain.getInstance().getRightPIDController(),
-            Drivetrain.getInstance()::tankDriveVolts,
-            Drivetrain.getInstance());
+    public static SequentialCommandGroup loadPath(String pathName, PathConstraints constraints) {
 
-        return this.command;        
+        LoadPath.trajectory = PathPlanner.loadPath(pathName, constraints);
+        LoadPath.command = new PPRamseteCommand(
+          LoadPath.trajectory,
+          Drivetrain.getInstance()::getPose,
+          Drivetrain.getInstance().getRamseteController(),
+          // Drivetrain.getInstance().getFeedforward(),
+          Drivetrain.getInstance().getKinematics(),
+          // Drivetrain.getInstance()::getWheelSpeeds,
+          // new PIDController(1, 0, 0),
+          // new PIDController(1, 0, 0),
+          Drivetrain.getInstance()::tankDriveVolts,
+          Drivetrain.getInstance()
+        );
+
+        return new SequentialCommandGroup(ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(), LoadPath.command);
     }
 
 }
