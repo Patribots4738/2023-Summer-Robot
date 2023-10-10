@@ -47,9 +47,7 @@ public class Pivot extends SubsystemBase implements Loggable {
 
         // Initialize the motors
         pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
-        Constants.SPARK_LIST.add(pivotLead);
         pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
-        Constants.SPARK_LIST.add(pivotFollower);
 
         // Restore the motors to factory defaults
         pivotLead.restoreFactoryDefaults();
@@ -73,6 +71,8 @@ public class Pivot extends SubsystemBase implements Loggable {
         pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
         pivotPIDController.setOutputRange(-0.3, 0.3);
         // Flash is burnt in robotContainer... incinerateMotors()
+        Constants.SPARK_LIST.add(pivotLead);
+        Constants.SPARK_LIST.add(pivotFollower);
 
         setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.RESET_INDEX]);
     }
@@ -101,7 +101,7 @@ public class Pivot extends SubsystemBase implements Loggable {
         this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
                 PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
         // System.out.println("desired Rotation:" + this.desiredRotation);
-        pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
+        // pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
     }
 
     public void setArmHigh(boolean isBackwards) {
