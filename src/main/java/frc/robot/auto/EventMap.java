@@ -29,6 +29,6 @@ public class EventMap {
     }
 
     public FollowPathWithEvents getPathEventCommand(){
-
+      return null;
     }
 }
