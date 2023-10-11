@@ -64,7 +64,7 @@ public class Claw extends SubsystemBase {
     }
 
     public void setSpeed(int index, boolean isBackwards){
-        this.speed = (!isBackwards) ? PlacementConstants.PLACEMENT_SPEEDS_FRONT[index] : -PlacementConstants.PLACEMENT_SPEEDS_BACK[index];
+        this.speed = (!isBackwards) ? PlacementConstants.PLACEMENT_SPEEDS_FRONT[index] : PlacementConstants.PLACEMENT_SPEEDS_BACK[index];
         setSpeed(speed);
     }
 

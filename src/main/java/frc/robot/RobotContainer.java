@@ -17,6 +17,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import io.github.oblarg.oblog.Loggable;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -143,8 +144,9 @@ public class RobotContainer implements Loggable {
         POVRight.onTrue((new InstantCommand(() -> shootingBackwards = true)));
         POVLeft.onTrue((new InstantCommand(() -> shootingBackwards = false)));
 
+        
         // TODO: set speed values to constant
-        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(0.15)));
+        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(0.4)));
         rightTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(Pivot.placementIndex, shootingBackwards)));
 
         // CLAW STOP
@@ -153,7 +155,10 @@ public class RobotContainer implements Loggable {
         // CLAW AUTO OUTTAKE
         // TODO: set speed values to constant
         rightBumper.onTrue(new InstantCommand(() -> claw.setSpeed(Pivot.placementIndex, shootingBackwards))
-                .andThen(new InstantCommand(() -> pivot.setArmReset())));
+                .andThen(new WaitCommand(1))
+                .andThen(new InstantCommand(() -> pivot.setArmReset()))
+                .andThen(new InstantCommand(() -> claw.setSpeed(0))));
+
 
     }
 
