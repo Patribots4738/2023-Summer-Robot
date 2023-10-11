@@ -13,6 +13,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.ResetPose;
+import frc.robot.commands.StopDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 
@@ -46,14 +47,14 @@ public class LoadPath {
           Drivetrain.getInstance()
         );
 
+        // Reset the pose to the initial pose of the trajectory
+        // Run the trajectory
+        // Stop the drive
         return new SequentialCommandGroup(
           ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(), 
-          
-          new SequentialCommandGroup(
-            new InstantCommand(() -> Pivot.getInstance().setArmHigh(true)))
-              .until(Pivot.getInstance()::pivotAtDesiredPosition),
-          
-          LoadPath.command);
+          LoadPath.command,
+          StopDrive.getCommand()
+          );
     }
 
 }
