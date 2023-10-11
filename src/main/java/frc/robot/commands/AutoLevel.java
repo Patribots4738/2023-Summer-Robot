@@ -1,66 +1,74 @@
 package frc.robot.commands;
 
+import java.util.function.BiConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.Constants.AlignmentConstants;
 import frc.robot.subsystems.Drivetrain;
 
-public class AutoLevel extends InstantCommand{
+public class AutoLevel extends CommandBase{
 
     Timer elapsedTime;
 
     Command driveForward;
     Command driveBackward;
 
-    boolean tiltedLeft;
-    boolean tiltedRight;
+    boolean tiltedForward;
+    boolean tiltedBackwards;
 
+    private double tilt;
+    
+    Supplier<Double> getTilt;
 
-    /*
-     * double elapsedTime = Timer.getFPGATimestamp() - startedChargePad;
-      // boolean setWheelsUp = false;
-      double tilt = 0;
-
-      // If our heading is within -45 to 45 degrees or within -135 and -180 or within 135 to 180, use the pitch
-      // Otherwise, use the roll
-      if (-45 < swerve.getYaw().getDegrees() && swerve.getYaw().getDegrees() < 45) {
-        tilt = -swerve.getPitch().getRadians();
-      }
-      else if (-180 < swerve.getYaw().getDegrees() && swerve.getYaw().getDegrees() < -135 ||
-          135 < swerve.getYaw().getDegrees() && swerve.getYaw().getDegrees() < 180) 
-      {
-        tilt = swerve.getPitch().getRadians();
-      }
-      else if (-135 < swerve.getYaw().getDegrees() && swerve.getYaw().getDegrees() < -45) {
-        tilt = swerve.getRoll().getRadians();
-      }
-      else if (45 < swerve.getYaw().getDegrees() && swerve.getYaw().getDegrees() < 135) 
-      {
-        tilt = -swerve.getRoll().getRadians();
-      }
-     */
     public AutoLevel(){
         this.elapsedTime = new Timer();
+
+        this.getTilt = () -> {
+            double tiltedAngle = 0;
+            if (-45 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 45) {
+                tiltedAngle =  -Drivetrain.getInstance().getPitch().getRadians();
+            }
+            else if (-180 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < -135 ||
+                135 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 180) 
+            {
+                tiltedAngle = Drivetrain.getInstance().getPitch().getRadians();
+            }
+            else if (-135 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < -45) {
+                tiltedAngle = Drivetrain.getInstance().getRoll().getRadians();
+            }
+            else if (45 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 135) 
+            {
+                tiltedAngle = -Drivetrain.getInstance().getRoll().getRadians();
+            }
+            return tiltedAngle;
+        };
         
         addRequirements(Drivetrain.getInstance());
     }
 
     // TODO: Do we need to use pitch and roll as shown above?
-    
+
+    @Override
+    public void initialize() {
+        this.elapsedTime.start();
+    }
+
     @Override
     public void execute() {
-        elapsedTime.start();
-        double tilt = Drivetrain.getInstance().getGyroAngleDegrees();
+        this.tilt = this.getTilt.get();
 
-        this.tiltedLeft = tilt < 7;
-        this.tiltedRight = tilt > -7;
+        this.tiltedForward = tilt < 7;
+        this.tiltedBackwards = tilt > -7;
 
         this.driveForward = new InstantCommand(
             () -> Drivetrain.getInstance().drive(
@@ -82,20 +90,20 @@ public class AutoLevel extends InstantCommand{
                         -0.055),
                         0));
 
-        ConditionalCommand repeatCommand = new ConditionalCommand(
-            this.driveForward.until(() -> tiltedRight),
+        ConditionalCommand command = new ConditionalCommand(
+            this.driveForward.until(() -> tiltedForward),
             new ConditionalCommand(
-                this.driveBackward.until(() -> tiltedLeft), 
+                this.driveBackward.until(() -> tiltedBackwards), 
                 StopDrive.getCommand(), 
-                () -> tiltedRight),
-            () -> tiltedLeft );
+                () -> tiltedForward),
+            () -> tiltedBackwards );
 
-        repeatCommand.execute();
+        command.execute();
     }
 
     @Override
     public boolean isFinished() {
-        return (!tiltedLeft && !tiltedRight);
+        return (!tiltedForward && !tiltedBackwards);
     }
 
 }
