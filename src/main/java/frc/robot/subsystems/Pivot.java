@@ -41,6 +41,8 @@ public class Pivot extends SubsystemBase implements Loggable {
 
     public static int placementIndex;
 
+    public static Pivot instance;
+
     public Pivot() {
         this.desiredRotation = 0.0;
         Pivot.placementIndex = PlacementConstants.RESET_INDEX;
@@ -91,6 +93,10 @@ public class Pivot extends SubsystemBase implements Loggable {
         return encoderPositionDegrees;
     }
 
+    public boolean pivotAtDesiredPosition() {
+      return 0 == MathUtil.applyDeadband(desiredRotation-getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES)
+    }
+
     /**
      * Set the rotation of the pivot, in degrees
      * 
@@ -101,7 +107,7 @@ public class Pivot extends SubsystemBase implements Loggable {
         this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
                 PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
         // System.out.println("desired Rotation:" + this.desiredRotation);
-        // pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
+        pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
     }
 
     public void setArmHigh(boolean isBackwards) {
@@ -125,6 +131,14 @@ public class Pivot extends SubsystemBase implements Loggable {
     public void setArmReset() {
         Pivot.placementIndex = PlacementConstants.RESET_INDEX;
         setDesiredRotation(PlacementConstants.RESET_PLACEMENT);
+    }
+
+    public static Pivot getInstance() {
+      if (instance == null){
+        instance = new Pivot();
+      }
+
+      return instance;
     }
 
 }
