@@ -101,7 +101,7 @@ public class Pivot extends SubsystemBase implements Loggable {
         this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
                 PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
         // System.out.println("desired Rotation:" + this.desiredRotation);
-        // pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
+        pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
     }
 
     public void setArmHigh(boolean isBackwards) {

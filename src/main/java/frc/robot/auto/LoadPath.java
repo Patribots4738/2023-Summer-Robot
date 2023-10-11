@@ -6,6 +6,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ControllerConstants;
@@ -43,7 +44,14 @@ public class LoadPath {
           Drivetrain.getInstance()
         );
 
-        return new SequentialCommandGroup(ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(), LoadPath.command);
+        return new SequentialCommandGroup(
+          ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(),
+
+          // Move Pivot
+          // .andThen shoot claw
+          // for now, let's always shoot high
+
+          LoadPath.command);
     }
 
 }
