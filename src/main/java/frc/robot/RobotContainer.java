@@ -64,7 +64,7 @@ public class RobotContainer implements Loggable {
         drivetrain = Drivetrain.getInstance();
         driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
         operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
-        pivot = new Pivot();
+        pivot = Pivot.getInstance();
         claw = Claw.getInstance();
         baseDrive = new BaseDrive(
             drivetrain,
