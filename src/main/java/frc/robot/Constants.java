@@ -147,6 +147,10 @@ public final class Constants {
 
     }
 
+    public static final class AlignmentConstants {
+        public static final double CHARGE_PAD_CORRECTION_P = 0.1;
+    }
+
     public static final class PlacementConstants {
         public static final int LOW_INDEX = 0;
         public static final int MID_INDEX = 1;

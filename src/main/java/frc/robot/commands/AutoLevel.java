@@ -2,11 +2,14 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import frc.robot.Constants.AlignmentConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class AutoLevel extends InstantCommand{
@@ -15,6 +18,10 @@ public class AutoLevel extends InstantCommand{
 
     Command driveForward;
     Command driveBackward;
+
+    boolean tiltedLeft;
+    boolean tiltedRight;
+
 
     /*
      * double elapsedTime = Timer.getFPGATimestamp() - startedChargePad;
@@ -38,62 +45,57 @@ public class AutoLevel extends InstantCommand{
       {
         tilt = -swerve.getRoll().getRadians();
       }
-
-      System.out.printf("Elapsed Time: %.1f, Full output: %.2f\n", elapsedTime, ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)/(elapsedTime/16)));
-
-      if (tilt > Math.toRadians(7)) {
-        swerve.drive(
-            MathUtil.clamp(((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)/(elapsedTime/(DriverStation.isAutonomous() ? 10 : 20))), 0.055, 0.20),
-            0, 
-            0, 
-            true, false);
-      }
-      else if (tilt < -Math.toRadians(7)) {
-        swerve.drive(
-            MathUtil.clamp(((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)/(elapsedTime/(DriverStation.isAutonomous() ? 10 : 20))), -0.20, -0.055),
-            0, 
-            0, 
-            true, false);
-      }
-      else {
-        swerve.setWheelsUp();
-      }
      */
     public AutoLevel(){
         this.elapsedTime = new Timer();
         
-        this.driveForward = new InstantCommand(() -> Drivetrain.getInstance().drive(0.2, 0));
-        this.driveBackward = new InstantCommand(() -> Drivetrain.getInstance().drive(-0.2, 0));
-
         addRequirements(Drivetrain.getInstance());
     }
 
+    // TODO: Do we need to use pitch and roll as shown above?
+    
     @Override
     public void execute() {
         elapsedTime.start();
         double tilt = Drivetrain.getInstance().getGyroAngleDegrees();
 
-        boolean isTilted = tilt > 7 || tilt < -7;???????
+        this.tiltedLeft = tilt < 7;
+        this.tiltedRight = tilt > -7;
+
+        this.driveForward = new InstantCommand(
+            () -> Drivetrain.getInstance().drive(
+                MathUtil.clamp(
+                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)
+                     / (elapsedTime.get() /(DriverStation.isAutonomous() 
+                        ? 10 : 20))), 
+                    0.055, 
+                    0.20), 
+                    0));
+
+        this.driveBackward = new InstantCommand(
+            () -> Drivetrain.getInstance().drive(
+                MathUtil.clamp(
+                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)
+                     / (elapsedTime.get() / (DriverStation.isAutonomous() 
+                        ? 10 : 20))), 
+                        -0.20, 
+                        -0.055),
+                        0));
 
         ConditionalCommand repeatCommand = new ConditionalCommand(
-            this.driveForward.until(() -> isTilted),
+            this.driveForward.until(() -> tiltedRight),
             new ConditionalCommand(
-                this.driveBackward.until(() -> isTilted), 
+                this.driveBackward.until(() -> tiltedLeft), 
                 StopDrive.getCommand(), 
-                () -> tilt < -7),
-            () -> tilt > 7 );
+                () -> tiltedRight),
+            () -> tiltedLeft );
 
         repeatCommand.execute();
     }
 
     @Override
-    public void end(boolean interrupted) {
-
-    }
-
-    @Override
     public boolean isFinished() {
-        return false;
+        return (!tiltedLeft && !tiltedRight);
     }
 
 }
