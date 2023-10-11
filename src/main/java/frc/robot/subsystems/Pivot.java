@@ -41,6 +41,8 @@ public class Pivot extends SubsystemBase implements Loggable {
 
     public static int placementIndex;
 
+    public static Pivot instance;
+
     public Pivot() {
         this.desiredRotation = 0.0;
         Pivot.placementIndex = PlacementConstants.RESET_INDEX;
@@ -91,6 +93,10 @@ public class Pivot extends SubsystemBase implements Loggable {
         return encoderPositionDegrees;
     }
 
+    public boolean pivotAtDesiredPosition() {
+        return 0 == MathUtil.applyDeadband(desiredRotation - getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES);
+    }
+
     /**
      * Set the rotation of the pivot, in degrees
      * 
@@ -125,6 +131,14 @@ public class Pivot extends SubsystemBase implements Loggable {
     public void setArmReset() {
         Pivot.placementIndex = PlacementConstants.RESET_INDEX;
         setDesiredRotation(PlacementConstants.RESET_PLACEMENT);
+    }
+
+    public static Pivot getInstance() {
+      if (instance == null){
+        instance = new Pivot();
+      }
+
+      return instance;
     }
 
 }

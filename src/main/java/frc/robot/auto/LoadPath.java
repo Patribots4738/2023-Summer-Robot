@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.ResetPose;
+import frc.robot.commands.StopDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Pivot;
 
 public class LoadPath {
     
@@ -44,14 +47,14 @@ public class LoadPath {
           Drivetrain.getInstance()
         );
 
+        // Reset the pose to the initial pose of the trajectory
+        // Run the trajectory
+        // Stop the drive
         return new SequentialCommandGroup(
-          ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(),
-
-          // Move Pivot
-          // .andThen shoot claw
-          // for now, let's always shoot high
-
-          LoadPath.command);
+          ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(), 
+          LoadPath.command,
+          StopDrive.getCommand()
+          );
     }
 
 }

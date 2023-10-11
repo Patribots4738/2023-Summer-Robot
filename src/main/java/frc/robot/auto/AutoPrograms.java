@@ -5,10 +5,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.PlaceHighBackThenTraj;
 import frc.robot.commands.StopDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.limelight.LimelightBase;
 import java.util.HashMap;
 import java.util.Set;
@@ -41,11 +44,11 @@ public class AutoPrograms {
         auto = new HashMap<String, Command>();
     
         PathConstraints constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        //TODO: add to autoStrings to dashboard
 
+        // TODO: add more auto programs here
         constraints = new PathConstraints(2, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        SequentialCommandGroup command = LoadPath.loadPath("Charge", constraints);
-        auto.put("DEFAULT", new SequentialCommandGroup(command, StopDrive.getCommand()));
+        PlaceHighBackThenTraj placeHighBack = new PlaceHighBackThenTraj("Charge", constraints);
+        auto.put("DEFAULT", placeHighBack);
 
         Set<String> keySet = auto.keySet();
         String[] keySetCopy = new String[keySet.size()];
