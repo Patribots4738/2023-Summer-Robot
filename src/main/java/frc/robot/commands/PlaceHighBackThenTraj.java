@@ -9,6 +9,7 @@ import frc.robot.auto.LoadPath;
 import frc.robot.subsystems.Pivot;
 
 public class PlaceHighBackThenTraj extends SequentialCommandGroup{
+
     Command placeBackHigh = Commands.runOnce(() -> Pivot.getInstance().setArmHigh(true))
                                 .until(Pivot.getInstance()::pivotAtDesiredPosition);
     

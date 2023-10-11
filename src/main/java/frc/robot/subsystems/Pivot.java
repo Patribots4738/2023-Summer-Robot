@@ -94,7 +94,7 @@ public class Pivot extends SubsystemBase implements Loggable {
     }
 
     public boolean pivotAtDesiredPosition() {
-      return 0 == MathUtil.applyDeadband(desiredRotation-getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES)
+        return 0 == MathUtil.applyDeadband(desiredRotation - getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES);
     }
 
     /**
