@@ -12,7 +12,7 @@ public class ResetPose extends CommandBase {
             .getOdometry()
             .resetPose(
                 Drivetrain.getInstance()
-                    .getGyroAngleRotation2d(), 
+                    .getYaw(), 
                     desiredPose)
     );
     private static ResetPose instance;

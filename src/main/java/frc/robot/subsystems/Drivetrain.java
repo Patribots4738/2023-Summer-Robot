@@ -114,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPosition(0);
 
         odometry = new Odometry(
-                getGyroAngleRotation2d(),
+                getYaw(),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition(),
                 new Pose2d());
@@ -162,7 +162,7 @@ public class Drivetrain extends SubsystemBase {
         //   turn);
           
         odometry.update(
-                Rotation2d.fromDegrees(getGyroAngleDegrees()),
+                Rotation2d.fromDegrees(getGyroAngle()),
                 leftEncoder.getPosition(),
                 rightEncoder.getPosition());
         
@@ -178,17 +178,36 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPosition(0);
     }
 
-    public Rotation2d getGyroAngleRotation2d() {
-        return Rotation2d.fromDegrees(getGyroAngleDegrees());
-    }
-
+    
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
-
-    public double getGyroAngleDegrees() {
+    
+    public double getGyroAngle() {
         return gyro.getAngle();
     }
+    
+    public Rotation2d getYaw() {
+        return Rotation2d.fromDegrees(getGyroAngle());
+    }
+
+    public Rotation2d getPitch() {
+
+        Rotation2d pitchRotation2d = Rotation2d
+            .fromDegrees(gyro.getXComplementaryAngle() - ((gyro.getXComplementaryAngle() > 0) ? 180 : -180));
+    
+        return pitchRotation2d;
+    
+      }
+
+      public Rotation2d getRoll() {
+
+        Rotation2d rollRotation2d = Rotation2d
+            .fromDegrees(gyro.getYComplementaryAngle() - ((gyro.getYComplementaryAngle() > 0) ? 180 : -180));
+    
+        return rollRotation2d;
+    
+      }
     
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
