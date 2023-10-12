@@ -184,7 +184,7 @@ public class Drivetrain extends SubsystemBase {
     }
     
     public double getGyroAngle() {
-        return gyro.getAngle();
+        return 0;//gyro.getAngle();
     }
     
     public Rotation2d getYaw() {
@@ -197,15 +197,6 @@ public class Drivetrain extends SubsystemBase {
             .fromDegrees(gyro.getXComplementaryAngle() - ((gyro.getXComplementaryAngle() > 0) ? 180 : -180));
     
         return pitchRotation2d;
-    
-      }
-
-      public Rotation2d getRoll() {
-
-        Rotation2d rollRotation2d = Rotation2d
-            .fromDegrees(gyro.getYComplementaryAngle() - ((gyro.getYComplementaryAngle() > 0) ? 180 : -180));
-    
-        return rollRotation2d;
     
       }
     
