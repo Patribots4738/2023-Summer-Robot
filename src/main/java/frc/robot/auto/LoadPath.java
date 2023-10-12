@@ -5,6 +5,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.ResetPose;
@@ -46,8 +47,7 @@ public class LoadPath {
         // Stop the drive
         return new SequentialCommandGroup(
           ResetPose.setDesiredPose(LoadPath.trajectory.getInitialPose()).getCommand(), 
-          LoadPath.command,
-          StopDrive.getCommand()
+          LoadPath.command
           );
     }
 
