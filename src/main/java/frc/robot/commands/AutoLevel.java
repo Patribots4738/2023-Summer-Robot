@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -22,51 +23,39 @@ public class AutoLevel extends CommandBase{
 
     Command driveForward;
     Command driveBackward;
+    Command conditional;
 
-    boolean tiltedForward;
-    boolean tiltedBackwards;
+    BooleanSupplier tiltedForward;
+    BooleanSupplier tiltedBackwards;
 
-    private double tilt;
+    private DoubleSupplier tiltedAngle;
     
-    Supplier<Double> getTilt;
+    Supplier<DoubleSupplier> getTilt;
 
     public AutoLevel(){
         this.elapsedTime = new Timer();
 
         this.getTilt = () -> {
-            double tiltedAngle = 0;
             if (-90 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 90) {
-                tiltedAngle =  Drivetrain.getInstance().getPitch().getRadians();
+              tiltedAngle = () -> -Drivetrain.getInstance().getRoll().getDegrees();
             }
-            else
+            else if (90 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 180) 
             {
-                tiltedAngle = -Drivetrain.getInstance().getPitch().getRadians();
+              tiltedAngle = () -> Drivetrain.getInstance().getRoll().getDegrees();
             }
+
+            // System.out.println(
+            //   "Pitch: "+ Drivetrain.getInstance().getPitch().getDegrees() 
+            //   + ", Roll : " + tiltedAngle);
+            
             return tiltedAngle;
         };
-        
-        addRequirements(Drivetrain.getInstance());
-    }
-
-    // TODO: Do we need to use pitch and roll as shown above?
-
-    @Override
-    public void initialize() {
-        this.elapsedTime.start();
-    }
-
-    @Override
-    public void execute() {
-        this.tilt = this.getTilt.get();
-
-        this.tiltedForward = tilt < 7;
-        this.tiltedBackwards = tilt > -7;
 
         this.driveForward = new InstantCommand(
             () -> Drivetrain.getInstance().drive(
                 MathUtil.clamp(
-                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)
-                     / (elapsedTime.get() /(DriverStation.isAutonomous() 
+                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * getTilt.get().getAsDouble())
+                     / (1/*elapsedTime.get()*/ /(DriverStation.isAutonomous() 
                         ? 10 : 20))), 
                     0.055, 
                     0.20), 
@@ -75,31 +64,53 @@ public class AutoLevel extends CommandBase{
         this.driveBackward = new InstantCommand(
             () -> Drivetrain.getInstance().drive(
                 MathUtil.clamp(
-                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * tilt)
-                     / (elapsedTime.get() / (DriverStation.isAutonomous() 
+                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * getTilt.get().getAsDouble())
+                     / (1/*elapsedTime.get()*/ / (DriverStation.isAutonomous() 
                         ? 10 : 20))), 
                         -0.20, 
                         -0.055),
                         0));
 
         ConditionalCommand command2 =  new ConditionalCommand(
-          this.driveBackward.until(() -> tiltedBackwards), 
+          this.driveBackward.until(tiltedBackwards), 
           new InstantCommand(() -> Drivetrain.getInstance().drive(0, 0)),
           // StopDrive.getCommand(), 
-          () -> tiltedForward);
+          tiltedForward);
 
-        ConditionalCommand command = new ConditionalCommand(
-            this.driveForward.until(() -> tiltedForward),
+        conditional = new ConditionalCommand(
+            this.driveForward.until(tiltedForward),
             command2,
-            () -> tiltedBackwards);
+            tiltedForward);
+        
+        addRequirements(Drivetrain.getInstance());
+    }
 
-        command.initialize();
-        command.execute();
+    @Override
+    public void initialize() {
+        this.elapsedTime.restart();
+        conditional.initialize();
+    }
+
+    @Override
+    public void execute() {
+        this.tiltedAngle = this.getTilt.get();
+
+        this.tiltedForward = () -> tiltedAngle.getAsDouble() > 7;
+        this.tiltedBackwards = () -> tiltedAngle.getAsDouble() < -7;
+
+        conditional.execute();
     }
 
     @Override
     public boolean isFinished() {
-        return (!tiltedForward && !tiltedBackwards);
+        return false;
+        // return (!tiltedForward && !tiltedBackwards);
     }
 
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        elapsedTime.stop();
+        elapsedTime.reset();
+    }
 }
