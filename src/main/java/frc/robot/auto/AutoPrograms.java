@@ -5,11 +5,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.AutoLevel;
-import frc.robot.commands.PlaceHighBackThenTraj;
+import frc.robot.commands.ResetPose;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.limelight.LimelightBase;
 import java.util.HashMap;
 import java.util.Set;
@@ -45,11 +48,18 @@ public class AutoPrograms {
 
         // TODO: add more auto programs here
         constraints = new PathConstraints(2, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        PlaceHighBackThenTraj placeHighBack = new PlaceHighBackThenTraj("Charge", constraints);
-        AutoLevel autoLevel = new AutoLevel();
+        CommandBase placeBackHigh = Commands.run(() -> Pivot.getInstance().setArmHigh(true))
+            .until(Pivot.getInstance()::pivotAtDesiredPosition);
+        placeBackHigh.addRequirements(Pivot.getInstance());
+        
+        Command trajCommand = LoadPath.loadPath("P1_Mobility_Charge", constraints);
+
+              AutoLevel autoLevel = new AutoLevel();
         SequentialCommandGroup P1_Mobility_Charge = new SequentialCommandGroup(
-            placeHighBack,
-            autoLevel
+            placeBackHigh,
+            trajCommand,
+            Commands.run(() -> Drivetrain.getInstance().drive(1, 0)).withTimeout(3)
+            // autoLevel
         );
 
         auto.put("DEFAULT", P1_Mobility_Charge);

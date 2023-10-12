@@ -5,6 +5,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
@@ -12,19 +13,40 @@ import frc.robot.commands.ResetPose;
 import frc.robot.commands.StopDrive;
 import frc.robot.subsystems.Drivetrain;
 
-public class LoadPath {
+public class LoadPath extends CommandBase{
     
     private static PathConstraints constraints;
-    private static PathPlannerTrajectory trajectory;
+    public static PathPlannerTrajectory trajectory;
     private static PPRamseteCommand command;
 
     public LoadPath() {
       init();
+      loadPath("DEFAULT", constraints);
     }
 
     private static void init(){
       LoadPath.constraints = new PathConstraints(DrivetrainConstants.MAX_DRIVE_VELOCITY, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
   }
+
+    @Override
+    public void initialize() {
+      LoadPath.command.initialize();
+    }
+
+    @Override
+    public void execute() {
+      LoadPath.command.execute();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+      LoadPath.command.end(interrupted);
+    }
+
+    @Override
+    public boolean isFinished() {
+      return LoadPath.command.isFinished();
+    }
 
     public static SequentialCommandGroup loadPath(String pathName, PathConstraints constraints) {
 
