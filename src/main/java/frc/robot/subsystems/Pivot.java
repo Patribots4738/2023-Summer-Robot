@@ -27,16 +27,16 @@ public class Pivot extends SubsystemBase implements Loggable {
 
     private final AbsoluteEncoder pivotEncoder;
 
-    @Log.Graph(visibleTime = 20)
+    // @Log.Graph(visibleTime = 20)
     private double encoderPositionDegrees;
 
-    @Config
+    // @Config
     public static double PIVOT_P = 0.02;
 
-    @Config
+    // @Config
     public static double PIVOT_I = 0;
 
-    @Config
+    // @Config
     public static double PIVOT_D = 0.02;
 
     public static int placementIndex;
@@ -78,15 +78,6 @@ public class Pivot extends SubsystemBase implements Loggable {
 
         setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.RESET_INDEX]);
     }
-
-    /**
-     * Get the current rotation of the pivot
-     * 
-     * @return the current rotation of the pivot
-     */
-    public double getRotationDegrees() {
-        return desiredRotation;
-    }
     
     public double getEncoderPositionDegrees() {
         encoderPositionDegrees = pivotEncoder.getPosition();
@@ -94,7 +85,7 @@ public class Pivot extends SubsystemBase implements Loggable {
     }
 
     public boolean pivotAtDesiredPosition() {
-        return 0 == MathUtil.applyDeadband(desiredRotation - getRotationDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES);
+        return 0 == MathUtil.applyDeadband(desiredRotation - getEncoderPositionDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES);
     }
 
     /**

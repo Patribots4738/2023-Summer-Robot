@@ -29,6 +29,7 @@ public class AutoLevel extends CommandBase{
     BooleanSupplier tiltedBackwards;
 
     private DoubleSupplier tiltedAngle;
+    private DoubleSupplier yaw;
     
     Supplier<DoubleSupplier> getTilt;
 
@@ -36,49 +37,47 @@ public class AutoLevel extends CommandBase{
         this.elapsedTime = new Timer();
 
         this.getTilt = () -> {
-            if (-90 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 90) {
+            yaw = () -> Drivetrain.getInstance().getYaw().getDegrees();
+            if (-90 < yaw.getAsDouble() && yaw.getAsDouble() < 90) {
               tiltedAngle = () -> -Drivetrain.getInstance().getRoll().getDegrees();
             }
-            else if (90 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 180) 
+            else if (90 < yaw.getAsDouble() && yaw.getAsDouble() < 180) 
             {
               tiltedAngle = () -> Drivetrain.getInstance().getRoll().getDegrees();
             }
-
-            // System.out.println(
-            //   "Pitch: "+ Drivetrain.getInstance().getPitch().getDegrees() 
-            //   + ", Roll : " + tiltedAngle);
             
             return tiltedAngle;
         };
+        this.tiltedAngle = this.getTilt.get();
+
+        
+        this.tiltedBackwards = () -> tiltedAngle.getAsDouble() < -AlignmentConstants.ZERO_OFFSET;
+        this.tiltedForward = () -> tiltedAngle.getAsDouble() > AlignmentConstants.ZERO_OFFSET;
 
         this.driveForward = new InstantCommand(
             () -> Drivetrain.getInstance().drive(
                 MathUtil.clamp(
-                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * getTilt.get().getAsDouble())
-                     / (1/*elapsedTime.get()*/ /(DriverStation.isAutonomous() 
-                        ? 10 : 20))), 
-                    0.055, 
-                    0.20), 
+                    (AlignmentConstants.CHARGE_PAD_CORRECTION_P * 11), 
+                    AlignmentConstants.LOW_SPEED, 
+                    AlignmentConstants.HIGH_SPEED), 
                     0));
 
         this.driveBackward = new InstantCommand(
             () -> Drivetrain.getInstance().drive(
                 MathUtil.clamp(
-                    ((AlignmentConstants.CHARGE_PAD_CORRECTION_P * getTilt.get().getAsDouble())
-                     / (1/*elapsedTime.get()*/ / (DriverStation.isAutonomous() 
-                        ? 10 : 20))), 
-                        -0.20, 
-                        -0.055),
+                    (AlignmentConstants.CHARGE_PAD_CORRECTION_P * -11), 
+                        -AlignmentConstants.HIGH_SPEED, 
+                        -AlignmentConstants.LOW_SPEED),
                         0));
 
         ConditionalCommand command2 =  new ConditionalCommand(
-          this.driveBackward.until(tiltedBackwards), 
+          this.driveForward, 
           new InstantCommand(() -> Drivetrain.getInstance().drive(0, 0)),
           // StopDrive.getCommand(), 
-          tiltedForward);
+          tiltedBackwards);
 
         conditional = new ConditionalCommand(
-            this.driveForward.until(tiltedForward),
+            this.driveBackward,
             command2,
             tiltedForward);
         
@@ -94,10 +93,7 @@ public class AutoLevel extends CommandBase{
     @Override
     public void execute() {
         this.tiltedAngle = this.getTilt.get();
-
-        this.tiltedForward = () -> tiltedAngle.getAsDouble() > 7;
-        this.tiltedBackwards = () -> tiltedAngle.getAsDouble() < -7;
-
+        conditional.initialize();
         conditional.execute();
     }
 

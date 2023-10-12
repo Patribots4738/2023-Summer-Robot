@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -153,8 +154,10 @@ public class Drivetrain extends SubsystemBase {
         // This method will be called once per scheduler run
         // if (rightEncoder.getPosition() != 0) System.out.println(rightEncoder.getPosition());
 
+        double slewForward = driveFilter.calculate(forward);
+
         drive.arcadeDrive(
-          driveFilter.calculate(forward),
+          DriverStation.isAutonomous() ? forward : slewForward,
           turn);
           
         // drive.tankDrive(

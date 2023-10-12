@@ -7,7 +7,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.AutoLevel;
@@ -16,8 +19,12 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.limelight.LimelightBase;
+
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Set;
+
+import javax.management.InstanceNotFoundException;
 
 import com.pathplanner.lib.PathConstraints;
 
@@ -50,15 +57,21 @@ public class AutoPrograms {
 
         // TODO: add more auto programs here
         constraints = new PathConstraints(2, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
-        CommandBase placeBackHigh = Commands.run(() -> Pivot.getInstance().setArmHigh(true))
+        CommandBase placeBackHigh = 
+            Commands.run(() -> Pivot.getInstance().setArmHigh(true))
             .until(Pivot.getInstance()::pivotAtDesiredPosition)
-              .andThen( Commands.run(() -> Claw.getInstance().setSpeed(PlacementConstants.HIGH_INDEX, true)) );
+            .andThen(() -> Claw.getInstance().setSpeed(PlacementConstants.HIGH_INDEX, true))
+            .andThen(new WaitCommand(0.7))
+            .andThen(() -> Pivot.getInstance().setArmReset())
+            .andThen(() -> Claw.getInstance().setSpeed(0));
               
         placeBackHigh.addRequirements(Pivot.getInstance());
+        placeBackHigh.addRequirements(Claw.getInstance());
         
         Command trajCommand = LoadPath.loadPath("P1_Mobility_Charge", constraints);
 
-              AutoLevel autoLevel = new AutoLevel();
+        AutoLevel autoLevel = new AutoLevel();
+
         SequentialCommandGroup P1_Mobility_Charge = new SequentialCommandGroup(
             placeBackHigh,
             trajCommand,

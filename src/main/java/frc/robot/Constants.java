@@ -117,7 +117,7 @@ public final class Constants {
 
         public static final double PIVOT_P = 0.005;
         public static final double PIVOT_I = 0;
-        public static final double PIVOT_D = 0.0525;
+        public static final double PIVOT_D = 0.0725;
 
         public static final int LOW_INDEX = 0;
         public static final int MID_INDEX = 1;
@@ -149,6 +149,9 @@ public final class Constants {
 
     public static final class AlignmentConstants {
         public static final double CHARGE_PAD_CORRECTION_P = .1;
+        public static final double LOW_SPEED = .1;
+        public static final double HIGH_SPEED = .3;
+        public static final double ZERO_OFFSET = 7;
     }
 
     public static final class PlacementConstants {
