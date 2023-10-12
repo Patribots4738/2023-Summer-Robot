@@ -57,9 +57,9 @@ public class AutoPrograms {
               AutoLevel autoLevel = new AutoLevel();
         SequentialCommandGroup P1_Mobility_Charge = new SequentialCommandGroup(
             placeBackHigh,
-            trajCommand,
-            Commands.run(() -> Drivetrain.getInstance().drive(1, 0)).withTimeout(3)
-            // autoLevel
+            // trajCommand,
+            // Commands.run(() -> Drivetrain.getInstance().drive(1, 0)).withTimeout(3)
+            autoLevel
         );
 
         auto.put("DEFAULT", P1_Mobility_Charge);

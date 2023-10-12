@@ -148,7 +148,7 @@ public final class Constants {
     }
 
     public static final class AlignmentConstants {
-        public static final double CHARGE_PAD_CORRECTION_P = 0.1;
+        public static final double CHARGE_PAD_CORRECTION_P = .1;
     }
 
     public static final class PlacementConstants {
