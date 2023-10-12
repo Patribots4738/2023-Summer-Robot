@@ -35,20 +35,12 @@ public class AutoLevel extends CommandBase{
 
         this.getTilt = () -> {
             double tiltedAngle = 0;
-            if (-45 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 45) {
-                tiltedAngle =  -Drivetrain.getInstance().getPitch().getRadians();
+            if (-90 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 90) {
+                tiltedAngle =  Drivetrain.getInstance().getPitch().getRadians();
             }
-            else if (-180 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < -135 ||
-                135 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 180) 
+            else
             {
-                tiltedAngle = Drivetrain.getInstance().getPitch().getRadians();
-            }
-            else if (-135 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < -45) {
-                tiltedAngle = Drivetrain.getInstance().getRoll().getRadians();
-            }
-            else if (45 < Drivetrain.getInstance().getYaw().getDegrees() && Drivetrain.getInstance().getYaw().getDegrees() < 135) 
-            {
-                tiltedAngle = -Drivetrain.getInstance().getRoll().getRadians();
+                tiltedAngle = -Drivetrain.getInstance().getPitch().getRadians();
             }
             return tiltedAngle;
         };
@@ -90,14 +82,18 @@ public class AutoLevel extends CommandBase{
                         -0.055),
                         0));
 
+        ConditionalCommand command2 =  new ConditionalCommand(
+          this.driveBackward.until(() -> tiltedBackwards), 
+          new InstantCommand(() -> Drivetrain.getInstance().drive(0, 0)),
+          // StopDrive.getCommand(), 
+          () -> tiltedForward);
+
         ConditionalCommand command = new ConditionalCommand(
             this.driveForward.until(() -> tiltedForward),
-            new ConditionalCommand(
-                this.driveBackward.until(() -> tiltedBackwards), 
-                StopDrive.getCommand(), 
-                () -> tiltedForward),
-            () -> tiltedBackwards );
+            command2,
+            () -> tiltedBackwards);
 
+        command.initialize();
         command.execute();
     }
 
