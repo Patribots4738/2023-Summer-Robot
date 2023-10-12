@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PlacementConstants;
 import frc.robot.commands.AutoLevel;
 import frc.robot.commands.ResetPose;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.limelight.LimelightBase;
@@ -49,7 +51,9 @@ public class AutoPrograms {
         // TODO: add more auto programs here
         constraints = new PathConstraints(2, DrivetrainConstants.MAX_DRIVE_ACCELERATION);
         CommandBase placeBackHigh = Commands.run(() -> Pivot.getInstance().setArmHigh(true))
-            .until(Pivot.getInstance()::pivotAtDesiredPosition);
+            .until(Pivot.getInstance()::pivotAtDesiredPosition)
+              .andThen( Commands.run(() -> Claw.getInstance().setSpeed(PlacementConstants.HIGH_INDEX, true)) );
+              
         placeBackHigh.addRequirements(Pivot.getInstance());
         
         Command trajCommand = LoadPath.loadPath("P1_Mobility_Charge", constraints);
@@ -57,8 +61,7 @@ public class AutoPrograms {
               AutoLevel autoLevel = new AutoLevel();
         SequentialCommandGroup P1_Mobility_Charge = new SequentialCommandGroup(
             placeBackHigh,
-            // trajCommand,
-            // Commands.run(() -> Drivetrain.getInstance().drive(1, 0)).withTimeout(3)
+            trajCommand,
             autoLevel
         );
 
