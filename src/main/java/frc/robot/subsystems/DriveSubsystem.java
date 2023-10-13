@@ -19,14 +19,14 @@ public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
   private final MotorControllerGroup leftMotors =
       new MotorControllerGroup(
-          new PWMSparkMax(DriveConstants.leftMotor1Port),
-          new PWMSparkMax(DriveConstants.leftMotor2Port));
+          new PWMSparkMax(DriveConstants.LEFT_MOTOR1_PORT),
+          new PWMSparkMax(DriveConstants.LEFT_MOTOR2_PORT));
 
   // The motors on the right side of the drive.
   private final MotorControllerGroup rightMotors =
       new MotorControllerGroup(
-          new PWMSparkMax(DriveConstants.rightMotor1Port),
-          new PWMSparkMax(DriveConstants.rightMotor2Port));
+          new PWMSparkMax(DriveConstants.RIGHT_MOTOR1_PORT),
+          new PWMSparkMax(DriveConstants.RIGHT_MOTOR2_PORT));
 
   // The robot's drive
   private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
@@ -34,16 +34,16 @@ public class DriveSubsystem extends SubsystemBase {
   // The left-side drive encoder
   private final Encoder leftEncoder =
       new Encoder(
-          DriveConstants.leftEncoderPorts[0],
-          DriveConstants.leftEncoderPorts[1],
-          DriveConstants.leftEncoderReversed);
+          DriveConstants.LEFT_ENCODER_PORT[0],
+          DriveConstants.LEFT_ENCODER_PORT[1],
+          DriveConstants.LEFT_ENCODER_REVERSED);
 
   // The right-side drive encoder
   private final Encoder rightEncoder =
       new Encoder(
-          DriveConstants.rightEncoderPorts[0],
-          DriveConstants.rightEncoderPorts[1],
-          DriveConstants.rightEncoderReversed);
+          DriveConstants.RIGHT_ENCODER_PORT[0],
+          DriveConstants.RIGHT_ENCODER_PORT[1],
+          DriveConstants.RIGHT_ENCODER_REVERSED);
 
   // The gyro sensor
   private final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
@@ -59,8 +59,8 @@ public class DriveSubsystem extends SubsystemBase {
     rightMotors.setInverted(true);
 
     // Sets the distance per pulse for the encoders
-    leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    leftEncoder.setDistancePerPulse(DriveConstants.ENCODER_DISTANCE_PER_PULSE);
+    rightEncoder.setDistancePerPulse(DriveConstants.ENCODER_DISTANCE_PER_PULSE);
 
     resetEncoders();
     odometry =

@@ -39,7 +39,7 @@ public class RobotContainer {
   private final DriveSubsystem robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  XboxController driverController = new XboxController(OIConstants.driverControllerPort);
+  XboxController driverController = new XboxController(OIConstants.DRIVER_CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -81,19 +81,19 @@ public class RobotContainer {
     var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.driveKinematics,
+                DriveConstants.ks_VOLTS,
+                DriveConstants.kv_VOLT_SECONDS_PER_METER,
+                DriveConstants.ka_VOLT_SECONDS_SQUARED_PER_METER),
+            DriveConstants.DRIVE_KINEMATICS,
             10);
 
     // Create config for trajectory
     TrajectoryConfig config =
         new TrajectoryConfig(
-                AutoConstants.kMaxSpeedMetersPerSecond,
-                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                AutoConstants.MAX_SPEED_METERS_PER_SECOND,
+                AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(DriveConstants.driveKinematics)
+            .setKinematics(DriveConstants.DRIVE_KINEMATICS)
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
@@ -113,15 +113,15 @@ public class RobotContainer {
         new RamseteCommand(
             exampleTrajectory,
             robotDrive::getPose,
-            new RamseteController(AutoConstants.ramseteB, AutoConstants.ramseteZeta),
+            new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
             new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.driveKinematics,
+                DriveConstants.ks_VOLTS,
+                DriveConstants.kv_VOLT_SECONDS_PER_METER,
+                DriveConstants.ka_VOLT_SECONDS_SQUARED_PER_METER),
+            DriveConstants.DRIVE_KINEMATICS,
             robotDrive::getWheelSpeeds,
-            new PIDController(DriveConstants.kPDriveVel, 0, 0),
-            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            new PIDController(DriveConstants.kp_DRIVE_VEL, 0, 0),
+            new PIDController(DriveConstants.kp_DRIVE_VEL, 0, 0),
             // RamseteCommand passes volts to the callback
             robotDrive::tankDriveVolts,
             robotDrive);
