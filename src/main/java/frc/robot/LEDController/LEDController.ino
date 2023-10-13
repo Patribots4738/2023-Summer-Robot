@@ -9,27 +9,24 @@
 #define BRIGHTNESS 175
 #define MS_DELAY 6
 
-#define DEVICE_ID 8
+#define PORT 8
 #define DATA_PIN 9
 
 CRGB leds[NUM_LEDS];
 
-uint8_t data = 0;
+int data = 0;
 uint8_t patternIndex = 0;
 
 void setup() {
-    Wire.begin(DEVICE_ID);
-    Wire.onReceive(receiveEvent);
+    Wire.begin(PORT);
+    Wire.onReceive(event);
 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     Serial.begin(9600);
-    
-    pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
-
     EVERY_N_MILLISECONDS(MS_DELAY) {
         switch ((data == 0) ? patternIndex : data) {
             case 1:
@@ -64,14 +61,14 @@ void nextPattern() {
   if (patternIndex == 0) patternIndex++; 
 }
 
-void receiveEvent() {
-  while (1 < Wire.available()) {
-    char c = Wire.read();
+void event() {
+  while(1 < Wire.available()) {
+      char c = Wire.read();    // Receive a byte as character
+      Serial.print(c);         // Print the character
   }
-  
   data = Wire.read();
+  Serial.println(data);
 
-  digitalWrite(LED_BUILTIN, true);
 }
 
 //------- Pattern dump below -------//
