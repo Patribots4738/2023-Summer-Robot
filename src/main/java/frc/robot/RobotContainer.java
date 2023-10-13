@@ -4,120 +4,71 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
+import static edu.wpi.first.wpilibj.XboxController.Button;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.BaseDrive;
-import frc.robot.Constants.PlacementConstants;
-import frc.robot.commands.AutoSetPivotRotation;
-import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Pivot;
-import io.github.oblarg.oblog.Loggable;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import java.util.List;
+
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer implements Loggable{
-  // The robot's subsystems and commands are defined here...
+public class RobotContainer {
+  // The robot's subsystems
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
-  // Subsystems
-  private final Drivetrain drivetrain = new Drivetrain();
+  // The driver's controller
+  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  private final XboxController driverController = new XboxController(Constants.DRIVER_CONTROLLER_PORT);
-  private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT);
-
-  private final Pivot pivot = new Pivot();
-  private final Claw claw = new Claw();
-  private boolean shootingBackwards;
-
-  /*
-    () -> Explantion:
-      We need to give a supplier to the BaseDrive constructor. The supplier
-      will be called every time the command is scheduled. We want to give the
-      supplier the controller axis, without calling the controller axis once.
-      This is why we use () ->
-  */
-  private final BaseDrive baseDrive = new BaseDrive(
-      drivetrain,
-      () -> MathUtil.applyDeadband(driverController.getLeftY(), Constants.DRIVER_DEADBAND_FORWARD),
-      () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, Constants.DRIVER_DEADBAND_TURN)
-  );
-
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    drivetrain.setDefaultCommand(baseDrive);
-    // claw.setDefaultCommand(manualSetClawSpeed);
     configureButtonBindings();
 
-    RobotContainer.incinerateMotors();
+    // Configure default commands
+    // Set the default drive command to split-stick arcade drive
+    m_robotDrive.setDefaultCommand(
+        // A split-stick arcade command, with forward/backward controlled by the left
+        // hand, and turning controlled by the right.
+        new RunCommand(
+            () ->
+                m_robotDrive.arcadeDrive(
+                    -m_driverController.getLeftY(), -m_driverController.getRightX()),
+            m_robotDrive));
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
+   * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // create triggers for each button used
-
-    // Trigger aDrive = new Trigger(() -> driverController.getAButton());
-    // aDrive.onTrue(Commands.run(()-> drivetrain.setDefaultCommand(baseDriveSlow))).onFalse(Commands.run(() ->drivetrain.setDefaultCommand(baseDrive)));
-
-    Trigger y = new Trigger(() -> operatorController.getYButton());
-    Trigger b = new Trigger(() -> operatorController.getBButton());
-    Trigger a = new Trigger(() -> operatorController.getAButton());
-    Trigger x = new Trigger(() -> operatorController.getXButton());
-
-    Trigger leftTrigger = new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.2);
-    Trigger leftBumper = new Trigger(() -> operatorController.getLeftBumper());
-    Trigger rightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.2);
-
-    Trigger rightStickPressed = new Trigger(() -> operatorController.getRightStickButton());
-
-    // High
-    y.onTrue(movePivotAndClaw(PlacementConstants.HIGH_INDEX));
-    // Middle
-    b.onTrue(movePivotAndClaw(PlacementConstants.MID_INDEX));
-    // Low
-    a.onTrue(movePivotAndClaw(PlacementConstants.LOW_INDEX));
-    // Reset
-    x.onTrue(movePivotAndClaw(PlacementConstants.RESET_INDEX));
-
-    /*
-     * When A button is pressed, we want to set the pivot to a certain angle
-     * Then, we want to wait until that angle is reached by the pivot
-     * Finally, we want to move the claw at a certain speed
-     */
-
-    leftTrigger.whileTrue(Commands.run(() -> claw.setSpeed(operatorController.getLeftTriggerAxis()/2)));
-                // .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
-
-    leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
-
-    rightTrigger.whileTrue(Commands.run(() -> claw.setSpeed(-operatorController.getRightTriggerAxis())))
-                .onFalse(new InstantCommand(() -> claw.setSpeed(0)));
-
-    rightStickPressed.onTrue(new InstantCommand(() -> shootingBackwards = !shootingBackwards));
+    // Drive at half speed when the right bumper is held
+    new JoystickButton(m_driverController, Button.kRightBumper.value)
+        .onTrue(new InstantCommand(() -> m_robotDrive.setMaxOutput(0.5)))
+        .onFalse(new InstantCommand(() -> m_robotDrive.setMaxOutput(1)));
   }
 
   /**
@@ -126,34 +77,59 @@ public class RobotContainer implements Loggable{
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
-  }
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(
+                DriveConstants.ksVolts,
+                DriveConstants.kvVoltSecondsPerMeter,
+                DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kDriveKinematics,
+            10);
 
-  public Command movePivotAndClaw(int index) {
-    return new AutoSetPivotRotation(pivot, shootingBackwards ? PlacementConstants.PLACEMENT_POSITIONS_BACK[index] : PlacementConstants.PLACEMENT_POSITIONS_FRONT[index])
-    .andThen(new InstantCommand(() -> claw.setSpeed(shootingBackwards ? PlacementConstants.PLACEMENT_SPEEDS_BACK[index] : PlacementConstants.PLACEMENT_SPEEDS_FRONT[index]))
-    .andThen(new WaitCommand(PlacementConstants.PLACEMENT_TIMES[index])))
-    .andThen(new InstantCommand(() -> claw.setSpeed(0)))
-    // Maybe make this an instant command directly telling the pivot to move instead of having 
-    // to wait for the claw to go back to stow
-    // .andThen(new InstantCommand(() -> pivot.setDesiredRotation(PlacementConstants.RESET_PLACEMENT)));
-    .andThen(new AutoSetPivotRotation(pivot, PlacementConstants.RESET_PLACEMENT)); 
-  }
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(
+                AutoConstants.kMaxSpeedMetersPerSecond,
+                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(DriveConstants.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
 
-  /**
-   * Run burnFlash() for all controllers initialized. burnFlash() stops comms w/deivce for 200ms or more.
-   * Might include calls from before method was called or calls from after. 
-   * Too risky so we do this to burn everything in sync
-   * to avoid accidentally stopping messages from getting to the device
-   */
-  public static void incinerateMotors() {
-    Timer.delay(0.25);
-    for (CANSparkMax spark : Constants.SPARK_LIST) {
-      spark.burnFlash();
-      Timer.delay(0.005);
-    }
-    Timer.delay(0.25);
-    // System.out.println("\n\nAll motor flashes burnt\n\n");
+    // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(3, 0, new Rotation2d(0)),
+            // Pass config
+            config);
+
+    RamseteCommand ramseteCommand =
+        new RamseteCommand(
+            exampleTrajectory,
+            m_robotDrive::getPose,
+            new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+            new SimpleMotorFeedforward(
+                DriveConstants.ksVolts,
+                DriveConstants.kvVoltSecondsPerMeter,
+                DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kDriveKinematics,
+            m_robotDrive::getWheelSpeeds,
+            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            // RamseteCommand passes volts to the callback
+            m_robotDrive::tankDriveVolts,
+            m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
   }
 }
