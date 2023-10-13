@@ -16,6 +16,7 @@ public class ArduinoController extends SubsystemBase {
   public ArduinoController() {
     arduino = new I2C(I2C.Port.kOnboard, LEDConstants.ARDUINO_ADDRESS);
     queue = new LinkedList<Integer>();
+    super.register();
   }
 
   @Override
@@ -43,11 +44,16 @@ public class ArduinoController extends SubsystemBase {
     }
   }
 
+  public void setLEDState(int state, boolean override) {
+    // Add the state to the queue
+    queue.offer(state);
+  }
+
   public void sendByte() {
     // Send the latest queue value to the arduino,
     // Then, remove the latest value from the queue
     if (queue.peek() != null) {
-      // System.out.println("Sending byte: " + queue.peek());
+    //   System.out.println("Sending byte: " + queue.peek());
       arduino.write(LEDConstants.ARDUINO_ADDRESS, queue.poll());
     }
     

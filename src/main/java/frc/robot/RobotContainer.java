@@ -7,16 +7,21 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.commands.BaseDrive;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.PlacementConstants;
+import frc.robot.subsystems.ArduinoController;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import io.github.oblarg.oblog.Loggable;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -39,10 +44,11 @@ public class RobotContainer implements Loggable {
 
     private final XboxController driverController;
     private final XboxController operatorController;
-
+    
     private final Pivot pivot;
     private final Claw claw;
     private boolean shootingBackwards;
+    private ArduinoController arduinoController;
 
     /*
      * () -> Explantion:
@@ -74,6 +80,7 @@ public class RobotContainer implements Loggable {
             () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
         // Configure the button bindings
         drivetrain.setDefaultCommand(baseDrive);
+        arduinoController = new ArduinoController();
         // claw.setDefaultCommand(manualSetClawSpeed);
         configureButtonBindings();
 
@@ -114,7 +121,11 @@ public class RobotContainer implements Loggable {
          * pov 270 = backwards shooting - set
          * 
          */
-
+        Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance() == Alliance.Red);
+        redAlliance.onTrue(Commands.runOnce(() -> arduinoController.setLEDState(LEDConstants.RED_FIRE, true)));
+        Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance() == Alliance.Blue);
+        blueAlliance.onTrue(Commands.runOnce(() -> arduinoController.setLEDState(LEDConstants.BLUE_FIRE, true)));
+        // blueAlliance.onTrue(Commands.runOnce(, null));
         // LOW
         Trigger aPress = new Trigger(() -> operatorController.getAButton());
         // MID
