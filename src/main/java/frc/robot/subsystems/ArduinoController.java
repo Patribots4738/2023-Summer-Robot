@@ -41,7 +41,6 @@ public class ArduinoController extends SubsystemBase {
     if (!queue.contains(state) && state != currentState) {
       queue.offer(state);
     }
-    
   }
 
   public void sendByte() {

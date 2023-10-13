@@ -218,5 +218,11 @@ public final class Constants {
     
     public static final class LEDConstants {
       public static final int ARDUINO_ADDRESS = 8;
+
+      public static final int RAINBOW_BOUNCE = 1;
+      public static final int RAINBOW_FULL = 2;
+      public static final int GREEN_WHITE_GOLD = 3;
+      public static final int RED_FIRE = 4;
+      public static final int BLUE_FIRE = 5;
     }
 }
