@@ -84,7 +84,7 @@ public final class Constants {
         private static final double TRACK_WIDTH_METERS = 0.5588;
 
         public static final double MAX_DRIVE_VELOCITY = 4;
-        public static final double MAX_DRIVE_ACCELERATION = 1;
+        public static final double MAX_DRIVE_ACCELERATION = 1.5;
 
         public static final double MAX_DRIVE_VOLTAGE = 7;
 
@@ -209,6 +209,7 @@ public final class Constants {
 
         };
         
+        public static final double INTAKE_SPEED = 0.4;
     }
 
     public static final class VisionConstants {

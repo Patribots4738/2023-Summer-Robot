@@ -73,7 +73,6 @@ public class AutoLevel extends CommandBase{
         ConditionalCommand command2 =  new ConditionalCommand(
           this.driveForward, 
           new InstantCommand(() -> Drivetrain.getInstance().drive(0, 0)),
-          // StopDrive.getCommand(), 
           tiltedBackwards);
 
         conditional = new ConditionalCommand(

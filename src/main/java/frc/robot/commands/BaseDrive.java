@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -38,8 +39,7 @@ public class BaseDrive extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        StopDrive stop = new StopDrive();
-        stop.execute();
+        Commands.runOnce(() -> Drivetrain.getInstance().drive(0, 0));
     }
 
     // Returns true when the command should end.

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.BaseDrive;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.PlacementConstants;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -146,7 +147,7 @@ public class RobotContainer implements Loggable {
 
         
         // TODO: set speed values to constant
-        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(0.4)));
+        leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(PlacementConstants.INTAKE_SPEED)));
         rightTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(Pivot.placementIndex, shootingBackwards)));
 
         // CLAW STOP
