@@ -142,13 +142,13 @@ public class RobotContainer implements Loggable {
         xPress.onTrue(new InstantCommand(() -> pivot.setArmReset()));
 
         // CLAW BACKWARDS OR FORWARDS
-        POVRight.onTrue((new InstantCommand(() -> shootingBackwards = true)));
-        POVLeft.onTrue((new InstantCommand(() -> shootingBackwards = false)));
+        POVRight.onTrue((new InstantCommand(() -> shootingBackwards = false)));
+        POVLeft.onTrue((new InstantCommand(() -> shootingBackwards = true)));
 
         
         // TODO: set speed values to constant
         leftTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(PlacementConstants.INTAKE_SPEED)));
-        rightTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(Pivot.placementIndex, shootingBackwards)));
+        rightTrigger.onTrue(new InstantCommand(() -> claw.setSpeed(-operatorController.getRightTriggerAxis())));
 
         // CLAW STOP
         leftBumper.onTrue(new InstantCommand(() -> claw.setSpeed(0)));
