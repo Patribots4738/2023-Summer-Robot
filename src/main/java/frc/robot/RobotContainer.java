@@ -39,7 +39,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_driverController = new XboxController(OIConstants.driverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -84,7 +84,7 @@ public class RobotContainer {
                 DriveConstants.ksVolts,
                 DriveConstants.kvVoltSecondsPerMeter,
                 DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
+            DriveConstants.driveKinematics,
             10);
 
     // Create config for trajectory
@@ -93,7 +93,7 @@ public class RobotContainer {
                 AutoConstants.kMaxSpeedMetersPerSecond,
                 AutoConstants.kMaxAccelerationMetersPerSecondSquared)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(DriveConstants.kDriveKinematics)
+            .setKinematics(DriveConstants.driveKinematics)
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
@@ -113,12 +113,12 @@ public class RobotContainer {
         new RamseteCommand(
             exampleTrajectory,
             m_robotDrive::getPose,
-            new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+            new RamseteController(AutoConstants.ramseteB, AutoConstants.ramseteZeta),
             new SimpleMotorFeedforward(
                 DriveConstants.ksVolts,
                 DriveConstants.kvVoltSecondsPerMeter,
                 DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
+            DriveConstants.driveKinematics,
             m_robotDrive::getWheelSpeeds,
             new PIDController(DriveConstants.kPDriveVel, 0, 0),
             new PIDController(DriveConstants.kPDriveVel, 0, 0),

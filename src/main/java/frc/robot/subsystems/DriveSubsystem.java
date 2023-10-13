@@ -17,62 +17,62 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
-  private final MotorControllerGroup m_leftMotors =
+  private final MotorControllerGroup leftMotors =
       new MotorControllerGroup(
-          new PWMSparkMax(DriveConstants.kLeftMotor1Port),
-          new PWMSparkMax(DriveConstants.kLeftMotor2Port));
+          new PWMSparkMax(DriveConstants.leftMotor1Port),
+          new PWMSparkMax(DriveConstants.leftMotor2Port));
 
   // The motors on the right side of the drive.
-  private final MotorControllerGroup m_rightMotors =
+  private final MotorControllerGroup rightMotors =
       new MotorControllerGroup(
-          new PWMSparkMax(DriveConstants.kRightMotor1Port),
-          new PWMSparkMax(DriveConstants.kRightMotor2Port));
+          new PWMSparkMax(DriveConstants.rightMotor1Port),
+          new PWMSparkMax(DriveConstants.rightMotor2Port));
 
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
 
   // The left-side drive encoder
-  private final Encoder m_leftEncoder =
+  private final Encoder leftEncoder =
       new Encoder(
-          DriveConstants.kLeftEncoderPorts[0],
-          DriveConstants.kLeftEncoderPorts[1],
-          DriveConstants.kLeftEncoderReversed);
+          DriveConstants.leftEncoderPorts[0],
+          DriveConstants.leftEncoderPorts[1],
+          DriveConstants.leftEncoderReversed);
 
   // The right-side drive encoder
-  private final Encoder m_rightEncoder =
+  private final Encoder rightEncoder =
       new Encoder(
-          DriveConstants.kRightEncoderPorts[0],
-          DriveConstants.kRightEncoderPorts[1],
-          DriveConstants.kRightEncoderReversed);
+          DriveConstants.rightEncoderPorts[0],
+          DriveConstants.rightEncoderPorts[1],
+          DriveConstants.rightEncoderReversed);
 
   // The gyro sensor
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  private final ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
   // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+  private final DifferentialDriveOdometry odometry;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_rightMotors.setInverted(true);
+    rightMotors.setInverted(true);
 
     // Sets the distance per pulse for the encoders
-    m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
 
     resetEncoders();
-    m_odometry =
+    odometry =
         new DifferentialDriveOdometry(
-            m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+            gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
-        m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    odometry.update(
+        gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
   }
 
   /**
@@ -81,7 +81,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   /**
@@ -90,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
   }
 
   /**
@@ -100,8 +100,8 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(
-        m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
+    odometry.resetPosition(
+        gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance(), pose);
   }
 
   /**
@@ -111,7 +111,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rot the commanded rotation
    */
   public void arcadeDrive(double fwd, double rot) {
-    m_drive.arcadeDrive(fwd, rot);
+    drive.arcadeDrive(fwd, rot);
   }
 
   /**
@@ -121,15 +121,15 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rightVolts the commanded right output
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    m_leftMotors.setVoltage(leftVolts);
-    m_rightMotors.setVoltage(rightVolts);
-    m_drive.feed();
+    leftMotors.setVoltage(leftVolts);
+    rightMotors.setVoltage(rightVolts);
+    drive.feed();
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
-    m_leftEncoder.reset();
-    m_rightEncoder.reset();
+    leftEncoder.reset();
+    rightEncoder.reset();
   }
 
   /**
@@ -138,7 +138,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
+    return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
   }
 
   /**
@@ -147,7 +147,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the left drive encoder
    */
   public Encoder getLeftEncoder() {
-    return m_leftEncoder;
+    return leftEncoder;
   }
 
   /**
@@ -156,7 +156,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the right drive encoder
    */
   public Encoder getRightEncoder() {
-    return m_rightEncoder;
+    return rightEncoder;
   }
 
   /**
@@ -165,12 +165,12 @@ public class DriveSubsystem extends SubsystemBase {
    * @param maxOutput the maximum output to which the drive will be constrained
    */
   public void setMaxOutput(double maxOutput) {
-    m_drive.setMaxOutput(maxOutput);
+    drive.setMaxOutput(maxOutput);
   }
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    m_gyro.reset();
+    gyro.reset();
   }
 
   /**
@@ -179,7 +179,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
+    return gyro.getRotation2d().getDegrees();
   }
 
   /**
@@ -188,6 +188,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return -m_gyro.getRate();
+    return -gyro.getRate();
   }
 }
