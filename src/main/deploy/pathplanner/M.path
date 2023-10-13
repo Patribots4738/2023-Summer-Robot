@@ -45,13 +45,8 @@
       }
     }
   ],
-  "markers": [
-    {
-      "position": 0.4727272727272728,
-      "names": [
-        "event",
-        "intake"
-      ]
-    }
-  ]
+  "maxVelocity": null,
+  "maxAcceleration": 1.5,
+  "isReversed": null,
+  "markers": []
 }
