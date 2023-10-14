@@ -102,7 +102,6 @@ public final class Constants {
 
         // TODO: Use these values
         public static final double ORIGINAL_ZERO_OFFSET = 16.5016218;
-
         // TODO: Use these values
         public static final double ZERO_OFFSET_OFFSET = 180;
 
