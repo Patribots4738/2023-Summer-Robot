@@ -16,120 +16,89 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-public class Pivot extends SubsystemBase implements Loggable {
-    private double desiredRotation;
+public class Pivot extends SubsystemBase implements Loggable{
+  private double desiredRotation;
 
-    CANSparkMax pivotLead;
-    CANSparkMax pivotFollower;
+  CANSparkMax pivotLead;
+  CANSparkMax pivotFollower;
 
-    @Config
-    SparkMaxPIDController pivotPIDController;
+  @Config
+  SparkMaxPIDController pivotPIDController;
 
-    private final AbsoluteEncoder pivotEncoder;
+  private final AbsoluteEncoder pivotEncoder;
 
-    // @Log.Graph(visibleTime = 20)
-    private double encoderPositionDegrees;
+  @Log.Graph(visibleTime = 20)
+  private double encoderPositionDegrees;
 
-    // @Config
-    public static double PIVOT_P = 0.02;
+  @Config
+  public static double PIVOT_P = 0.02;
 
-    // @Config
-    public static double PIVOT_I = 0;
+  @Config
+  public static double PIVOT_I = 0;
 
-    // @Config
-    public static double PIVOT_D = 0.02;
+  @Config
+  public static double PIVOT_D = 0.02;
 
-    public static int placementIndex;
+  public Pivot() {
+    this.desiredRotation = 0.0;
 
-    public static Pivot instance;
+    // Initialize the motors
+    pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
+    Constants.SPARK_LIST.add(pivotLead);
+    pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
+    Constants.SPARK_LIST.add(pivotFollower);
 
-    public Pivot() {
-        this.desiredRotation = 0.0;
-        Pivot.placementIndex = PlacementConstants.RESET_INDEX;
+    // Restore the motors to factory defaults
+    pivotLead.restoreFactoryDefaults();
+    pivotFollower.restoreFactoryDefaults();
 
-        // Initialize the motors
-        pivotLead = new CANSparkMax(PivotConstants.PIVOT_LEAD_CAN_ID, MotorType.kBrushless);
-        pivotFollower = new CANSparkMax(PivotConstants.PIVOT_FOLLOWER_CAN_ID, MotorType.kBrushless);
+    pivotFollower.follow(pivotLead, true);
 
-        // Restore the motors to factory defaults
-        pivotLead.restoreFactoryDefaults();
-        pivotFollower.restoreFactoryDefaults();
+    pivotPIDController = pivotLead.getPIDController();
 
-        pivotFollower.follow(pivotLead, true);
+    pivotEncoder = pivotLead.getAbsoluteEncoder(Type.kDutyCycle);
 
-        pivotPIDController = pivotLead.getPIDController();
+    pivotPIDController.setP(PIVOT_P);
+    pivotPIDController.setI(PIVOT_I);
+    pivotPIDController.setD(PIVOT_D);
 
-        pivotEncoder = pivotLead.getAbsoluteEncoder(Type.kDutyCycle);
+    // Convert the encoder position from rotations to degrees
+    pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
 
-        pivotPIDController.setP(PIVOT_P);
-        pivotPIDController.setI(PIVOT_I);
-        pivotPIDController.setD(PIVOT_D);
+    pivotPIDController.setFeedbackDevice(pivotEncoder);
 
-        // Convert the encoder position from rotations to degrees
-        pivotEncoder.setPositionConversionFactor(PivotConstants.PIVOT_POSITION_ENCODER_FACTOR);
+    pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
+    pivotPIDController.setOutputRange(-0.3, 0.3);
+    // Flash is burnt in robotContainer... incinerateMotors()
 
-        pivotPIDController.setFeedbackDevice(pivotEncoder);
+    setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.RESET_INDEX]);
+  }
+ 
 
-        pivotLead.setSmartCurrentLimit(PivotConstants.PIVOT_SMART_CURRENT_LIMIT);
-        pivotPIDController.setOutputRange(-0.3, 0.3);
-        // Flash is burnt in robotContainer... incinerateMotors()
-        Constants.SPARK_LIST.add(pivotLead);
-        Constants.SPARK_LIST.add(pivotFollower);
+  /**
+   * Get the current rotation of the pivot
+   * 
+   * @return the current rotation of the pivot
+   */
+  public double getRotationDegrees() {
+    return desiredRotation;
+  }
 
-        setDesiredRotation(PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.RESET_INDEX]);
-    }
-    
-    public double getEncoderPositionDegrees() {
-        encoderPositionDegrees = pivotEncoder.getPosition();
-        return encoderPositionDegrees;
-    }
+  public double getEncoderPositionDegrees() {
+    encoderPositionDegrees = pivotEncoder.getPosition();
+    return encoderPositionDegrees;
+  }
 
-    public boolean pivotAtDesiredPosition() {
-        return 0 == MathUtil.applyDeadband(desiredRotation - getEncoderPositionDegrees(), PivotConstants.PIVOT_DEADBAND_DEGREES);
-    }
-
-    /**
-     * Set the rotation of the pivot, in degrees
-     * 
-     * @param placementPositionDegrees the rotation of the pivot
-     */
-    public void setDesiredRotation(double placementPositionDegrees) {
-        // Clamp the desired rotation to the limits of the pivot
-        this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
-                PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
-        // System.out.println("desired Rotation:" + this.desiredRotation);
-        pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
-    }
-
-    public void setArmHigh(boolean isBackwards) {
-        Pivot.placementIndex = PlacementConstants.HIGH_INDEX;
-        setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.HIGH_INDEX]
-                : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.HIGH_INDEX]);
-    }
-
-    public void setArmLow(boolean isBackwards) {
-        Pivot.placementIndex = PlacementConstants.LOW_INDEX;
-        setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.LOW_INDEX]
-                : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.LOW_INDEX]);
-    }
-
-    public void setArmMid(boolean isBackwards) {
-        Pivot.placementIndex = PlacementConstants.MID_INDEX;
-        setDesiredRotation((isBackwards) ? PlacementConstants.PLACEMENT_POSITIONS_BACK[PlacementConstants.MID_INDEX]
-                : PlacementConstants.PLACEMENT_POSITIONS_FRONT[PlacementConstants.MID_INDEX]);
-    }
-
-    public void setArmReset() {
-        Pivot.placementIndex = PlacementConstants.RESET_INDEX;
-        setDesiredRotation(PlacementConstants.RESET_PLACEMENT);
-    }
-
-    public static Pivot getInstance() {
-      if (instance == null){
-        instance = new Pivot();
-      }
-
-      return instance;
-    }
+  /**
+   * Set the rotation of the pivot, in degrees
+   * 
+   * @param placementPositionDegrees the rotation of the pivot
+   */
+  public void setDesiredRotation(double placementPositionDegrees) {
+    // Clamp the desired rotation to the limits of the pivot
+    this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES, PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
+    // System.out.println("desired Rotation:" + this.desiredRotation);
+    pivotPIDController.setReference(this.desiredRotation, ControlType.kPosition);
+  }
 
 }
