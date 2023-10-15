@@ -85,6 +85,7 @@ public class AutoPrograms {
         CommandBase placeBackMid = 
             Commands.run(() -> Pivot.getInstance().setArmMid(true))
             .until(Pivot.getInstance()::pivotAtDesiredPosition)
+            .andThen(() -> Claw.getInstance().setSpeed(PlacementConstants.RESET_INDEX, false))
             .andThen(() -> Claw.getInstance().setSpeed(PlacementConstants.MID_INDEX, true))
             .andThen(new WaitCommand(0.7))
             .andThen(() -> Pivot.getInstance().setArmReset())
@@ -97,9 +98,20 @@ public class AutoPrograms {
             mobilityTrajectory.asProxy()
         );
 
-        auto.put("DEFAULT", P1_Mobility_Charge);
-        auto.put("mobilityCharge", P1_Mobility_Charge);
-        auto.put("2P", twoP);
+
+
+        auto.put("DEFAULT", (placeBackHigh.asProxy()
+        .andThen(Commands.run(() -> Drivetrain.getInstance().drive(-0.6, 0)).asProxy()
+        .withTimeout(4)
+        .alongWith(Commands.runOnce(() -> Claw.getInstance().setSpeed(0.3)))
+        .andThen(Commands.runOnce(() -> Drivetrain.getInstance().drive(0, 0))
+        .andThen(Commands.runOnce(() -> Claw.getInstance().setSpeed(0)))
+        ))));
+        
+
+
+        // auto.put("2P", twoP);
+        // auto.put("mobilityCharge", P1_Mobility_Charge);
 
         Set<String> keySet = auto.keySet();
         String[] keySetCopy = new String[keySet.size()];

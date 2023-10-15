@@ -27,17 +27,17 @@ public class Pivot extends SubsystemBase implements Loggable {
 
     private final AbsoluteEncoder pivotEncoder;
 
-    // @Log.Graph(visibleTime = 20)
+    @Log
     private double encoderPositionDegrees;
 
     // @Config
-    public static double PIVOT_P = 0.02;
+    public static double PIVOT_P = 0.01;
 
     // @Config
     public static double PIVOT_I = 0;
 
     // @Config
-    public static double PIVOT_D = 0.02;
+    public static double PIVOT_D = 0.01;
 
     public static int placementIndex;
 
@@ -94,7 +94,9 @@ public class Pivot extends SubsystemBase implements Loggable {
      * @param placementPositionDegrees the rotation of the pivot
      */
     public void setDesiredRotation(double placementPositionDegrees) {
-        // Clamp the desired rotation to the limits of the pivot
+        pivotLead.setVoltage(0.3);
+        pivotFollower.setVoltage(0.3);
+      // Clamp the desired rotation to the limits of the pivot
         this.desiredRotation = MathUtil.clamp(placementPositionDegrees, PivotConstants.PIVOT_LOW_LIMIT_DEGREES,
                 PivotConstants.PIVOT_HIGH_LIMIT_DEGREES);
         // System.out.println("desired Rotation:" + this.desiredRotation);

@@ -55,31 +55,35 @@ public class RobotContainer implements Loggable {
      */
     private final BaseDrive baseDrive;
 
-    // private final BaseDrive baseDrive = new BaseDrive(
-    //   drivetrain,
-    //   () -> MathUtil.applyDeadband(driverController.getRightY(), ControllerConstants.DRIVER_DEADBAND_TURN),
-    //   () -> MathUtil.applyDeadband(-driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD));
-
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-
-        drivetrain = Drivetrain.getInstance();
-        driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
-        operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
-        pivot = Pivot.getInstance();
-        claw = Claw.getInstance();
-        baseDrive = new BaseDrive(
-            drivetrain,
-            () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
-            () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
+      
+      drivetrain = Drivetrain.getInstance();
+      driverController = new XboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
+      operatorController = new XboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
+      pivot = Pivot.getInstance();
+      claw = Claw.getInstance();
+      baseDrive = new BaseDrive(
+        drivetrain,
+        () -> MathUtil.applyDeadband(driverController.getLeftY(), ControllerConstants.DRIVER_DEADBAND_FORWARD),
+        () -> MathUtil.applyDeadband(driverController.getRightX() * 0.8, ControllerConstants.DRIVER_DEADBAND_TURN));
+        // baseDrive = new BaseDrive(
+        //   drivetrain,
+        //   () -> MathUtil.applyDeadband(driverController.getRightY() * 0.8, ControllerConstants.DRIVER_DEADBAND_FORWARD),
+        //   () -> MathUtil.applyDeadband(-driverController.getLeftY() * 0.8, ControllerConstants.DRIVER_DEADBAND_FORWARD));
         // Configure the button bindings
         drivetrain.setDefaultCommand(baseDrive);
         // claw.setDefaultCommand(manualSetClawSpeed);
         configureButtonBindings();
-
+        
         RobotContainer.incinerateMotors();
+    }
+
+    public void updateEncoder(){
+      pivot.getEncoderPositionDegrees();
     }
 
     /**
